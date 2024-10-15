@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "../../src/assets/logo.svg";
+import logo from "../../public/assets/images/logo.svg";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,16 +27,28 @@ export const Navigation = () => {
             <div className="nav__menu hidden md:block ml-10">
               <div className="menu__items flex items-baseline space-x-4">
                 <Link
-                  href="/wanita"
-                  className="menu__item text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md text-sm"
+                  href="/"
+                  className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
-                  Wanita
+                  Home
                 </Link>
                 <Link
-                  href="/pria"
-                  className="menu__item text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-bold"
+                  href="/"
+                  className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
-                  Pria
+                  New Arrival
+                </Link>
+                <Link
+                  href="/"
+                  className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
+                >
+                  Products
+                </Link>
+                <Link
+                  href="/"
+                  className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
+                >
+                  Collaboration
                 </Link>
               </div>
             </div>
@@ -73,16 +85,28 @@ export const Navigation = () => {
       >
         <div className="mobile-menu__items px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
-            href="/wanita"
-            className="mobile-menu__item text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base"
+            href="/"
+            className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
-            Wanita
+            Home
           </Link>
           <Link
-            href="/pria"
-            className="mobile-menu__item text-gray-700 hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-bold"
+            href="/"
+            className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
-            Pria
+            New Arrival
+          </Link>
+          <Link
+            href="/"
+            className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
+          >
+            Products
+          </Link>
+          <Link
+            href="/"
+            className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
+          >
+            Collaboration
           </Link>
         </div>
       </div>
