@@ -11,16 +11,18 @@ class CartRepository implements CartRepositoryInterface
     public function index()
     {
         $cart = Auth::user()->cart()->with('items.product')->first();
-        return $cart;
+        $items = $cart ? $cart->items : [];
+        return $items;
     }
 
     public function addToCart($productId, $quantity)
     {
         $cart = Auth::user()->cart()->firstOrCreate();
-        $cartItem = $cart->items()->updateOrCreate(
-            ['product_id' => $productId],
-            ['quantity' => $quantity]
-        );
+        $cartItem = $cart->items()->with('product')->firstOrNew(['product_id' => $productId]);
+
+        $cartItem->quantity = $cartItem->exists ? $cartItem->quantity + $quantity : $quantity;
+        $cartItem->save();
+
         return $cartItem;
     }
 
@@ -31,7 +33,7 @@ class CartRepository implements CartRepositoryInterface
 
     public function increaseQty($itemId)
     {
-        $cartItem = CartItem::find($itemId);
+        $cartItem = CartItem::with('product')->find($itemId);
 
         if ($cartItem) {
             $cartItem->quantity += 1;
@@ -43,7 +45,7 @@ class CartRepository implements CartRepositoryInterface
 
     public function decreaseQty($itemId)
     {
-        $cartItem = CartItem::findOrFail($itemId);
+        $cartItem = CartItem::with('product')->findOrFail($itemId);
 
         if ($cartItem) {
             if ($cartItem->quantity > 1) {

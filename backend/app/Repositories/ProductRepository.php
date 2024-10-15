@@ -63,6 +63,8 @@ class ProductRepository implements ProductRepositoryInterface
             $oldImage = str_replace($this->APP_URL.'/storage/','',$product->image);
             //delete old image from public storage
             Storage::disk('public')->delete($oldImage);
+        } else {
+            unset($data['image']);
         }
 
         $product->update($data);
