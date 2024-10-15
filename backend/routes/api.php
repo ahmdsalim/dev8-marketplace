@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\CategoryController;
+
+
+Route::prefix('auth')->group(function() {
+    Route::get('/unauthenticated', function () {
+        return response()->json(['message' => 'Unauthenticated'], 401);
+    })->name('login');
+    
+    Route::controller(AuthController::class)->group(function() {
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+        Route::post('/logout', 'logout')->middleware('auth:sanctum');
+    });
+    
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->middleware('auth:sanctum');
+    
+});
+
+//route resource
+Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum', 'authtype:admin']);
+Route::apiResource('/products', ProductController::class)->middleware(['auth:sanctum', 'authtype:admin']);
+Route::apiResource('/categories', CategoryController::class)->middleware(['auth:sanctum', 'authtype:admin']);
+
+//route cart
+Route::middleware(['auth:sanctum', 'authtype:user'])->controller(CartController::class)->group(function() {
+    Route::get('/cart/items', 'getCartItems');
+    Route::post('/cart/items/add', 'addItem');
+    Route::delete('/cart/items/remove/{itemId}', 'removeItem');
+    Route::post('/cart/items/increase-qty/{itemId}', 'increaseQty');
+    Route::post('/cart/items/decrease-qty/{itemId}', 'decreaseQty');
+});
