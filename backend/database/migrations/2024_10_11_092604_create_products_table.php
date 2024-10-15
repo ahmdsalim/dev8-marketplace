@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image');
             $table->string('slug')->unique();
             $table->text('description');
+            $table->string('size');
             $table->integer('price');
             $table->integer('stock');
             $table->timestamps();
