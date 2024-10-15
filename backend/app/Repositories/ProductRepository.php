@@ -10,6 +10,13 @@ use App\Interfaces\ProductRepositoryInterface;
 
 class ProductRepository implements ProductRepositoryInterface
 {
+    private $APP_URL;
+
+    public function __construct()
+    {
+        $this->APP_URL = env('APP_ENV') == 'production' ? env('APP_URL') : env('APP_URL').':'.env('APP_PORT');
+    }
+
     public function index(Request $request, $limit = 10)
     {
         $search = $request->query('search');
@@ -38,7 +45,7 @@ class ProductRepository implements ProductRepositoryInterface
         $image = $data['image'];
         $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
         $image->storeAs('product-images', $imageName, 'public');
-        $data['image'] = "/storage/product-images/$imageName";
+        $data['image'] = "$this->APP_URL/storage/product-images/$imageName";
 
         return Product::create($data);
     }
@@ -51,9 +58,9 @@ class ProductRepository implements ProductRepositoryInterface
             $image = $data['image'];
             $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
             $image->storeAs('product-images', $imageName, 'public');
-            $data['image'] = "/storage/product-images/$imageName";
+            $data['image'] = "$this->APP_URL/storage/product-images/$imageName";  
             //delete old image
-            $oldImage = str_replace('/storage/','',$product->image);
+            $oldImage = str_replace($this->APP_URL.'/storage/','',$product->image);
             //delete old image from public storage
             Storage::disk('public')->delete($oldImage);
         }
@@ -66,6 +73,11 @@ class ProductRepository implements ProductRepositoryInterface
     public function delete($id)
     {
         $product = Product::findOrFail($id);
+        if($product->image) {
+            $oldImage = str_replace($this->APP_URL.'/storage/','',$product->image);
+            //delete old image from public storage
+            Storage::disk('public')->delete($oldImage);
+        }
         $product->delete();
 
         return $product;
