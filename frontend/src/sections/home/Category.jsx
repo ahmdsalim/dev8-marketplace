@@ -2,6 +2,7 @@ import React from "react";
 import hoodie from "../../../public/assets/images/hoodie.jpg";
 import jersey from "../../../public/assets/images/jersey.jpg";
 import tShirt from "../../../public/assets/images/t-shirt.jpg";
+
 const products = [
   {
     id: 1,
@@ -19,6 +20,7 @@ const products = [
     image: jersey,
   },
 ];
+
 export const Category = () => {
   return (
     <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
@@ -32,9 +34,9 @@ export const Category = () => {
             the hottest trends and timeless styles.
           </p>
         </div>
-        <button className="categories__button bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border transition-colors">
+        {/* <button className="categories__button bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border transition-colors">
           View All New Arrivals
-        </button>
+        </button> */}
       </div>
 
       <div className="categories__items flex flex-wrap -mx-4 justify-center">
