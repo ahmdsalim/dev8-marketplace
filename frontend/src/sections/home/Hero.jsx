@@ -1,5 +1,5 @@
 import React from "react";
-import heroGif from "../../public/assets/videos/hero.gif";
+import heroGif from "../../../public/assets/videos/hero.gif";
 
 export const Hero = () => {
   return (

@@ -1,7 +1,9 @@
 import React from "react";
 import { Navigation } from "../components/Navigation";
-import { Hero } from "../components/Hero";
-import { Category } from "../components/Category";
+import { Hero } from "../sections/home/Hero";
+import { Category } from "../sections/home/Category";
+import { Footer } from "../components/Footer";
+import { Products } from "../sections/home/Products";
 
 export const Home = () => {
   return (
@@ -9,6 +11,8 @@ export const Home = () => {
       <Navigation />
       <Hero />
       <Category />
+      <Products />
+      <Footer />
     </div>
   );
 };

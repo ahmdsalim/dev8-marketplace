@@ -1,7 +1,8 @@
 import React from "react";
-import hoodie from "../../public/assets/images/hoodie.jpg";
-import jersey from "../../public/assets/images/jersey.jpg";
-import tShirt from "../../public/assets/images/t-shirt.jpg";
+import hoodie from "../../../public/assets/images/hoodie.jpg";
+import jersey from "../../../public/assets/images/jersey.jpg";
+import tShirt from "../../../public/assets/images/t-shirt.jpg";
+
 const products = [
   {
     id: 1,
@@ -19,22 +20,23 @@ const products = [
     image: jersey,
   },
 ];
+
 export const Category = () => {
   return (
     <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
       <div className="categories__header flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div className="categories__info mb-4 md:mb-0">
           <h2 className="categories__title text-3xl font-bold mb-2">
-            New Arrivals
+            Our Products
           </h2>
           <p className="categories__description text-gray-600 max-w-2xl">
-            Discover our latest collection of high-quality clothing and
-            accessories, featuring the hottest trends and timeless styles.
+            Discover our latest collection of high-quality clothing, featuring
+            the hottest trends and timeless styles.
           </p>
         </div>
-        <button className="categories__button bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border transition-colors">
+        {/* <button className="categories__button bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border transition-colors">
           View All New Arrivals
-        </button>
+        </button> */}
       </div>
 
       <div className="categories__items flex flex-wrap -mx-4 justify-center">
