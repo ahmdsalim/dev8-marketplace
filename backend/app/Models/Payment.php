@@ -9,5 +9,17 @@ class Payment extends Model
 {
     use HasFactory;
 
-    const CREATED_AT = 'payment_date';
+    protected $fillable = [
+        'order_id',
+        'amount',
+        'payment_method',
+        'status',
+        'expired_date',
+        'payment_date'
+    ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

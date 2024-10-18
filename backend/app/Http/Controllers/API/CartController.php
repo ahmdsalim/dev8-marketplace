@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use App\Classes\PaginationData;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -32,7 +33,7 @@ class CartController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse(new CartResource($cartItem), 'Item added to cart', 201);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e);
+            return ApiResponseClass::rollback($e, $e->getMessage());
         }
     }
 
@@ -66,6 +67,21 @@ class CartController extends Controller
             return ApiResponseClass::sendResponse(new CartResource($cartItem), '', 200);
         } catch(\Exception $e) {
             return ApiResponseClass::rollback($e);
+        }
+    }
+
+    public function getCheckOutItems(Request $request)
+    {
+        try {
+            $cartItemIds = $request->cart_item_ids;
+            $cartItems = $this->cartRepository->getCheckOutItems($cartItemIds);
+
+            return ApiResponseClass::sendResponse(CartResource::collection($cartItems), '', 200);
+        } catch (\Exception $e) {
+            if ($e->getMessage() === 'Some items are out of stock') {
+                return ApiResponseClass::throw($e, $e->getMessage(), 400);
+            }
+            return ApiResponseClass::throw($e);
         }
     }
 }

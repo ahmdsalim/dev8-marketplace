@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductCollection;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Http\Resources\ProductResource;
 use App\Interfaces\ProductRepositoryInterface;
 
 class ProductController extends Controller
@@ -27,7 +28,7 @@ class ProductController extends Controller
     {
         $data = $this->productRepository->index($request);
 
-        return ApiResponseClass::sendResponse(ProductResource::collection($data), '', 200);
+        return ApiResponseClass::sendResponse(new ProductCollection($data), '', 200);
     }
 
     /**
@@ -48,6 +49,8 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'image' => $request->file('image'),
             'description' => $request->description,
+            'size' => $request->size,
+            'weight' => $request->weight,
             'price' => $request->price,
             'stock' => $request->stock,
         ];
@@ -58,7 +61,7 @@ class ProductController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse(new ProductResource($product), 'Product created successfully', 201);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e, 'Product creation failed');
+            return ApiResponseClass::rollback($e, 'Product creation failed');
         }
     }
 
@@ -99,7 +102,7 @@ class ProductController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse([], 'Product updated successfully', 200);
         } catch(\Exception $e) {
-            ApiResponseClass::rollback($e, 'Product update failed');
+            return ApiResponseClass::rollback($e, 'Product update failed');
         }
     }
 

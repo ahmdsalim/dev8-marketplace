@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('invoice_number')->unique();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('status');
-            $table->integer('total_amount');
+            $table->integer('total_amount')->nullable();
             $table->text('delivery_address');
-            $table->string('snapToken')->nullable();
+            $table->string('courier');
+            $table->integer('delivery_cost')->nullable();
+            $table->string('snap_token')->nullable();
+            $table->text('payment_url')->nullable(); //Column for development purpose only
             $table->timestamp('order_date')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate();
         });

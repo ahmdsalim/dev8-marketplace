@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
+use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\CategoryCollection;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Resources\CategoryResource;
 use App\Interfaces\CategoryRepositoryInterface;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -25,7 +26,7 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $data = $this->categoryRepository->index($request);
-        return ApiResponseClass::sendResponse(CategoryResource::collection($data), '', 200);
+        return ApiResponseClass::sendResponse(new CategoryCollection($data), '', 200);
     }
 
     /**
@@ -52,7 +53,7 @@ class CategoryController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse(new CategoryResource($category), 'Category created successfully', 201);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e, 'Category creation failed');
+            return ApiResponseClass::rollback($e, 'Category creation failed');
         }
     }
 
@@ -89,7 +90,7 @@ class CategoryController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse([], 'Category updated successfully', 200);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e, 'Category update failed');
+            return ApiResponseClass::rollback($e, 'Category update failed');
         }
     }
 

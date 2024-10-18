@@ -5,12 +5,13 @@ namespace App\Repositories;
 use App\Models\CartItem;
 use Illuminate\Support\Facades\Auth;
 use App\Interfaces\CartRepositoryInterface;
+use App\Models\Product;
 
 class CartRepository implements CartRepositoryInterface
 {
     public function index()
     {
-        $cart = Auth::user()->cart()->with('items.product')->first();
+        $cart = Auth::user()->cart()->with('items.product.category')->first();
         $items = $cart ? $cart->items : [];
         return $items;
     }
@@ -18,6 +19,11 @@ class CartRepository implements CartRepositoryInterface
     public function addToCart($productId, $quantity)
     {
         $cart = Auth::user()->cart()->firstOrCreate();
+        
+        if(Product::find($productId)->stock < $quantity) {
+            throw new \Exception('Product is out of stock');
+        }
+
         $cartItem = $cart->items()->with('product')->firstOrNew(['product_id' => $productId]);
 
         $cartItem->quantity = $cartItem->exists ? $cartItem->quantity + $quantity : $quantity;
@@ -58,5 +64,25 @@ class CartRepository implements CartRepositoryInterface
         }
 
         return $cartItem;
+    }
+
+    public function getCheckOutItems($cartItemIds)
+    {
+        $cart = Auth::user()->cart()->firstOrFail();
+        $cartItems = $cart->items()->with('product.category')->whereIn('id', $cartItemIds)->get();
+
+        $outOfStockItems = [];
+
+        foreach ($cartItems as $item) {
+            if ($item->product->stock < $item->quantity) {
+                $outOfStockItems[] = $item->product->name;
+            }
+        }
+
+        if (!empty($outOfStockItems)) {
+            throw new \Exception('Some items are out of stock');
+        }
+
+        return $cartItems;
     }
 }

@@ -30,7 +30,7 @@ class AuthController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse($success, "User registered successfully", 201);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e, "User registration failed");
+            return ApiResponseClass::rollback($e, "User registration failed");
         }
     }
 

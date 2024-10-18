@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreProductRequest extends FormRequest
+class CheckOutCartItemsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,8 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'category_id' => 'required|exists:categories,id',
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-            'description' => 'required',
-            'size' => 'required',
-            'weight' => 'required|numeric',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric'
+            'cart_item_ids' => 'required|array',
+            'cart_item_ids.*' => 'required|integer|exists:cart_items,id'
         ];
     }
 

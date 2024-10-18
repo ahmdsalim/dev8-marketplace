@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Classes\ApiResponseClass;
 use Illuminate\Http\Request;
+use App\Classes\ApiResponseClass;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserCollection;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Http\Resources\UserResource;
 use App\Interfaces\UserRepositoryInterface;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -25,8 +26,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $data = $this->userRepository->index($request);
-
-        return ApiResponseClass::sendResponse(UserResource::collection($data), '', 200);
+        
+        return ApiResponseClass::sendResponse(new UserCollection($data), '', 200);
     }
 
     /**
@@ -57,7 +58,7 @@ class UserController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse(new UserResource($user), 'User created successfully', 201);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e, 'User creation failed');
+            return ApiResponseClass::rollback($e, 'User creation failed');
         }
     }
 
@@ -97,7 +98,7 @@ class UserController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse([], 'User updated successfully', 200);
         } catch (\Exception $e) {
-            ApiResponseClass::rollback($e, 'User update failed');
+            return ApiResponseClass::rollback($e, 'User update failed');
         }
     }
 

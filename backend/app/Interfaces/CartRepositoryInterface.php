@@ -9,4 +9,5 @@ interface CartRepositoryInterface
     public function removeFromCart($itemId);
     public function increaseQty($itemId);
     public function decreaseQty($itemId);
+    public function getCheckOutItems($cartItemIds);
 }
