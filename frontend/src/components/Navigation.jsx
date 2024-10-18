@@ -68,7 +68,7 @@ export const Navigation = () => {
               </div>
             </div>
             <button className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100">
-              <User size={24} />
+              <User size={24} href="/login" />
             </button>
             <button className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100">
               <ShoppingCart size={24} />
