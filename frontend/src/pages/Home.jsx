@@ -8,7 +8,6 @@ import { Products } from "../sections/home/Products";
 export const Home = () => {
   return (
     <div>
-      <Navigation />
       <Hero />
       <Category />
       <Products />

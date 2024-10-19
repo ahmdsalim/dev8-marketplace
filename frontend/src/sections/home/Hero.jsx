@@ -1,5 +1,6 @@
 import React from "react";
 import heroGif from "../../../public/assets/videos/hero.gif";
+import { Link } from "react-router-dom";
 
 export const Hero = () => {
   return (
@@ -24,12 +25,12 @@ export const Hero = () => {
             voluptate quaerat dignissimos necessitatibus? Modi deleniti
             cupiditate dolorem!
           </p>
-          <a
-            href="#"
+          <Link
+            to="#"
             className="hero__button hero__button--primary mt-6 inline-block px-6 py-3 text-lg font-semibold text-black bg-white rounded transition-colors duration-300 hover:bg-black hover:text-white"
           >
             Shop Now
-          </a>
+          </Link>
         </div>
       </div>
     </section>

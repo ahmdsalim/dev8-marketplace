@@ -1,25 +1,38 @@
 import "./App.css";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
-  createBrowserRouter,
+  BrowserRouter as Router,
+  Routes,
+  Route,
   Navigate,
-  RouterProvider,
 } from "react-router-dom";
+
 import { Home } from "./pages/Home";
 import { Auth } from "./pages/Auth";
+import { Toaster } from "react-hot-toast";
+import { Layout } from "./components/Layout";
+import { isAuthenticated } from "./utils/AuthHelpers";
+import { Profile } from "./pages/Profile";
 
 function App() {
-  const router = createBrowserRouter([
-    { path: "/", element: <Home /> },
-    { path: "/login", element: <Auth /> },
-    { path: "/register", element: <Auth /> },
-    // { path: "/", element: <Navigate to="/login" /> },
-    // { path: "*", element: <NotFoundPage /> },
-  ]);
   return (
-    <>
-      {/* <Toaster /> */}
-      <RouterProvider router={router} />
-    </>
+    <Router>
+      <Toaster />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/login"
+            element={isAuthenticated() ? <Navigate to="/profile" /> : <Auth />}
+          />
+          <Route
+            path="/register"
+            element={isAuthenticated() ? <Navigate to="/profile" /> : <Auth />}
+          />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 

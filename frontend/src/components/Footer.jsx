@@ -1,5 +1,6 @@
 import React from "react";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -10,19 +11,19 @@ export const Footer = () => {
             <h3 className="footer__title font-bold text-lg mb-4">Products</h3>
             <ul className="footer__list space-y-2">
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   Hoodie
-                </a>
+                </Link>
               </li>
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   T-shirt
-                </a>
+                </Link>
               </li>
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   Jersey
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -30,14 +31,14 @@ export const Footer = () => {
             <h3 className="footer__title font-bold text-lg mb-4">HELP</h3>
             <ul className="footer__list space-y-2">
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -47,19 +48,19 @@ export const Footer = () => {
             </h3>
             <ul className="footer__list space-y-2">
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   About Us
-                </a>
+                </Link>
               </li>
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li className="footer__item">
-                <a href="#" className="footer__link hover:text-gray-900">
+                <Link to="#" className="footer__link hover:text-gray-900">
                   Refund and Returns Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -67,30 +68,30 @@ export const Footer = () => {
           <div className="footer__column flex-1 mb-4">
             <h3 className="footer__title font-bold text-lg mb-4">Follow Us!</h3>
             <div className="footer__social flex space-x-4">
-              <a
-                href="#"
+              <Link
+                to="#"
                 className="footer__social-link text-gray-400 hover:text-gray-600"
               >
                 <Instagram size={24} />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="#"
                 className="footer__social-link text-gray-400 hover:text-gray-600"
               >
                 <Facebook size={24} />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="#"
                 className="footer__social-link text-gray-400 hover:text-gray-600"
               >
                 <Twitter size={24} />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="#"
                 className="footer__social-link text-gray-400 hover:text-gray-600"
               >
                 <Youtube size={24} />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/assets/images/logo.svg";
+import { isAuthenticated } from "../utils/AuthHelpers";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleProfileRedirect = () => {
+    if (isAuthenticated()) {
+      navigate("/profile");
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <nav className="nav bg-white border-b border-gray-200">
@@ -20,32 +30,32 @@ export const Navigation = () => {
             </button>
           </div>
           <div className="nav__logo flex-1 flex items-center justify-center md:justify-start">
-            <Link href="/" className="flex-shrink-0">
+            <Link to="/" className="flex-shrink-0">
               {/* <span className="text-xl font-bold italic">RETO</span> */}
               <img src={logo} alt="Logo" className="logo__image h-16 w-auto" />
             </Link>
             <div className="nav__menu hidden md:block ml-10">
               <div className="menu__items flex items-baseline space-x-4">
                 <Link
-                  href="/"
+                  to="/"
                   className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   Home
                 </Link>
                 <Link
-                  href="/"
+                  to="/"
                   className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   New Arrival
                 </Link>
                 <Link
-                  href="/"
+                  to="/"
                   className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   Products
                 </Link>
                 <Link
-                  href="/"
+                  to="/"
                   className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   Collaboration
@@ -67,12 +77,18 @@ export const Navigation = () => {
                 />
               </div>
             </div>
-            <button className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100">
-              <User size={24} href="/login" />
+            <button
+              onClick={handleProfileRedirect}
+              className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100"
+            >
+              <User size={24} />
             </button>
-            <button className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100">
+            <Link
+              to="/"
+              className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100"
+            >
               <ShoppingCart size={24} />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -85,25 +101,25 @@ export const Navigation = () => {
       >
         <div className="mobile-menu__items px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
-            href="/"
+            to="/"
             className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
             Home
           </Link>
           <Link
-            href="/"
+            to="/"
             className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
             New Arrival
           </Link>
           <Link
-            href="/"
+            to="/"
             className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
             Products
           </Link>
           <Link
-            href="/"
+            to="/"
             className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
             Collaboration
