@@ -26,7 +26,7 @@ class AuthController extends Controller
         try {
             $user = User::create($details);
             $success['token'] =  $user->createToken('authToken')->plainTextToken;
-            $success['name'] =  $user->name;
+            $success['user'] =  $user;
             DB::commit();
             return ApiResponseClass::sendResponse($success, "User registered successfully", 201);
         } catch (\Exception $e) {
