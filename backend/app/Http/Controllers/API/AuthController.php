@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginUserRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterUserRequest;
 
@@ -34,7 +35,7 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $request) {
+    public function login(LoginUserRequest $request) {
         $credentials = $request->only('username', 'password');
         $field = filter_var($credentials['username'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $credentials = [

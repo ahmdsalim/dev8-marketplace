@@ -14,7 +14,10 @@ use App\Http\Controllers\API\RajaOngkirController;
 
 Route::prefix('auth')->group(function() {
     Route::get('/unauthenticated', function () {
-        return response()->json(['message' => 'Unauthenticated'], 401);
+        if(request()->wantsJson()){
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        return abort(401);
     })->name('login');
     
     Route::controller(AuthController::class)->group(function() {

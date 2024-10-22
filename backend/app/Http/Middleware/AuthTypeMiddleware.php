@@ -18,7 +18,7 @@ class AuthTypeMiddleware
         $allowedRoles = explode('.', $rolename);
         $userRole = $request->user()->role;
         if (!in_array($userRole, $allowedRoles)) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized Access'], 403);
+            return response()->json(['message' => 'Forbidden.'], 403);
         }
         return $next($request);
     }
