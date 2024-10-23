@@ -29,7 +29,9 @@ Route::prefix('auth')->group(function() {
     Route::get('/user', function (Request $request) {
         return $request->user();
     })->middleware('auth:sanctum');
-    
+
+    Route::put('/user/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
+    Route::put('/user/update-profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
 });
 
 //route resource
@@ -50,7 +52,6 @@ Route::prefix('data')->group(function(){
         Route::get('/orders/list', 'index');
         Route::get('/orders/list/{order_id}', 'show');
         Route::post('/orders/checkout', 'checkOut');
-
     });
 
     //route cart

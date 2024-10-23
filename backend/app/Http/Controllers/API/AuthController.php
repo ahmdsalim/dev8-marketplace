@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginUserRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\UpdateProfileRequest;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -56,5 +60,25 @@ class AuthController extends Controller
     public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
         return ApiResponseClass::sendResponse([], "User logged out successfully");
+    }
+
+    public function changePassword(ChangePasswordRequest $request) {
+        try {
+            Auth::user()->fill([
+                'password' => bcrypt($request->new_password)
+            ])->save();
+            return ApiResponseClass::sendResponse([], "Password changed successfully");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, "Password change failed");
+        }
+    }
+
+    public function updateProfile(UpdateProfileRequest $request) {
+        try {
+            Auth::user()->fill($request->validated())->save();
+            return ApiResponseClass::sendResponse([], "Profile updated successfully");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, "Profile update failed");
+        }
     }
 }
