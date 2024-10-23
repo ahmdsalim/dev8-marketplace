@@ -2,8 +2,10 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_LOCAL;
 
 export const LOGIN_URL = `${API_BASE_URL}/auth/login`;
 export const REGISTER_URL = `${API_BASE_URL}/auth/register`;
-export const LOGGED_USER_URL = `${API_BASE_URL}/auth/auth`;
+export const LOGGED_USER_URL = `${API_BASE_URL}/auth/user`;
 export const LOGOUT_URL = `${API_BASE_URL}/auth/logout`;
+export const CHANGE_PASSWORD_URL = `${API_BASE_URL}/auth/user/change-password`;
+export const UPDATE_PROFILE_URL = `${API_BASE_URL}/auth/user/update-profile`;
 
 export const GET_USERS_URL = `${API_BASE_URL}/users`;
 export const GET_USER_URL = (id) => `${API_BASE_URL}/users/${id}`;

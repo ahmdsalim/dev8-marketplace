@@ -1,6 +1,13 @@
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
-import { LOGIN_URL, REGISTER_URL, LOGOUT_URL } from "../service/api";
+import {
+  LOGIN_URL,
+  REGISTER_URL,
+  LOGOUT_URL,
+  LOGGED_USER_URL,
+  CHANGE_PASSWORD_URL,
+  UPDATE_PROFILE_URL,
+} from "../service/api";
 
 export const useRegister = () => {
   return useMutation(
@@ -58,7 +65,7 @@ export const useLogout = () => {
           },
         }
       );
-      return res.data.data;
+      return res.data;
     },
     {
       onSuccess: () => {
@@ -70,4 +77,62 @@ export const useLogout = () => {
       },
     }
   );
+};
+
+export const useUser = () => {
+  return useQuery("user", async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found");
+    }
+    const res = await axios.get(LOGGED_USER_URL, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  });
+};
+
+export const useChangePassword = () => {
+  return useMutation(
+    async ({ current_password, new_password, confirm_password }) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      const res = await axios.put(
+        CHANGE_PASSWORD_URL,
+        { current_password, new_password, confirm_password },
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    }
+  );
+};
+
+export const useChangeProfile = () => {
+  return useMutation(async ({ name, username, email, phone }) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found");
+    }
+    const res = await axios.put(
+      UPDATE_PROFILE_URL,
+      { name, username, email, phone },
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  });
 };

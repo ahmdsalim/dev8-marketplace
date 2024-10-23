@@ -5,7 +5,6 @@ import * as yup from "yup";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin, useRegister } from "../hooks/autoHooks";
 import { showSuccessToast, showErrorToast } from "../utils/ToastUtils";
-import { Navigation } from "../components/Navigation";
 
 const registerSchema = yup.object().shape({
   email: yup
@@ -56,13 +55,14 @@ export const Auth = () => {
   });
 
   const onSubmit = (data) => {
+    console.log(data);
     if (isLogin) {
       login(data, {
         onSuccess: () => {
           showSuccessToast("Welcome Back !");
           navigate("/");
         },
-        onError: () => {
+        onError: (err) => {
           const errorMessage =
             err.response?.data?.message || "An error occurred during login";
           showErrorToast(errorMessage);
@@ -76,8 +76,7 @@ export const Auth = () => {
         },
         onError: (err) => {
           const errorMessage =
-            err.response?.data?.message ||
-            "An error occurred during registration";
+            err.response?.data?.message || "An error occurred during login";
           showErrorToast(errorMessage);
         },
       });
@@ -204,6 +203,7 @@ export const Auth = () => {
               <input
                 id="password"
                 type="password"
+                placeholder="Password"
                 {...register("password")}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                         focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
