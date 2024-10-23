@@ -16,6 +16,24 @@ class OrderRepository implements OrderRepositoryInterface
         $search = $request->query('search');
         $status = $request->query('status');
         
+        $query = Order::query();
+        
+        if($search) {
+            $query->where('name', 'like', '%'.$search.'%');
+        }
+
+        if($status) {
+            $query->where('status', $status);
+        }
+
+		return $query->paginate($limit);
+    }
+
+    public function getUserOrders($request, $limit = 10)
+    {
+        $search = $request->query('search');
+        $status = $request->query('status');
+        
         $query = Order::query()->where('user_id', auth()->id());
         
         if($search) {

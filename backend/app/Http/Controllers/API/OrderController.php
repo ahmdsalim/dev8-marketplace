@@ -25,6 +25,12 @@ class OrderController extends Controller
         return ApiResponseClass::sendResponse(new OrderCollection($data), '', 200);
     }
 
+    public function getUserOrders(Request $request)
+    {
+        $data = $this->orderRepository->getUserOrders($request);
+        return ApiResponseClass::sendResponse(new OrderCollection($data), '', 200);
+    }
+
     public function checkOut(CheckOutOrderRequest $request)
     {
         DB::beginTransaction();

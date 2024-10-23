@@ -47,9 +47,11 @@ Route::prefix('data')->group(function(){
     Route::get('/categories/list', [CategoryController::class, 'index']);
     Route::get('/categories/list/{slug}', [CategoryController::class, 'show']);
     
+    //route order admin
+    Route::get('/orders/list', [OrderController::class, 'index'])->middleware(['auth:sanctum', 'authtype:admin']);
     //route order user
     Route::middleware(['auth:sanctum', 'authtype:user'])->controller(OrderController::class)->group(function() {
-        Route::get('/orders/list', 'index');
+        Route::get('/orders/user/list', 'getUserOrders');
         Route::get('/orders/list/{order_id}', 'show');
         Route::post('/orders/checkout', 'checkOut');
     });
