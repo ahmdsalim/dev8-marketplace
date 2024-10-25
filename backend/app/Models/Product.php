@@ -10,7 +10,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description', 'size', 'weight', 'price', 'image', 'stock', 'category_id'];
+    protected $fillable = ['name', 'slug', 'description', 'size', 'weight', 'price', 'image', 'stock', 'category_id', 'collaboration_id'];
 
     public static function boot()
     {
@@ -30,14 +30,8 @@ class Product extends Model
 
     protected static function generateUniqueSlug($slug)
     {
-        $originalSlug = $slug;
         $randomString = Str::random(11);
         $slug = $slug . '-' . $randomString;
-
-        while(Product::where('slug', $slug)->exists()) {
-            $randomString = Str::random(11);
-            $slug = $originalSlug . '' . $randomString;
-        }
 
         return $slug;
     }
@@ -45,5 +39,10 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function collaboration()
+    {
+        return $this->belongsTo(Collaboration::class);
     }
 }

@@ -15,6 +15,8 @@ use App\Interfaces\OrderRepositoryInterface;
 use App\Interfaces\PaymentRepositoryInterface;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\CategoryRepositoryInterface;
+use App\Interfaces\CollaborationInterface;
+use App\Repositories\CollaborationRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CartRepositoryInterface::class, CartRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         $this->app->bind(PaymentRepositoryInterface::class, PaymentRepository::class);
+        $this->app->bind(CollaborationInterface::class, CollaborationRepository::class);
     }
 
     /**

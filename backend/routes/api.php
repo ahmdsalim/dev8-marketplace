@@ -10,6 +10,7 @@ use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\CollaborationController;
 use App\Http\Controllers\API\RajaOngkirController;
 
 Route::prefix('auth')->group(function() {
@@ -38,6 +39,7 @@ Route::prefix('auth')->group(function() {
 Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum', 'authtype:admin']);
 Route::apiResource('/products', ProductController::class)->middleware(['auth:sanctum', 'authtype:admin']);
 Route::apiResource('/categories', CategoryController::class)->middleware(['auth:sanctum', 'authtype:admin']);
+Route::apiResource('/collaborations', CollaborationController::class)->middleware(['auth:sanctum', 'authtype:admin']);
 
 //route public/user
 Route::prefix('data')->group(function(){
@@ -46,6 +48,9 @@ Route::prefix('data')->group(function(){
 
     Route::get('/categories/list', [CategoryController::class, 'index']);
     Route::get('/categories/list/{slug}', [CategoryController::class, 'show']);
+
+    Route::get('/collaborations/list', [CollaborationController::class, 'index']);
+    Route::get('/collaborations/list/{slug}', [CollaborationController::class, 'show']);
     
     //route order admin
     Route::get('/orders/list', [OrderController::class, 'index'])->middleware(['auth:sanctum', 'authtype:admin']);

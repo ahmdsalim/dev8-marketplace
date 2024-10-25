@@ -16,7 +16,7 @@ class PaymentRepository implements PaymentRepositoryInterface
             $trans_status = $midtrans_response->transaction_status;
     
             if(in_array($trans_status, ['capture', 'settlement'])) {
-                $order->status = 'success';
+                $order->status = 'processed';
                 
                 $order->payment()->update([
                     'status' => 'paid'

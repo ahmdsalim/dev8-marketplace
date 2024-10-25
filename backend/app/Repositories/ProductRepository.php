@@ -21,6 +21,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $search = $request->query('search');
         $category = $request->query('category');
+        $collaboration = $request->query('collaboration');
         
         $query = Product::query();
         
@@ -30,6 +31,10 @@ class ProductRepository implements ProductRepositoryInterface
 
         if($category) {
             $query->where('category_id', $category);
+        }
+
+        if($collaboration) {
+            $query->where('collaboration_id', $collaboration);
         }
 
 		return $query->paginate($limit);
