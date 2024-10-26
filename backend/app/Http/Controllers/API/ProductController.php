@@ -46,6 +46,7 @@ class ProductController extends Controller
     {
         $details = [
             'name' => $request->name,
+            'collaboration_id' => $request->collaboration_id ?? null,
             'category_id' => $request->category_id,
             'image' => $request->file('image'),
             'description' => $request->description,
@@ -89,9 +90,12 @@ class ProductController extends Controller
     {
         $details = [
             'name' => $request->name,
+            'collaboration_id' => $request->collaboration_id ?? null,
             'category_id' => $request->category_id,
-            'description' => $request->description,
             'image' => $request->file('image') ?? null,
+            'description' => $request->description,
+            'size' => $request->size,
+            'weight' => $request->weight,
             'price' => $request->price,
             'stock' => $request->stock,
         ];
