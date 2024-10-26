@@ -4,5 +4,5 @@ namespace App\Interfaces;
 
 interface PaymentRepositoryInterface
 {
-    public function store($order_id, $midtrans_response);
+    public function store($order_id, $midtrans_request);
 }

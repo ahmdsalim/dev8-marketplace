@@ -7,6 +7,7 @@ use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaymentHandlingRequest;
 use Illuminate\Support\Facades\Http;
 use App\Interfaces\PaymentRepositoryInterface;
 
@@ -19,24 +20,20 @@ class PaymentController extends Controller
         $this->paymentRepository = $paymentRepository;
     }
 
-    public function webhook(Request $request)
+    public function webhook(PaymentHandlingRequest $request)
     {
         DB::beginTransaction();
         try {
-            $request->order_id ?? throw new \Exception();
-            
             $midtrans_server_key = env('APP_ENV') == 'production' ? env('MIDTRANS_SERVER_KEY_PROD') : env('MIDTRANS_SERVER_KEY_SANDBOX');
-            $midtrans_base_api = env('APP_ENV') == 'production' ? env('MIDTRANS_BASE_API_PROD') : env('MIDTRANS_BASE_API_SANDBOX');
-            $auth = base64_encode($midtrans_server_key. ':');
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Authorization' => "Basic $auth"
-            ])->get($midtrans_base_api . '/v2/' . $request->order_id . '/status');
             
-            $response = json_decode($response->body());
+            //verify request using signature key
+            $signature_key = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $midtrans_server_key);
 
-            $message = $this->paymentRepository->store($request->order_id, $response);
+            if ($request->signature_key != $signature_key) {
+                return response()->json(['success' => false, 'message' => 'Invalid signature key'], 400);
+            }
+
+            $message = $this->paymentRepository->store($request->order_id, $request);
             
             DB::commit();
             return ApiResponseClass::sendResponse([], $message, 200);
