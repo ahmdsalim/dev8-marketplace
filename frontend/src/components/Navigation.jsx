@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/assets/images/logo.svg";
-import { isAuthenticated } from "../utils/AuthHelpers";
+import { isAuthenticated } from "../helpers/AuthHelpers";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,7 +49,7 @@ export const Navigation = () => {
                   New Arrival
                 </Link>
                 <Link
-                  to="/"
+                  to="/products"
                   className="menu__item text-gray hover:bg-gray-100 px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   Products

@@ -70,7 +70,6 @@ export const useLogout = () => {
     {
       onSuccess: () => {
         localStorage.removeItem("token");
-        window.location.href = "/login";
       },
       onError: (error) => {
         console.error("Logout failed", error);
@@ -80,19 +79,29 @@ export const useLogout = () => {
 };
 
 export const useUser = () => {
-  return useQuery("user", async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No token found");
-    }
-    const res = await axios.get(LOGGED_USER_URL, {
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
+  return useQuery(
+    "user",
+    async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      const res = await axios.get(LOGGED_USER_URL, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res.data;
+    },
+    {
+      onError: (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+        }
       },
-    });
-    return res.data;
-  });
+    }
+  );
 };
 
 export const useChangePassword = () => {

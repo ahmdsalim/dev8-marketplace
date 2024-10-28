@@ -1,18 +1,14 @@
 import "./App.css";
-// import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { Home } from "./pages/Home";
 import { Auth } from "./pages/Auth";
 import { Toaster } from "react-hot-toast";
 import { Layout } from "./components/Layout";
-import { isAuthenticated } from "./utils/AuthHelpers";
+// import { isAuthenticated } from "./helpers/AuthHelpers";
 import { Profile } from "./pages/Profile";
+import { Products } from "./pages/Products";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -21,15 +17,12 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/login"
-            element={isAuthenticated() ? <Navigate to="/profile" /> : <Auth />}
-          />
-          <Route
-            path="/register"
-            element={isAuthenticated() ? <Navigate to="/profile" /> : <Auth />}
-          />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/login" element={<Auth />} />
+          <Route path="/register" element={<Auth />} />
+          <Route path="/" element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
         </Routes>
       </Layout>
     </Router>
