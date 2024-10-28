@@ -98,12 +98,8 @@ class OrderRepository implements OrderRepositoryInterface
         ]);
         
         //get delivery cost by service choiced
-        // Debugging the response from RajaOngkir API
-        Log::info('RajaOngkir API Response:', $response->json());
-
         $delivery_cost = collect($response['rajaongkir']['results'][0]['costs'])
                     ->firstWhere('service', $request->service)['cost'][0]['value'];
-
         
         $order->update(['total_amount' => $total_amount, 'delivery_cost' => $delivery_cost]);
 
