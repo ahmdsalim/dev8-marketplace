@@ -44,6 +44,7 @@ class CategoryController extends Controller
     {
         $details = [
             'name' => $request->name,
+            'image' => $request->file('image') ?? null,
             'description' => $request->description,
         ];
 
@@ -81,6 +82,7 @@ class CategoryController extends Controller
     {
         $details = [
             'name' => $request->name,
+            'image' => $request->file('image') ?? null,
             'description' => $request->description,
         ];
 
