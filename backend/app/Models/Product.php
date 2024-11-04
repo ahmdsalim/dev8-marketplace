@@ -10,7 +10,11 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description', 'size', 'weight', 'price', 'image', 'stock', 'category_id', 'collaboration_id'];
+    protected $fillable = ['name', 'slug', 'description', 'size', 'weight', 'price', 'images', 'stock', 'category_id', 'collaboration_id'];
+
+    protected $casts = [
+        'images' => 'json'
+    ];
 
     public static function boot()
     {

@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Interfaces\ProductRepositoryInterface;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -48,16 +50,29 @@ class ProductRepository implements ProductRepositoryInterface
     public function store(array $data)
     {
         try {
-            $image = $data['image'];
-            $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
-            $image->storeAs('product-images', $imageName, 'public');
-            $data['image'] = "$this->APP_URL/storage/product-images/$imageName";
+            $images = $data['images'];
+            
+            $uploadedImg = [];
+
+            foreach($images as $image) {
+                $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
+                $image->storeAs('product-images', $imageName, 'public');
+                $imgId = Str::random(2);
+                $uploadedImg[] = [
+                    'id' => $imgId,
+                    'image' => "$this->APP_URL/storage/product-images/$imageName"
+                ];
+            }
+
+            $data['images'] = $uploadedImg;
     
             return Product::create($data);
         } catch (\Exception $e) {
-            $imageName = str_replace($this->APP_URL.'/storage/','',$imageName);
-            if(Storage::disk('public')->exists('product-images/'.$imageName)) {
-                Storage::disk('public')->delete('product-images/'.$imageName);
+            foreach($uploadedImg as $image) {
+                $imageName = str_replace($this->APP_URL.'/storage/','',$image['']);
+                if(Storage::disk('public')->exists('product-images/'.$imageName)) {
+                    Storage::disk('public')->delete('product-images/'.$imageName);
+                }
             }
             throw new \Exception($e->getMessage());
         }
@@ -66,29 +81,41 @@ class ProductRepository implements ProductRepositoryInterface
     public function update(array $data, $id)
     {
         $product = Product::findOrFail($id);
+        $uploadedImg = [];
 
         try {
-            if($data['image']) {
-                $image = $data['image'];
-                $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
-                $image->storeAs('product-images', $imageName, 'public');
-                $data['image'] = "$this->APP_URL/storage/product-images/$imageName";  
-                //delete old image
-                $oldImage = str_replace($this->APP_URL.'/storage/','',$product->image);
-                //delete old image from public storage
-                Storage::disk('public')->delete($oldImage);
+            $newImages = $data['images'];
+            if($newImages) {
+                $images = $product->images;
+                foreach ($newImages as $image) {
+                    $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
+                    $image->storeAs('product-images', $imageName, 'public');
+                    $imgId = Str::random(2);
+                    $imageData = [
+                        'id' => $imgId,
+                        'image' => "$this->APP_URL/storage/product-images/$imageName"
+                    ];
+
+                    //push to updated image
+                    $images[] = $imageData;
+                    //push to uploaded image for tracking
+                    $uploadedImg[] = $imageData;
+                }
+                $data['images'] = $images;
             } else {
-                unset($data['image']);
+                unset($data['images']);
             }
     
             $product->update($data);
     
             return $product;
         } catch (\Exception $e) {
-            if($data['image']) {
-                $imageName = str_replace($this->APP_URL.'/storage/','',$imageName);
-                if(Storage::disk('public')->exists('product-images/'.$imageName)) {
-                    Storage::disk('public')->delete('product-images/'.$imageName);
+            if($newImages) {
+                foreach ($uploadedImg as $image) {
+                    $imageName = str_replace($this->APP_URL.'/storage/','',$image['image']);
+                    if(Storage::disk('public')->exists('product-images/'.$imageName)) {
+                        Storage::disk('public')->delete('product-images/'.$imageName);
+                    }
                 }
             }
             throw new \Exception($e->getMessage());
@@ -98,12 +125,36 @@ class ProductRepository implements ProductRepositoryInterface
     public function delete($id)
     {
         $product = Product::findOrFail($id);
-        if($product->image) {
-            $oldImage = str_replace($this->APP_URL.'/storage/','',$product->image);
-            //delete old image from public storage
-            Storage::disk('public')->delete($oldImage);
+        if(count($product->images) > 0) {
+            foreach ($product->images as $image) {
+                $oldImage = str_replace($this->APP_URL.'/storage/','',$image['image']);
+                //delete old image from public storage
+                Storage::disk('public')->delete($oldImage);
+            }
         }
         $product->delete();
+
+        return $product;
+    }
+
+    public function deleteImage($id, $imgId)
+    {
+        $product = Product::findOrFail($id);
+
+        $images = collect($product->images);
+
+        $selectedImg = $images->where('id', $imgId)->first();
+        
+        if(!$selectedImg) throw new \Exception('Image not found', 404);
+        $oldImage = str_replace($this->APP_URL.'/storage/','',$selectedImg['image']);
+        Storage::disk('public')->delete($oldImage);
+
+        $images = $images->reject(function($image) use ($imgId) {
+            return $image['id'] === $imgId;
+        });
+
+        $product->images = $images->values()->all();
+        $product->save();
 
         return $product;
     }
