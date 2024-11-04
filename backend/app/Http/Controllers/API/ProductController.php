@@ -48,7 +48,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'collaboration_id' => $request->collaboration_id ?? null,
             'category_id' => $request->category_id,
-            'images' => $request->file('images'),
+            'image' => $request->file('image'),
             'description' => $request->description,
             'size' => $request->size,
             'weight' => $request->weight,
@@ -92,7 +92,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'collaboration_id' => $request->collaboration_id ?? null,
             'category_id' => $request->category_id,
-            'images' => $request->file('images') ?? null,
+            'image' => $request->file('image') ?? null,
             'description' => $request->description,
             'size' => $request->size,
             'weight' => $request->weight,
@@ -117,16 +117,5 @@ class ProductController extends Controller
     {
         $this->productRepository->delete($id);
         return ApiResponseClass::sendResponse([], 'Product deleted successfully', 200);
-    }
-
-    public function destroyImage(string $id, string $imageId)
-    {
-        try {
-            $this->productRepository->deleteImage($id, $imageId);
-            return ApiResponseClass::sendResponse([], 'Image deleted successfully', 200);
-        }  catch(\Exception $e) {
-            $errMsg = $e->getMessage() === 'Image not found' ? 'Image not found' : 'Image deleted failed';
-            return ApiResponseClass::rollback($e, $errMsg);
-        }
     }
 }
