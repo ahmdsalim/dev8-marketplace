@@ -125,8 +125,10 @@ class ProductController extends Controller
             $this->productRepository->deleteImage($id, $imageId);
             return ApiResponseClass::sendResponse([], 'Image deleted successfully', 200);
         }  catch(\Exception $e) {
-            $errMsg = $e->getMessage() === 'Image not found' ? 'Image not found' : 'Image deleted failed';
-            return ApiResponseClass::rollback($e, $errMsg);
+            $isErrorInList = in_array($e->getCode(), [404, 400]);
+            $errMsg = $isErrorInList ? $e->getMessage() : 'Image deleted failed';
+            $errCode = $isErrorInList ? $e->getCode() : 500;
+            return ApiResponseClass::throw($e, $errMsg, $errCode);
         }
     }
 }

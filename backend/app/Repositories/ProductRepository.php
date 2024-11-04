@@ -69,7 +69,7 @@ class ProductRepository implements ProductRepositoryInterface
             return Product::create($data);
         } catch (\Exception $e) {
             foreach($uploadedImg as $image) {
-                $imageName = str_replace($this->APP_URL.'/storage/','',$image['']);
+                $imageName = str_replace($this->APP_URL.'/storage/','',$image['image']);
                 if(Storage::disk('public')->exists('product-images/'.$imageName)) {
                     Storage::disk('public')->delete('product-images/'.$imageName);
                 }
@@ -140,12 +140,13 @@ class ProductRepository implements ProductRepositoryInterface
     public function deleteImage($id, $imgId)
     {
         $product = Product::findOrFail($id);
-
         $images = collect($product->images);
-
+        
         $selectedImg = $images->where('id', $imgId)->first();
         
         if(!$selectedImg) throw new \Exception('Image not found', 404);
+        if(count($product->images) === 1) throw new \Exception('A product must have at least one image', 400);
+
         $oldImage = str_replace($this->APP_URL.'/storage/','',$selectedImg['image']);
         Storage::disk('public')->delete($oldImage);
 
