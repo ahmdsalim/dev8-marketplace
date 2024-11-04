@@ -7,6 +7,7 @@ import {
   LOGGED_USER_URL,
   CHANGE_PASSWORD_URL,
   UPDATE_PROFILE_URL,
+  GET_LIST_PRODUCT_URL,
 } from "../service/api";
 
 export const useRegister = () => {
@@ -143,5 +144,16 @@ export const useChangeProfile = () => {
       }
     );
     return res.data;
+  });
+};
+
+export const useProducts = () => {
+  return useQuery("products", async () => {
+    const res = await axios.get(GET_LIST_PRODUCT_URL, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data.data.result;
   });
 };

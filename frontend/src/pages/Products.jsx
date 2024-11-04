@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,67 +10,7 @@ import {
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
 
-import reto1 from "../../public/assets/images/reto1.jpg";
-import reto2 from "../../public/assets/images/reto2.jpg";
-// Product data
-const products = [
-  {
-    id: 1,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 2,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 3,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 4,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 5,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 6,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 7,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-];
+import { useProducts } from "../hooks/autoHooks";
 
 const categories = ["Lihat semua", "Hoodie", "Sweatshirt", "T-Shirt"];
 
@@ -81,17 +22,18 @@ const priceRanges = [
 ];
 
 export const Products = () => {
+  const { data: products = [], isLoading, error } = useProducts();
+  console.log(products);
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("Lihat semua");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
 
-  // Filter produk berdasarkan kategori dan rentang harga
   const filteredProducts = products.filter((product) => {
     const matchCategory =
       selectedCategory === "Lihat semua"
@@ -112,13 +54,16 @@ export const Products = () => {
     setCurrentPage(data.selected);
   };
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
-    <div className="container bg-white max-w-7xl mx-auto px-4 py-12">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold">Produk</h2>
+    <div className="products container bg-white max-w-7xl mx-auto px-4 py-12">
+      <div className="products__header flex justify-between items-center mb-6">
+        <h2 className="products__title text-lg font-semibold">Produk</h2>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 rounded bg-gray-300 text-black"
+          className="products_filter-button px-4 py-2 rounded bg-gray-300 text-black"
         >
           Filter
         </button>
@@ -144,6 +89,7 @@ export const Products = () => {
           <div
             key={product.id}
             className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
+            onClick={() => navigate(`/product/${product.slug}`)}
           >
             <div
               className="product-card__image-wrapper relative aspect-square overflow-hidden"
@@ -213,30 +159,30 @@ export const Products = () => {
 
       {/* Modal filter */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded w-80">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Filter</h2>
+        <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="modal__content bg-white p-6 rounded w-80">
+            <div className="modal__header flex justify-between items-center mb-4">
+              <h2 className="modal__title text-lg font-semibold">Filter</h2>
               <button onClick={() => setIsModalOpen(false)}>
-                <X className="h-5 w-5" />
+                <X className="modal__close-icon h-5 w-5" />
               </button>
             </div>
 
             {/* Accordion Kategori */}
-            <div>
+            <div className="accordion">
               <button
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                className="flex justify-between items-center w-full py-2 text-left"
+                className="accordion__header flex justify-between items-center w-full py-2 text-left"
               >
                 <span>Kategori</span>
                 {isCategoryOpen ? (
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp className="accordion__icon h-4 w-4" />
                 ) : (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="accordion__icon h-4 w-4" />
                 )}
               </button>
               {isCategoryOpen && (
-                <div className="flex flex-col space-y-2 ml-4">
+                <div className="accordion__content flex flex-col space-y-2 ml-4">
                   {categories.map((category) => (
                     <button
                       key={category}
@@ -244,7 +190,7 @@ export const Products = () => {
                         setSelectedCategory(category);
                         setIsModalOpen(false);
                       }}
-                      className={`py-2 text-left ${
+                      className={`accordion__item py-2 text-left ${
                         selectedCategory === category
                           ? "font-semibold text-blue-600"
                           : ""
@@ -258,20 +204,20 @@ export const Products = () => {
             </div>
 
             {/* Accordion Harga */}
-            <div className="mt-4">
+            <div className="accordion mt-4">
               <button
                 onClick={() => setIsPriceOpen(!isPriceOpen)}
-                className="flex justify-between items-center w-full py-2 text-left"
+                className="accordion__header flex justify-between items-center w-full py-2 text-left"
               >
                 <span>Harga</span>
                 {isPriceOpen ? (
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp className="accordion__icon h-4 w-4" />
                 ) : (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="accordion__icon h-4 w-4" />
                 )}
               </button>
               {isPriceOpen && (
-                <div className="flex flex-col space-y-2 ml-4">
+                <div className="accordion__content flex flex-col space-y-2 ml-4">
                   {priceRanges.map((range) => (
                     <button
                       key={range.label}
@@ -279,7 +225,7 @@ export const Products = () => {
                         setSelectedPriceRange(range);
                         setIsModalOpen(false);
                       }}
-                      className={`py-2 text-left ${
+                      className={`accordion__item py-2 text-left ${
                         selectedPriceRange === range
                           ? "font-semibold text-blue-600"
                           : ""
