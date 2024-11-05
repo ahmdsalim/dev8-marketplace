@@ -1,19 +1,17 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { GET_PRODUCT_BY_SLUG_URL } from "../service/api";
-import axios from "axios";
+import { useProduct } from "../hooks/autoHooks";
+import { useParams } from "react-router-dom";
 
 export const ProductDetail = () => {
   const { slug } = useParams();
-  const [product, setProduct] = useState(null);
-
+  const { data: product, isLoading, error } = useProduct(slug);
+  console.log(product);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("S");
-  const [selectedColor, setSelectedColor] = useState("Port");
   const [activeTab, setActiveTab] = useState("details");
 
-  const images = ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"];
+  const images = product?.images || []; // Using optional chaining in case product is not yet available
   const colors = ["black", "darkgray", "navy", "brown"];
   const sizes = ["S", "M", "L", "XL"];
 
@@ -24,27 +22,22 @@ export const ProductDetail = () => {
       (prevIndex) => (prevIndex - 1 + images.length) % images.length
     );
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const res = await axios.get(`${GET_PRODUCT_BY_SLUG_URL}/${slug}`);
-      const data = await res.json();
-      setProduct(data);
-    };
-    fetchProduct();
-  }, [slug]);
-
-  if (!product) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className="product container max-w-7xl mx-auto px-4 py-12">
       <div className="product__content flex flex-col md:flex-row md:space-x-8">
         {/* Image Carousel */}
-        <div className="product__carousel relative flex-1 flex justify-center items-center">
+        <div className="product__carousel relative flex-1 flex flex-col justify-center items-center">
+          {/* Image */}
           <img
-            src={images[currentIndex]}
+            src={images[currentIndex].image}
             alt={`Product image ${currentIndex + 1}`}
             className="product__image w-full h-auto object-cover"
           />
+
+          {/* Previous and Next Buttons */}
           <button
             className="product__button product__button--prev absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full"
             onClick={prevSlide}
@@ -57,12 +50,14 @@ export const ProductDetail = () => {
           >
             <ChevronRight className="product__icon w-6 h-6" />
           </button>
+
+          {/* Image Indicators Below */}
           <div className="product__indicators flex justify-center space-x-2 mt-4">
             {images.map((_, index) => (
               <div
                 key={index}
                 className={`product__indicator h-2 w-2 rounded-full ${
-                  index === currentIndex ? "bg-black" : "bg-gray-300"
+                  index === currentIndex ? "bg-black" : "bg-gray"
                 }`}
               />
             ))}
@@ -72,26 +67,9 @@ export const ProductDetail = () => {
         {/* Product Information */}
         <div className="product__info flex-1 flex flex-col">
           <h1 className="product__title text-3xl font-bold">{product.name}</h1>
-          <p className="product__price text-2xl font-bold mb-4">
-            {product.price}
+          <p className="product__price text-2xl font-bold my-4">
+            Rp {product.price.toLocaleString()}
           </p>
-
-          {/* Color Selection
-          <div className="product__options product__options--colors mb-4">
-            <p className="product__label font-semibold mb-2">Select Color</p>
-            <div className="product__colors flex space-x-2">
-              {colors.map((color) => (
-                <button
-                  key={color}
-                  className={`product__color w-6 h-6 rounded-full ${
-                    color === selectedColor ? "ring-2 ring-black" : ""
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => setSelectedColor(color)}
-                />
-              ))}
-            </div>
-          </div> */}
 
           {/* Size Selection */}
           <div className="product__options product__options--sizes mb-4">
@@ -142,6 +120,7 @@ export const ProductDetail = () => {
                 <li>100% Cotton</li>
                 <li>Made in USA</li>
                 <li>Garment dyed</li>
+                <li>{product.description}</li>
               </ul>
             )}
             {activeTab === "sizing" && <p>Sizing information here.</p>}

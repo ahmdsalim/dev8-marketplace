@@ -23,7 +23,7 @@ const priceRanges = [
 
 export const Products = () => {
   const { data: products = [], isLoading, error } = useProducts();
-  console.log(products);
+  // console.log(products[0].images[0].image);
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("Lihat semua");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
@@ -69,27 +69,12 @@ export const Products = () => {
         </button>
       </div>
 
-      {/* Flex layout untuk produk */}
-      {/* <div className="flex flex-wrap gap-4">
-        {filteredProducts.map((product) => (
-          <div
-            key={product.id}
-            className="flex-1 min-w-[150px] max-w-[200px] border p-4 rounded"
-          >
-            <h3 className="text-sm font-medium">{product.name}</h3>
-            <p className="text-sm text-gray-600">
-              Rp {product.price.toLocaleString()}
-            </p>
-          </div>
-        ))}
-      </div> */}
-
       <div className="products__list flex flex-wrap justify-center">
         {currentProducts.map((product, index) => (
           <div
             key={product.id}
             className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
-            onClick={() => navigate(`/product/${product.slug}`)}
+            onClick={() => navigate(`/products/${product.slug}`)}
           >
             <div
               className="product-card__image-wrapper relative aspect-square overflow-hidden"
@@ -97,14 +82,14 @@ export const Products = () => {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <img
-                src={product.image}
+                src={product.images[1].image}
                 alt={`${product.name} - Front`}
                 className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                   hoveredIndex === index ? "opacity-0" : "opacity-100"
                 }`}
               />
               <img
-                src={product.hoverImage}
+                src={product.images[0].image}
                 alt={`${product.name} - Back`}
                 className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                   hoveredIndex === index ? "opacity-100" : "opacity-0"
@@ -116,7 +101,7 @@ export const Products = () => {
                 {product.name}
               </h2>
               <span className="product-card__price text-sm font-bold text-black ">
-                {product.price}
+                Rp {product.price.toLocaleString()}
               </span>
             </div>
           </div>

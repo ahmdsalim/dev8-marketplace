@@ -8,6 +8,7 @@ import {
   CHANGE_PASSWORD_URL,
   UPDATE_PROFILE_URL,
   GET_LIST_PRODUCT_URL,
+  GET_LIST_PRODUCT_BY_SLUG_URL,
 } from "../service/api";
 
 export const useRegister = () => {
@@ -156,4 +157,23 @@ export const useProducts = () => {
     });
     return res.data.data.result;
   });
+};
+
+export const useProduct = (slug) => {
+  return useQuery(
+    ["product", slug],
+    async () => {
+      const res = await axios.get(GET_LIST_PRODUCT_BY_SLUG_URL(slug), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data.data; // Make sure to return the actual product data (from res.data.data)
+    },
+    {
+      onError: (error) => {
+        console.error("Error fetching product data:", error);
+      },
+    }
+  );
 };
