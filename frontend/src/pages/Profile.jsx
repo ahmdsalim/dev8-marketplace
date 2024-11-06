@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { showErrorToast, showSuccessToast } from "../utils/ToastUtils";
+import { useNavigate } from "react-router-dom";
 
 const orders = [
   { id: "ORD001", date: "2023-01-15", status: "Delivered", total: 125.99 },
@@ -48,6 +49,7 @@ export const Profile = () => {
   const { mutate: changeProfile, isLoading: isChangingProfile } =
     useChangeProfile();
   const [activeTab, setActiveTab] = useState("profile");
+  const navigate = useNavigate();
 
   const {
     register,
@@ -84,7 +86,10 @@ export const Profile = () => {
   });
 
   const handleLogout = () => {
+    if (isLogoutLoading) return;
     logout();
+    showSuccessToast("Logout successfully");
+    navigate("/login");
   };
 
   const handleProfileSubmit = (data) => {

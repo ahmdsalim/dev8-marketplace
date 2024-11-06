@@ -72,7 +72,7 @@ export const Auth = () => {
     } else {
       registerUser(data, {
         onSuccess: () => {
-          showSuccessToast("Registration successful! Please log in.");
+          showSuccessToast("Registration successful!");
           navigate("/");
         },
         onError: (err) => {
