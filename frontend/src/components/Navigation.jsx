@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/assets/images/logo.svg";
+import { useProductSearch } from "../hooks/autoHooks";
 import { isAuthenticated } from "../helpers/AuthHelpers";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const {
+    data: searchResults,
+    isLoading,
+    isError,
+    error,
+  } = useProductSearch(searchQuery);
 
   const handleProfileRedirect = () => {
     if (isAuthenticated()) {
@@ -15,6 +23,28 @@ export const Navigation = () => {
       navigate("/login");
     }
   };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const searchResultsRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        searchResultsRef.current &&
+        !searchResultsRef.current.contains(e.target)
+      ) {
+        setSearchQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="nav bg-white border-b border-gray-200">
@@ -69,6 +99,8 @@ export const Navigation = () => {
                 <input
                   type="text"
                   placeholder="Cari"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                   className="search__input pl-10 pr-4 py-2 w-64 rounded-full border border-gray-300 focus:outline-none focus:border-gray-500"
                 />
                 <Search
@@ -134,6 +166,8 @@ export const Navigation = () => {
             <input
               type="text"
               placeholder="Cari"
+              value={searchQuery}
+              onChange={handleSearchChange}
               className="mobile-search__input pl-10 pr-4 py-2 w-full rounded-full border border-gray-300 focus:outline-none focus:border-gray-500"
             />
             <Search
@@ -143,6 +177,40 @@ export const Navigation = () => {
           </div>
         </div>
       </div>
+
+      {searchQuery && (
+        <div
+          ref={searchResultsRef}
+          className="search-results absolute top-35 left-0 right-0 bg-white shadow-lg rounded-b-lg z-50 border-t-2"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h3 className="text-lg font-semibold mb-2">Search Results</h3>
+            {isLoading ? (
+              <p className="text-gray-500">Loading...</p>
+            ) : isError ? (
+              <p className="text-red-500">
+                Error loading products: {error.message}
+              </p>
+            ) : searchResults?.length > 0 ? (
+              <ul>
+                {searchResults.map((result, index) => {
+                  return (
+                    <Link
+                      key={index}
+                      to={`/products/${result.slug}`}
+                      className="py-2 border-b last:border-b-0"
+                    >
+                      {result.name}
+                    </Link>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="text-gray-500">No results found</p>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

@@ -11,7 +11,7 @@ export const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState("S");
   const [activeTab, setActiveTab] = useState("details");
 
-  const images = product?.images || []; // Using optional chaining in case product is not yet available
+  const images = product?.images || [];
   const colors = ["black", "darkgray", "navy", "brown"];
   const sizes = ["S", "M", "L", "XL"];
 

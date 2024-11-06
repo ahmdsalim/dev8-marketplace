@@ -1,4 +1,6 @@
 import { useMutation, useQuery } from "react-query";
+import { useState, useEffect } from "react";
+
 import axios from "axios";
 import {
   LOGIN_URL,
@@ -9,6 +11,7 @@ import {
   UPDATE_PROFILE_URL,
   GET_LIST_PRODUCT_URL,
   GET_LIST_PRODUCT_BY_SLUG_URL,
+  GET_LIST_PRODUCT_SEARCH_URL,
 } from "../service/api";
 
 export const useRegister = () => {
@@ -159,6 +162,31 @@ export const useProducts = () => {
   });
 };
 
+export const useProductSearch = (searchQuery) => {
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  return useQuery(
+    ["products", debouncedSearchQuery],
+    async () => {
+      const res = await axios.get(
+        GET_LIST_PRODUCT_SEARCH_URL(debouncedSearchQuery)
+      );
+      return res.data.data.result;
+    },
+    {
+      enabled: !!debouncedSearchQuery,
+    }
+  );
+};
+
 export const useProduct = (slug) => {
   return useQuery(
     ["product", slug],
@@ -168,7 +196,7 @@ export const useProduct = (slug) => {
           "Content-Type": "application/json",
         },
       });
-      return res.data.data; // Make sure to return the actual product data (from res.data.data)
+      return res.data.data;
     },
     {
       onError: (error) => {

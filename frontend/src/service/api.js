@@ -17,6 +17,10 @@ export const GET_PRODUCTS_URL = `${API_BASE_URL}/products`;
 export const GET_PRODUCT_BY_SLUG_URL = (slug) =>
   `${API_BASE_URL}/products/${slug}`;
 export const GET_LIST_PRODUCT_URL = `${API_BASE_URL}/data/products/list`;
+
+export const GET_LIST_PRODUCT_SEARCH_URL = (searchQuery) =>
+  `${API_BASE_URL}/data/products/list/?search=${searchQuery}`;
+
 export const GET_LIST_PRODUCT_BY_SLUG_URL = (slug) =>
   `${API_BASE_URL}/data/products/list/${slug}`;
 export const CREATE_PRODUCT_URL = `${API_BASE_URL}/products`;

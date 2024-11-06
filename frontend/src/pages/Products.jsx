@@ -23,7 +23,7 @@ const priceRanges = [
 
 export const Products = () => {
   const { data: products = [], isLoading, error } = useProducts();
-  // console.log(products[0].images[0].image);
+  console.log(products);
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("Lihat semua");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
