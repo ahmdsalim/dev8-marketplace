@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 export const ProductDetail = () => {
   const { slug } = useParams();
   const { data: product, isLoading, error } = useProduct(slug);
-  console.log(product);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("S");
   const [activeTab, setActiveTab] = useState("details");

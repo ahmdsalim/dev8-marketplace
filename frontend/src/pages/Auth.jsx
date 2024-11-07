@@ -55,7 +55,6 @@ export const Auth = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
     if (isLogin) {
       login(data, {
         onSuccess: () => {

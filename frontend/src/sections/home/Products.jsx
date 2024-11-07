@@ -1,44 +1,37 @@
 import React, { useState } from "react";
-import reto1 from "../../../public/assets/images/reto1.jpg";
-import reto2 from "../../../public/assets/images/reto2.jpg";
-
-const products = [
-  {
-    id: 1,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 2,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 3,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-  {
-    id: 4,
-    name: "Skills Pay The Bills",
-    description: "Bright blue t-shirt with abstract graphic design",
-    price: "Rp200.000",
-    image: reto2,
-    hoverImage: reto1,
-  },
-];
+import { useProducts } from "../../hooks/autoHooks";
 
 export const Products = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const { data: products = [], isLoading, error } = useProducts();
+
+  // const sortedProducts = products.sort((a, b) => {
+  //   const dateA = new Date(a.created_at);
+  //   const dateB = new Date(b.created_at);
+
+  //   return dateB - dateA;
+  // });
+
+  // const latestProducts = sortedProducts.slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
+        <p>Loading categories...</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
+        <p className="text-red-500">
+          Error loading categories: {error.message}
+        </p>
+      </section>
+    );
+  }
+
   return (
     <section className="products container bg-white max-w-7xl mx-auto px-4 py-12">
       <div className="products__header flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -65,14 +58,14 @@ export const Products = () => {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <img
-                src={product.image}
+                src={product.images[1].image}
                 alt={`${product.name} - Front`}
                 className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                   hoveredIndex === index ? "opacity-0" : "opacity-100"
                 }`}
               />
               <img
-                src={product.hoverImage}
+                src={product.images[0].image}
                 alt={`${product.name} - Back`}
                 className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                   hoveredIndex === index ? "opacity-100" : "opacity-0"
@@ -84,7 +77,7 @@ export const Products = () => {
                 {product.name}
               </h2>
               <span className="product-card__price text-sm font-bold text-black ">
-                {product.price}
+                Rp {product.price.toLocaleString()}
               </span>
             </div>
           </div>
