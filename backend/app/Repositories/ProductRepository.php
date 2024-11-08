@@ -145,7 +145,7 @@ class ProductRepository implements ProductRepositoryInterface
         $selectedImg = $images->where('id', $imgId)->first();
         
         if(!$selectedImg) throw new \Exception('Image not found', 404);
-        if(count($product->images) === 1) throw new \Exception('A product must have at least one image', 400);
+        if(count($product->images) === 2) throw new \Exception('A product must have at least two image', 400);
 
         $oldImage = str_replace($this->APP_URL.'/storage/','',$selectedImg['image']);
         Storage::disk('public')->delete($oldImage);
