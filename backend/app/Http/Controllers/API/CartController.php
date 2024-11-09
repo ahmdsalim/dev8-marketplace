@@ -7,6 +7,7 @@ use App\Classes\PaginationData;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddCartItemRequest;
 use App\Http\Resources\CartResource;
 use App\Interfaces\CartRepositoryInterface;
 
@@ -25,11 +26,11 @@ class CartController extends Controller
         return ApiResponseClass::sendResponse(CartResource::collection($data), '', 200);
     }
 
-    public function addItem(Request $request)
+    public function addItem(AddCartItemRequest $request)
     {
         DB::beginTransaction();
         try {
-            $cartItem = $this->cartRepository->addToCart($request->product_id, $request->quantity);
+            $cartItem = $this->cartRepository->addToCart($request->product_id, $request->product_variant_id, $request->quantity);
             DB::commit();
             return ApiResponseClass::sendResponse(new CartResource($cartItem), 'Item added to cart', 201);
         } catch (\Exception $e) {
@@ -78,10 +79,10 @@ class CartController extends Controller
 
             return ApiResponseClass::sendResponse(CartResource::collection($cartItems), '', 200);
         } catch (\Exception $e) {
-            if ($e->getMessage() === 'Some items are out of stock') {
-                return ApiResponseClass::throw($e, $e->getMessage(), 400);
-            }
-            return ApiResponseClass::throw($e);
+            $errList = ['Some items are out of stock', 'Invalid cart item id'];
+            $errMsg = in_array($e->getMessage(), $errList) ? $e->getMessage() : null;
+            $errCode = in_array($e->getMessage(), $errList) ? $e->getCode() : null;
+            return ApiResponseClass::throw($e, $errMsg, $errCode);
         }
     }
 }

@@ -16,7 +16,7 @@ class OrderRepository implements OrderRepositoryInterface
         $search = $request->query('search');
         $status = $request->query('status');
         
-        $query = Order::query();
+        $query = Order::query()->with('payment');
         
         if($search) {
             $query->where('name', 'like', '%'.$search.'%');
@@ -34,7 +34,7 @@ class OrderRepository implements OrderRepositoryInterface
         $search = $request->query('search');
         $status = $request->query('status');
         
-        $query = Order::query()->where('user_id', auth()->id());
+        $query = Order::query()->with(['orderitems','payment'])->where('user_id', auth()->id());
         
         if($search) {
             $query->where('name', 'like', '%'.$search.'%');
@@ -64,21 +64,22 @@ class OrderRepository implements OrderRepositoryInterface
         $total_weight = 0;
         //make order items
         foreach($request->cart_item_ids as $cartItemId) {
-            $cartItem = CartItem::with('product')->find($cartItemId);
+            $cartItem = CartItem::with(['product:id,weight,stock','variant'])->find($cartItemId);
             $order->orderItems()->create([
                 'product_id' => $cartItem->product_id,
+                'product_variant_id' => $cartItem->product_variant_id,
                 'quantity' => $cartItem->quantity,
-                'price' => $cartItem->product->price,
+                'price' => $cartItem->price + $cartItem->variant->additional_price,
             ]);
 
             //count total amount
-            $total_amount += $cartItem->product->price * $cartItem->quantity;
+            $total_amount += ($cartItem->price + $cartItem->variant->additional_price) * $cartItem->quantity;
             //count total weight
             $total_weight += $cartItem->product->weight * $cartItem->quantity;
 
             //decrease stock product
             if($cartItem->product->stock < $cartItem->quantity) {
-                throw new \Exception('Insufficient product stock');
+                throw new \Exception('Insufficient product stock', 400);
             }
             $cartItem->product->stock -= $cartItem->quantity;
             $cartItem->product->save();
@@ -119,7 +120,7 @@ class OrderRepository implements OrderRepositoryInterface
                     'id' => $item->product_id,
                     'price' => $item->price,
                     'quantity' => $item->quantity,
-                    'name' => $item->product->name,
+                    'name' => $item->product->name.' - '.$item->variant->value,
                 ];
             })->toArray()
         ];
@@ -135,8 +136,9 @@ class OrderRepository implements OrderRepositoryInterface
             'Authorization' => "Basic $auth"
         ])->post($midtrans_api_url, $params);
 
-        $response->onError(function($response) {
-            throw new \Exception('Failed to create transaction', $response->status());
+        $response->onError(function($res) {
+            Log::error('Failed to create transaction', $res->json());
+            throw new \Exception('Failed to create transaction', $res->status());
         });
 
         //update transaction token

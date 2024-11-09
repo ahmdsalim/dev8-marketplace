@@ -23,7 +23,7 @@ class OrderResource extends JsonResource
             'delivery_address' => $this->delivery_address,
             'courier' => $this->courier,
             'delivery_cost' => $this->delivery_cost,
-            'order_items' => $this->whenLoaded('orderitems', []),
+            'order_items' => $this->whenLoaded('orderitems', null) ?? [],
             'payment' => $this->whenLoaded('payment', null),
             //column for development test
             'snap_token' => $this->snap_token ?? null,

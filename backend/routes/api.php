@@ -36,7 +36,11 @@ Route::prefix('auth')->group(function() {
 });
 
 //delete image product
-Route::delete('/products/delete-image/{id}/{imgId}', [ProductController::class, 'destroyImage'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::delete('/products/images/delete/{id}/{imgId}', [ProductController::class, 'destroyImage'])->middleware(['auth:sanctum', 'authtype:admin']);
+//variant product
+Route::post('/products/variants/store/{id}', [ProductController::class, 'storeVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::put('/products/variants/update/{id}/{variantId}', [ProductController::class, 'updateVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::delete('/products/variants/delete/{id}/{variantId}', [ProductController::class, 'destroyVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
 
 //route resource
 Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum', 'authtype:admin']);

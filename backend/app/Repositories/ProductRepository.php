@@ -65,8 +65,23 @@ class ProductRepository implements ProductRepositoryInterface
             }
 
             $data['images'] = $uploadedImg;
+            $variants = $data['variants'];
+
+            //unset variants key
+            unset($data['variants']);
     
-            return Product::create($data);
+            $product = Product::create($data);
+
+            $mappedVariants = array_map(function($variant) {
+                return [
+                    'value' => $variant['value'],
+                    'additional_price' => $variant['additional_price'] ?? 0
+                ];
+            }, $variants);
+
+            $product->variants()->createMany($mappedVariants);
+
+            return $product;
         } catch (\Exception $e) {
             foreach($uploadedImg as $image) {
                 $imageName = str_replace($this->APP_URL.'/storage/','',$image['image']);
@@ -156,6 +171,32 @@ class ProductRepository implements ProductRepositoryInterface
 
         $product->images = $images->values()->all();
         $product->save();
+
+        return $product;
+    }
+
+    public function addVariant(array $data, $id)
+    {
+        $product = Product::findOrFail($id);
+        $variant = $product->variants()->create($data);
+
+        return $variant;
+    }
+
+    public function updateVariant(array $data, $id, $variantId)
+    {
+        $product = Product::findOrFail($id);
+        $variant = $product->variants()->findOrFail($variantId);
+        $variant->update($data);
+
+        return $variant;
+    }
+
+    public function deleteVariant($id, $variantId)
+    {
+        $product = Product::findOrFail($id);
+        $variant = $product->variants()->findOrFail($variantId);
+        $variant->delete();
 
         return $product;
     }

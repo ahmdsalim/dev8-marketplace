@@ -9,7 +9,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\StoreVariantRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\UpdateVariantRequest;
 use App\Interfaces\ProductRepositoryInterface;
 
 class ProductController extends Controller
@@ -50,7 +52,7 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'images' => $request->file('images'),
             'description' => $request->description,
-            'size' => $request->size,
+            'variants' => $request->variants,
             'weight' => $request->weight,
             'price' => $request->price,
             'stock' => $request->stock,
@@ -129,6 +131,51 @@ class ProductController extends Controller
             $errMsg = $isErrorInList ? $e->getMessage() : 'Image deleted failed';
             $errCode = $isErrorInList ? $e->getCode() : 500;
             return ApiResponseClass::throw($e, $errMsg, $errCode);
+        }
+    }
+
+    public function storeVariant(StoreVariantRequest $request, string $id)
+    {
+        $details = [
+            'value' => $request->value,
+            'additional_price' => $request->additional_price ?? 0
+        ];
+
+        DB::beginTransaction();
+        try {
+            $variant = $this->productRepository->addVariant($details, $id);
+            DB::commit();
+            return ApiResponseClass::sendResponse($variant, 'Variant added successfully', 200);
+        } catch(\Exception $e) {
+            return ApiResponseClass::rollback($e, 'Variant add failed');
+        }
+        
+    }
+
+    public function updateVariant(UpdateVariantRequest $request, string $id, string $variantId)
+    {
+        $details = [
+            'value' => $request->value,
+            'additional_price' => $request->additional_price ?? 0
+        ];
+
+        DB::beginTransaction();
+        try {
+            $variant = $this->productRepository->updateVariant($details, $id, $variantId);
+            DB::commit();
+            return ApiResponseClass::sendResponse($variant, 'Variant updated successfully', 200);
+        } catch(\Exception $e) {
+            return ApiResponseClass::rollback($e, 'Variant update failed');
+        }
+    }
+
+    public function destroyVariant(string $id, string $variantId)
+    {
+        try {
+            $this->productRepository->deleteVariant($id, $variantId);
+            return ApiResponseClass::sendResponse([], 'Variant deleted successfully', 200);
+        } catch(\Exception $e) {
+            return ApiResponseClass::throw($e, 'Variant delete failed', 500);
         }
     }
 }

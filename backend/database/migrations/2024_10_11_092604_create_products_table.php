@@ -18,7 +18,6 @@ return new class extends Migration
             $table->json('images');
             $table->string('slug')->unique();
             $table->text('description');
-            $table->string('size');
             $table->integer('weight');
             $table->integer('price');
             $table->integer('stock');

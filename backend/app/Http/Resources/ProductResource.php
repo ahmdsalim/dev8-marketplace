@@ -18,7 +18,13 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'size' => $this->size,
+            'variants' => $this->variants->map(function($variant) {
+                return [
+                    'id' => $variant->id,
+                    'value' => $variant->value,
+                    'additional_price' => $variant->additional_price
+                ];
+            }) ?? [],
             'slug' => $this->slug,
             'weight' => $this->weight,
             'price' => $this->price,
