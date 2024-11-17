@@ -20,7 +20,6 @@ return new class extends Migration
             $table->text('description');
             $table->integer('weight');
             $table->integer('price');
-            $table->integer('stock');
             $table->timestamps();
         });
     }

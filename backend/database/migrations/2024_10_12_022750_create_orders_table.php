@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('invoice_number')->unique();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('status');
+            $table->integer('subtotal')->nullable();
             $table->integer('total_amount')->nullable();
             $table->text('delivery_address');
             $table->string('courier');

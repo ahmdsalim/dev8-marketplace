@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class AddCartItemRequest extends FormRequest
+class StoreProductVariantRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +25,16 @@ class AddCartItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|exists:products,id',
-            'variant_id' => 'required|exists:variants,id',
-            'quantity' => 'required|integer'
+            'variant_id' => [
+                'required',
+                Rule::unique('product_variant', 'variant_id')
+                    ->where(function($query) {
+                        $productId = $this->route('id');
+                        return $query->where('product_id', $productId);
+                    })
+            ],
+            'stock' => 'required|integer',
+            'additional_price' => 'nullable|integer'
         ];
     }
 

@@ -24,8 +24,8 @@ class StoreVariantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => 'required',
-            'additional_price' => 'nullable|numeric'
+            'name' => 'required',
+            'type' => 'required|in:pakaian,celana,sepatu'
         ];
     }
 

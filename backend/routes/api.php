@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -9,9 +8,10 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\VariantController;
 use App\Http\Controllers\API\CategoryController;
-use App\Http\Controllers\API\CollaborationController;
 use App\Http\Controllers\API\RajaOngkirController;
+use App\Http\Controllers\API\CollaborationController;
 
 Route::prefix('auth')->group(function() {
     Route::get('/unauthenticated', function () {
@@ -37,7 +37,8 @@ Route::prefix('auth')->group(function() {
 
 //delete image product
 Route::delete('/products/images/delete/{id}/{imgId}', [ProductController::class, 'destroyImage'])->middleware(['auth:sanctum', 'authtype:admin']);
-//variant product
+
+//product variant
 Route::post('/products/variants/store/{id}', [ProductController::class, 'storeVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
 Route::put('/products/variants/update/{id}/{variantId}', [ProductController::class, 'updateVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
 Route::delete('/products/variants/delete/{id}/{variantId}', [ProductController::class, 'destroyVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
@@ -47,6 +48,7 @@ Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum',
 Route::apiResource('/products', ProductController::class)->middleware(['auth:sanctum', 'authtype:admin']);
 Route::apiResource('/categories', CategoryController::class)->middleware(['auth:sanctum', 'authtype:admin']);
 Route::apiResource('/collaborations', CollaborationController::class)->middleware(['auth:sanctum', 'authtype:admin']);
+Route::apiResource('/variants', VariantController::class)->except('show')->middleware(['auth:sanctum', 'authtype:admin']);
 
 //route public/user
 Route::prefix('data')->group(function(){

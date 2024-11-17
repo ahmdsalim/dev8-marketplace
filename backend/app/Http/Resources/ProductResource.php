@@ -18,20 +18,14 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'variants' => $this->variants->map(function($variant) {
-                return [
-                    'id' => $variant->id,
-                    'value' => $variant->value,
-                    'additional_price' => $variant->additional_price
-                ];
-            }) ?? [],
+            'variants' => ProductVariantResource::collection($this->whenLoaded('variants')) ?? [],
             'slug' => $this->slug,
             'weight' => $this->weight,
             'price' => $this->price,
-            'stock' => $this->stock,
             'collaboration' => $this->collaboration->name ?? null,
             'category' => $this->category->name,
             'images' => $this->images,
+            'total_stock' => $this->total_stock,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

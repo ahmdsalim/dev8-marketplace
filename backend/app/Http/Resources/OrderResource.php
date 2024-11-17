@@ -19,6 +19,7 @@ class OrderResource extends JsonResource
             'invoice_number' => $this->invoice_number,
             'user_id' => $this->user_id,
             'status' => $this->status,
+            'subtotal' => $this->subtotal,
             'total_amount' => $this->total_amount,
             'delivery_address' => $this->delivery_address,
             'courier' => $this->courier,
@@ -28,6 +29,7 @@ class OrderResource extends JsonResource
             //column for development test
             'snap_token' => $this->snap_token ?? null,
             'payment_url' => $this->payment_url ?? null,
+            'need_refund' => $this->need_refund,
             'order_date' => $this->order_date,
             'updated_at' => $this->updated_at,
         ];

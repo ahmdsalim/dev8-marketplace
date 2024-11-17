@@ -1,0 +1,33 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Variant;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class VariantSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        Variant::create([
+            'name' => 'S',
+            'type' => 'pakaian'
+        ]);
+        Variant::create([
+            'name' => 'M',
+            'type' => 'pakaian'
+        ]);
+        Variant::create([
+            'name' => 'L',
+            'type' => 'pakaian'
+        ]);
+        Variant::create([
+            'name' => 'XL',
+            'type' => 'pakaian'
+        ]);
+    }
+}

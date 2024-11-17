@@ -30,11 +30,14 @@ class CartController extends Controller
     {
         DB::beginTransaction();
         try {
-            $cartItem = $this->cartRepository->addToCart($request->product_id, $request->product_variant_id, $request->quantity);
+            $cartItem = $this->cartRepository->addToCart($request->product_id, $request->variant_id, $request->quantity);
             DB::commit();
             return ApiResponseClass::sendResponse(new CartResource($cartItem), 'Item added to cart', 201);
         } catch (\Exception $e) {
-            return ApiResponseClass::rollback($e, $e->getMessage());
+            $errCodeList = [400];
+            $errMsg = in_array($e->getCode(), $errCodeList) ? $e->getMessage() : 'Failed to add item to cart';
+            $errCode = in_array($e->getCode(), $errCodeList) ? $e->getCode() : 500;
+            return ApiResponseClass::rollback($e, $errMsg, $errCode);
         }
     }
 
@@ -52,7 +55,10 @@ class CartController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse(new CartResource($cartItem), '', 200);
         } catch(\Exception $e) {
-            return ApiResponseClass::rollback($e);
+            $errCodeList = [400];
+            $errMsg = in_array($e->getCode(), $errCodeList) ? $e->getMessage() : 'Failed to increase item quantity';
+            $errCode = in_array($e->getCode(), $errCodeList) ? $e->getCode() : 500;
+            return ApiResponseClass::rollback($e, $errMsg, $errCode);
         }
     }
 
@@ -79,9 +85,9 @@ class CartController extends Controller
 
             return ApiResponseClass::sendResponse(CartResource::collection($cartItems), '', 200);
         } catch (\Exception $e) {
-            $errList = ['Some items are out of stock', 'Invalid cart item id'];
-            $errMsg = in_array($e->getMessage(), $errList) ? $e->getMessage() : null;
-            $errCode = in_array($e->getMessage(), $errList) ? $e->getCode() : null;
+            $errCodeList = [400];
+            $errMsg = in_array($e->getCode(), $errCodeList) ? $e->getMessage() : 'Failed to retrieve checked out items';
+            $errCode = in_array($e->getCode(), $errCodeList) ? $e->getCode() : 500;
             return ApiResponseClass::throw($e, $errMsg, $errCode);
         }
     }

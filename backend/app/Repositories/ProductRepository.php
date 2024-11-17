@@ -7,8 +7,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Interfaces\ProductRepositoryInterface;
-use Exception;
-use Illuminate\Support\Facades\Log;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -25,7 +23,7 @@ class ProductRepository implements ProductRepositoryInterface
         $category = $request->query('category');
         $collaboration = $request->query('collaboration');
         
-        $query = Product::query();
+        $query = Product::query()->with('variants');
         
         if($search) {
             $query->where('name', 'like', '%'.$search.'%');
@@ -44,7 +42,7 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getBySlug($slug)
     {
-        return Product::where('slug', $slug)->firstOrFail();
+        return Product::with('variants')->where('slug', $slug)->firstOrFail();
     }
 
     public function store(array $data)
@@ -65,21 +63,21 @@ class ProductRepository implements ProductRepositoryInterface
             }
 
             $data['images'] = $uploadedImg;
-            $variants = $data['variants'];
+            
+            $product_variant = [];
+            foreach($data['variants'] as $variant) {
+                $product_variant[$variant['id']] = [
+                    'stock' => $variant['stock'],
+                    'additional_price' => $variant['additional_price'] ?? 0
+                ];
+            }
 
-            //unset variants key
+            //delete variants key from product data
             unset($data['variants']);
     
             $product = Product::create($data);
 
-            $mappedVariants = array_map(function($variant) {
-                return [
-                    'value' => $variant['value'],
-                    'additional_price' => $variant['additional_price'] ?? 0
-                ];
-            }, $variants);
-
-            $product->variants()->createMany($mappedVariants);
+            $product->variants()->attach($product_variant);
 
             return $product;
         } catch (\Exception $e) {
@@ -178,7 +176,13 @@ class ProductRepository implements ProductRepositoryInterface
     public function addVariant(array $data, $id)
     {
         $product = Product::findOrFail($id);
-        $variant = $product->variants()->create($data);
+
+        $product->variants()->attach($data['variant_id'], [
+            'stock' => $data['stock'],
+            'additional_price' => $data['additional_price'] ?? 0
+        ]);
+
+        $variant = $product->variants()->where('variant_id', $data['variant_id'])->first();
 
         return $variant;
     }
@@ -186,8 +190,9 @@ class ProductRepository implements ProductRepositoryInterface
     public function updateVariant(array $data, $id, $variantId)
     {
         $product = Product::findOrFail($id);
-        $variant = $product->variants()->findOrFail($variantId);
-        $variant->update($data);
+        $product->variants()->updateExistingPivot($variantId, $data);
+
+        $variant = $product->variants()->where('variant_id', $variantId)->first();
 
         return $variant;
     }
@@ -195,9 +200,8 @@ class ProductRepository implements ProductRepositoryInterface
     public function deleteVariant($id, $variantId)
     {
         $product = Product::findOrFail($id);
-        $variant = $product->variants()->findOrFail($variantId);
-        $variant->delete();
+        $variant = $product->variants()->detach($variantId);
 
-        return $product;
+        return $variant;
     }
 }

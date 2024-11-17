@@ -2,10 +2,11 @@
 
 namespace App\Interfaces;
 
-interface CollaborationInterface
+use Illuminate\Http\Request;
+
+interface VariantRepositoryInterface
 {
-    public function index($request, $limit = 10);
-    public function getBySlug($slug);
+    public function index(Request $request, $limit = 10);
     public function store(array $data);
     public function update(array $data, $id);
     public function delete($id);

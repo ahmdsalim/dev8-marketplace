@@ -10,11 +10,13 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description', 'weight', 'price', 'images', 'stock', 'category_id', 'collaboration_id'];
+    protected $fillable = ['name', 'slug', 'description', 'weight', 'price', 'images', 'category_id', 'collaboration_id'];
 
     protected $casts = [
         'images' => 'json'
     ];
+
+    protected $appends = ['total_stock'];
 
     public static function boot()
     {
@@ -50,11 +52,6 @@ class Product extends Model
         return $this->belongsTo(Collaboration::class);
     }
 
-    public function variants()
-    {
-        return $this->hasMany(Variant::class);
-    }
-
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
@@ -63,5 +60,16 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function variants()
+    {
+        return $this->belongsToMany(Variant::class, 'product_variant')
+                    ->withPivot(['stock', 'additional_price']);
+    }
+
+    public function getTotalStockAttribute()
+    {
+        return $this->variants->sum('pivot.stock');
     }
 }

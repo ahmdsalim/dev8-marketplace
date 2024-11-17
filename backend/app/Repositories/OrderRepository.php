@@ -7,6 +7,7 @@ use App\Models\CartItem;
 use Illuminate\Support\Facades\Http;
 use App\Interfaces\OrderRepositoryInterface;
 use Illuminate\Support\Facades\Log;
+use Midtrans\Snap;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -60,29 +61,52 @@ class OrderRepository implements OrderRepositoryInterface
         ];
 
         $order = Order::create($details);
-        $total_amount = 0;
+        $subtotal = 0;
         $total_weight = 0;
+        $itemDetails = [];
         //make order items
         foreach($request->cart_item_ids as $cartItemId) {
-            $cartItem = CartItem::with(['product:id,weight,stock','variant'])->find($cartItemId);
+            $cartItem = CartItem::join('products', 'cart_items.product_id', '=', 'products.id')
+                                ->join('variants', 'cart_items.variant_id', '=', 'variants.id')
+                                ->join('product_variant', function ($join) {
+                                    $join->on('cart_items.product_id', '=', 'product_variant.product_id')
+                                         ->on('cart_items.variant_id', '=', 'product_variant.variant_id');
+                                })
+                                ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
+                                ->where('cart_items.id', $cartItemId)
+                                ->where('carts.user_id', auth()->id())
+                                ->select('cart_items.id', 'cart_items.product_id', 'cart_items.variant_id', 'products.name', 'cart_items.quantity', 'cart_items.price', 'products.weight', 'product_variant.stock', 'product_variant.additional_price')
+                                ->first();
+
+            //throw exception if cart item not found
+            if(!$cartItem) {
+                throw new \Exception('Cart item not found', 404);
+            }
+
+            //create order item
             $order->orderItems()->create([
                 'product_id' => $cartItem->product_id,
-                'product_variant_id' => $cartItem->product_variant_id,
+                'variant_id' => $cartItem->variant_id,
                 'quantity' => $cartItem->quantity,
-                'price' => $cartItem->price + $cartItem->variant->additional_price,
+                'price' => $cartItem->price + $cartItem->additional_price,
             ]);
 
-            //count total amount
-            $total_amount += ($cartItem->price + $cartItem->variant->additional_price) * $cartItem->quantity;
-            //count total weight
-            $total_weight += $cartItem->product->weight * $cartItem->quantity;
+            $itemDetails[] = [
+                'id' => $cartItem->product_id,
+                'name' => $cartItem->name,
+                'price' => $cartItem->price,
+                'quantity' => $cartItem->quantity
+            ];
 
-            //decrease stock product
-            if($cartItem->product->stock < $cartItem->quantity) {
+            //count total amount
+            $subtotal += ($cartItem->price + $cartItem->additional_price) * $cartItem->quantity;
+            //count total weight
+            $total_weight += $cartItem->weight * $cartItem->quantity;
+
+            //validate stock product
+            if($cartItem->stock < $cartItem->quantity) {
                 throw new \Exception('Insufficient product stock', 400);
             }
-            $cartItem->product->stock -= $cartItem->quantity;
-            $cartItem->product->save();
 
             //delete item from cart
             $cartItem->delete();
@@ -101,8 +125,20 @@ class OrderRepository implements OrderRepositoryInterface
         //get delivery cost by service choiced
         $delivery_cost = collect($response['rajaongkir']['results'][0]['costs'])
                     ->firstWhere('service', $request->service)['cost'][0]['value'];
-        
-        $order->update(['total_amount' => $total_amount, 'delivery_cost' => $delivery_cost]);
+                    
+        //add subtotal + delivery cost to total amount
+        $total_amount = $subtotal + $delivery_cost;
+
+        //update total amount and delivery cost
+        $order->update(['total_amount' => $total_amount, 'subtotal' => $subtotal, 'delivery_cost' => $delivery_cost]);
+
+        //add shipping cost to item details
+        $itemDetails[] = [
+            'id' => 'shipping-cost',
+            'name' => 'Shipping Cost',
+            'price' => $delivery_cost,
+            'quantity' => 1
+        ];
 
         //prepare transaction details
         $params = [
@@ -115,39 +151,20 @@ class OrderRepository implements OrderRepositoryInterface
                 'email' => auth()->user()->email,
                 'phone' => auth()->user()->phone
             ),
-            'item_details' => $order->orderItems->map(function($item) {
-                return [
-                    'id' => $item->product_id,
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'name' => $item->product->name.' - '.$item->variant->value,
-                ];
-            })->toArray()
+            'item_details' => $itemDetails
         ];
 
-        $midtrans_server_key = env('APP_ENV') == 'production' ? env('MIDTRANS_SERVER_KEY_PROD') : env('MIDTRANS_SERVER_KEY_SANDBOX');
-        $midtrans_api_url = env('APP_ENV') == 'production' ? env('MIDTRANS_API_PROD').'/snap/v1/transactions' : env('MIDTRANS_API_SANDBOX').'/snap/v1/transactions';
+        try {
+            //make midtrans transaction
+            $transaction = Snap::createTransaction($params);
 
-        $auth = base64_encode($midtrans_server_key);
-
-        //create transaction to midtrans
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => "Basic $auth"
-        ])->post($midtrans_api_url, $params);
-
-        $response->onError(function($res) {
-            Log::error('Failed to create transaction', $res->json());
-            throw new \Exception('Failed to create transaction', $res->status());
-        });
-
-        //update transaction token
-        if($response->successful()){
-            //development using payment url for backend test
-            $order->update(['snap_token' => $response['token'], 'payment_url' => $response['redirect_url']]);
+            //update transaction token and place payment url for backend development test
+            $order->update(['snap_token' => $transaction->token, 'payment_url' => $transaction->redirect_url]);
+            return $order;
+        } catch (\Exception $e) {
+            Log::error('Midtrans Error: ' . $e->getMessage());
+            throw new \Exception('Failed to create transaction', 500);
         }
-
-        return $order;
     }
 
     public function getById($id)

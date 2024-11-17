@@ -9,18 +9,11 @@ class Variant extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_variants';
+    protected $fillable = ['name', 'type'];
 
-    protected $fillable = ['value', 'additional_price', 'product_id'];
-
-    public function product()
+    public function products()
     {
-        return $this->belongsTo(Product::class);
-    }
-
-    public function cartItems()
-    {
-        return $this->hasMany(CartItem::class);
+        return $this->belongsToMany(Product::class, 'product_variant');
     }
 
     public function orderItems()

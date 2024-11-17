@@ -29,6 +29,7 @@ class CheckOutOrderRequest extends FormRequest
             'courier' => 'required|string',
             'service' => 'required|string',
             'cart_item_ids' => 'required|array',
+            'cart_item_ids.*' => 'required|integer|exists:cart_items,id'
         ];
     }
 

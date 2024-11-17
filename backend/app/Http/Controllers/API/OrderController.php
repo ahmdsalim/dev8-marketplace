@@ -39,9 +39,9 @@ class OrderController extends Controller
             DB::commit();
             return ApiResponseClass::sendResponse(new OrderResource($order), 'Order placed successfully', 201);
         } catch (\Exception $e) {
-            $errList = ['Insufficient product stock', 'Failed to create transaction'];
-            $errMsg = in_array($e->getMessage(), $errList) ? $e->getMessage() : 'Order placement failed';
-            $errCode = in_array($e->getMessage(), $errList) ? $e->getCode() : 500;
+            $errCodeList = [400, 404, 500];
+            $errMsg = in_array($e->getCode(), $errCodeList) ? $e->getMessage() : 'Order placement failed';
+            $errCode = in_array($e->getCode(), $errCodeList) ? $e->getCode() : 500;
             return ApiResponseClass::rollback($e, $errMsg, $errCode);
         }
     }

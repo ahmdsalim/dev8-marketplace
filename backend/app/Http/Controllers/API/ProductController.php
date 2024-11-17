@@ -9,10 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\StoreVariantRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Http\Requests\UpdateVariantRequest;
 use App\Interfaces\ProductRepositoryInterface;
+use App\Http\Requests\StoreProductVariantRequest;
+use App\Http\Requests\UpdateProductVariantRequest;
+use App\Http\Resources\ProductVariantResource;
 
 class ProductController extends Controller
 {
@@ -54,8 +55,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'variants' => $request->variants,
             'weight' => $request->weight,
-            'price' => $request->price,
-            'stock' => $request->stock,
+            'price' => $request->price
         ];
 
         DB::beginTransaction();
@@ -98,8 +98,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'size' => $request->size,
             'weight' => $request->weight,
-            'price' => $request->price,
-            'stock' => $request->stock,
+            'price' => $request->price
         ];
 
         DB::beginTransaction();
@@ -134,10 +133,11 @@ class ProductController extends Controller
         }
     }
 
-    public function storeVariant(StoreVariantRequest $request, string $id)
+    public function storeVariant(StoreProductVariantRequest $request, string $id)
     {
         $details = [
-            'value' => $request->value,
+            'variant_id' => $request->variant_id,
+            'stock' => $request->stock,
             'additional_price' => $request->additional_price ?? 0
         ];
 
@@ -145,27 +145,30 @@ class ProductController extends Controller
         try {
             $variant = $this->productRepository->addVariant($details, $id);
             DB::commit();
-            return ApiResponseClass::sendResponse($variant, 'Variant added successfully', 200);
+            return ApiResponseClass::sendResponse(new ProductVariantResource($variant), 'Product variant added successfully', 200);
         } catch(\Exception $e) {
-            return ApiResponseClass::rollback($e, 'Variant add failed');
+            return ApiResponseClass::rollback($e, 'Product variant add failed');
         }
         
     }
 
-    public function updateVariant(UpdateVariantRequest $request, string $id, string $variantId)
+    public function updateVariant(UpdateProductVariantRequest $request, string $id, string $variantId)
     {
         $details = [
-            'value' => $request->value,
-            'additional_price' => $request->additional_price ?? 0
+            'stock' => $request->stock
         ];
+
+        if($request->additional_price){
+            $details['additional_price'] = $request->additional_price;
+        }
 
         DB::beginTransaction();
         try {
             $variant = $this->productRepository->updateVariant($details, $id, $variantId);
             DB::commit();
-            return ApiResponseClass::sendResponse($variant, 'Variant updated successfully', 200);
+            return ApiResponseClass::sendResponse(new ProductVariantResource($variant), 'Product variant updated successfully', 200);
         } catch(\Exception $e) {
-            return ApiResponseClass::rollback($e, 'Variant update failed');
+            return ApiResponseClass::rollback($e, 'Product variant update failed');
         }
     }
 
@@ -173,9 +176,9 @@ class ProductController extends Controller
     {
         try {
             $this->productRepository->deleteVariant($id, $variantId);
-            return ApiResponseClass::sendResponse([], 'Variant deleted successfully', 200);
+            return ApiResponseClass::sendResponse([], 'Product variant deleted successfully', 200);
         } catch(\Exception $e) {
-            return ApiResponseClass::throw($e, 'Variant delete failed', 500);
+            return ApiResponseClass::throw($e, 'Product variant delete failed', 500);
         }
     }
 }

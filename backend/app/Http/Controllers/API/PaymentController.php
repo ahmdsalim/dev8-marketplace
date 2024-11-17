@@ -5,11 +5,10 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentHandlingRequest;
-use Illuminate\Support\Facades\Http;
 use App\Interfaces\PaymentRepositoryInterface;
+use Midtrans\Notification;
 
 class PaymentController extends Controller
 {
@@ -22,21 +21,17 @@ class PaymentController extends Controller
 
     public function webhook(PaymentHandlingRequest $request)
     {
+        //Initialize midtrans notification to get callback data
+        $notification = new Notification();
+
         DB::beginTransaction();
         try {
-            $midtrans_server_key = env('APP_ENV') == 'production' ? env('MIDTRANS_SERVER_KEY_PROD') : env('MIDTRANS_SERVER_KEY_SANDBOX');
+            $orderId = $notification->order_id;
             
-            //verify request using signature key
-            $signature_key = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $midtrans_server_key);
-
-            if ($request->signature_key != $signature_key) {
-                return response()->json(['success' => false, 'message' => 'Invalid signature key'], 400);
-            }
-
-            $message = $this->paymentRepository->store($request->order_id, $request);
+            $payment_message = $this->paymentRepository->store($orderId, $notification);
             
             DB::commit();
-            return ApiResponseClass::sendResponse([], $message, 200);
+            return ApiResponseClass::sendResponse([], $payment_message, 200);
         } catch (\Exception $e) {
             return ApiResponseClass::rollback($e, 'Payment creation failed');
         }
