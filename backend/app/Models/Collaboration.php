@@ -10,7 +10,7 @@ class Collaboration extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['name', 'slug', 'description'];
+    protected $fillable = ['name', 'slug'];
 
     public static function boot()
     {

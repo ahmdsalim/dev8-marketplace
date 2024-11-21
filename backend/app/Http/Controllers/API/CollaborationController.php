@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Interfaces\CollaborationInterface;
+use App\Interfaces\CollaborationRepositoryInterface;
 use App\Http\Resources\CollaborationCollection;
 use App\Http\Requests\StoreCollaborationRequest;
 use App\Http\Requests\UpdateCollaborationRequest;
@@ -14,9 +14,9 @@ use App\Http\Resources\CollaborationResource;
 
 class CollaborationController extends Controller
 {
-    private CollaborationInterface $collaborationRepository;
+    private CollaborationRepositoryInterface $collaborationRepository;
 
-    public function __construct(CollaborationInterface $collaborationRepository)
+    public function __construct(CollaborationRepositoryInterface $collaborationRepository)
     {
         $this->collaborationRepository = $collaborationRepository;
     }

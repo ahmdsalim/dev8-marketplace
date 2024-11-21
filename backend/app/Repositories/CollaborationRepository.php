@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Collaboration;
-use App\Interfaces\CollaborationInterface;
+use App\Interfaces\CollaborationRepositoryInterface;
 
-class CollaborationRepository implements CollaborationInterface
+class CollaborationRepository implements CollaborationRepositoryInterface
 {
     public function index($request, $limit = 10)
     {
