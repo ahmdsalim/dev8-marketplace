@@ -27,6 +27,10 @@ export const CREATE_PRODUCT_URL = `${API_BASE_URL}/products`;
 export const UPDATE_PRODUCT_URL = (id) => `${API_BASE_URL}/products/${id}`;
 export const DELETE_PRODUCT_URL = (id) => `${API_BASE_URL}/products/${id}`;
 
+export const GET_VARIANTS_URL = `${API_BASE_URL}/variants`;
+export const CREATE_VARIANTS_URL = `${API_BASE_URL}/variants`;
+export const UPDATE_VARIANTS_URL = (id) => `${API_BASE_URL}/variants/${id}`;
+
 export const GET_CATEGORIES_URL = `${API_BASE_URL}/categories`;
 export const GET_CATEGORY_BY_SLUG_URL = (slug) =>
   `${API_BASE_URL}/categories/${slug}`;
@@ -35,12 +39,14 @@ export const CREATE_CATEGORY_URL = `${API_BASE_URL}/categories`;
 export const UPDATE_CATEGORY_URL = (id) => `${API_BASE_URL}/categories/${id}`;
 export const DELETE_CATEGORY_URL = (id) => `${API_BASE_URL}/categories/${id}`;
 
-export const GET_CART_ITEMS_URL = `${API_BASE_URL}/cart/items`;
-export const CREATE_CART_ITEMS_URL = `${API_BASE_URL}/cart/items/add`;
+export const GET_CART_ITEMS_URL = `${API_BASE_URL}/data/cart/items`;
+export const CREATE_CART_ITEMS_URL = `${API_BASE_URL}/data/cart/items/add`;
 export const DELETE_CART_ITEMS_URL = (id) =>
-  `${API_BASE_URL}/cart/items/remove/${id}`;
-export const INCREASE_QTY_ITEM_URL = `${API_BASE_URL}/cart/items/increase-qty/`;
-export const DECREASE_QTY_ITEM_URL = `${API_BASE_URL}/cart/items/decrease-qty/`;
+  `${API_BASE_URL}/data/cart/items/remove/${id}`;
+export const INCREASE_QTY_ITEM_URL = (id) =>
+  `${API_BASE_URL}/data/cart/items/increase-qty/${id}`;
+export const DECREASE_QTY_ITEM_URL = (id) =>
+  `${API_BASE_URL}/data/cart/items/decrease-qty/${id}`;
 export const GET_CHECKOUT_ITEMS_URL = `${API_BASE_URL}/cart/items/checkout`;
 
 export const GET_ALL_PROVINCES_URL = `${API_BASE_URL}/rajaongkir/provinces`;

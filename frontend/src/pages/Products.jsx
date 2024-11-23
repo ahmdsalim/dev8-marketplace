@@ -1,37 +1,58 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
-  Heart,
   X,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
-
-import { useProducts } from "../hooks/autoHooks";
-
-const categories = ["Lihat semua", "Hoodie", "Sweatshirt", "T-Shirt"];
-
-const priceRanges = [
-  { label: "Rp0 - Rp162.500", min: 0, max: 162500 },
-  { label: "Rp162.500 - Rp325.000", min: 162500, max: 325000 },
-  { label: "Rp325.000 - Rp487.500", min: 325000, max: 487500 },
-  { label: "Rp487.500 - Rp650.000", min: 487500, max: 650000 },
-];
+import { useCategory, useProducts } from "../hooks/autoHooks";
 
 export const Products = () => {
-  const { data: products = [], isLoading, error } = useProducts();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("Lihat semua");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
+  const [priceRanges, setPriceRanges] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
+
+  const {
+    data: products = [],
+    isLoading: isProductsLoading,
+    error: errorProducts,
+  } = useProducts();
+  const {
+    data: categories = [],
+    isLoading: isCategoriesLoading,
+    error: errorCategories,
+  } = useCategory();
+
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map((product) => product.price);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      const rangeCount = 3;
+      const calculatedRanges = Array.from({ length: rangeCount }, (_, i) => {
+        const min = minPrice + (i * (maxPrice - minPrice)) / rangeCount;
+        const max = minPrice + ((i + 1) * (maxPrice - minPrice)) / rangeCount;
+
+        return {
+          label: `Rp.${min.toLocaleString()} - Rp.${max.toLocaleString()}`,
+          min,
+          max,
+        };
+      });
+
+      setPriceRanges(calculatedRanges);
+    }
+  }, [products]);
 
   const filteredProducts = products.filter((product) => {
     const matchCategory =
@@ -45,7 +66,6 @@ export const Products = () => {
           product.price <= selectedPriceRange.max;
     return matchCategory && matchPrice;
   });
-
   const offset = currentPage * itemsPerPage;
   const currentProducts = filteredProducts.slice(offset, offset + itemsPerPage);
 
@@ -53,8 +73,11 @@ export const Products = () => {
     setCurrentPage(data.selected);
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (isProductsLoading) return <p>Products Loading...</p>;
+  if (isCategoriesLoading) return <p>Categories Loading...</p>;
+  if (errorProducts) return <p>Error Products: {errorProducts.message}</p>;
+  if (errorCategories)
+    return <p>Error Categories: {errorCategories.message}</p>;
 
   return (
     <div className="products container bg-white max-w-7xl mx-auto px-4 py-12">
@@ -67,6 +90,14 @@ export const Products = () => {
           Filter
         </button>
       </div>
+
+      {filteredProducts.length === 0 && selectedCategory !== "Lihat semua" && (
+        <div className="text-center py-6">
+          <p className="text-xl font-semibold text-gray-700">
+            Tidak ada produk untuk kategori "{selectedCategory}".
+          </p>
+        </div>
+      )}
 
       <div className="products__list flex flex-wrap justify-center">
         {currentProducts.map((product, index) => (
@@ -123,7 +154,7 @@ export const Products = () => {
           "pagination__link w-8 h-8 flex items-center justify-center rounded-full text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
         }
         activeClassName={"pagination__page--active"}
-        activeLinkClassName={"bg-gray-900 text-white hover:bg-gray-800"}
+        activeLinkClassName={"bg-black text-white hover:bg-gray"}
         previousClassName={"pagination__previous"}
         nextClassName={"pagination__next"}
         previousLinkClassName={
@@ -141,7 +172,6 @@ export const Products = () => {
         }
       />
 
-      {/* Modal filter */}
       {isModalOpen && (
         <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="modal__content bg-white p-6 rounded w-80">
@@ -151,14 +181,12 @@ export const Products = () => {
                 <X className="modal__close-icon h-5 w-5" />
               </button>
             </div>
-
-            {/* Accordion Kategori */}
             <div className="accordion">
               <button
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                 className="accordion__header flex justify-between items-center w-full py-2 text-left"
               >
-                <span>Kategori</span>
+                <span>Category</span>
                 {isCategoryOpen ? (
                   <ChevronUp className="accordion__icon h-4 w-4" />
                 ) : (
@@ -169,31 +197,31 @@ export const Products = () => {
                 <div className="accordion__content flex flex-col space-y-2 ml-4">
                   {categories.map((category) => (
                     <button
-                      key={category}
+                      key={category.id}
                       onClick={() => {
-                        setSelectedCategory(category);
+                        setSelectedCategory(category.name);
                         setIsModalOpen(false);
+                        setCurrentPage(0);
                       }}
                       className={`accordion__item py-2 text-left ${
-                        selectedCategory === category
+                        selectedCategory === category.name
                           ? "font-semibold text-blue-600"
                           : ""
                       }`}
                     >
-                      {category}
+                      {category.name}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Accordion Harga */}
             <div className="accordion mt-4">
               <button
                 onClick={() => setIsPriceOpen(!isPriceOpen)}
                 className="accordion__header flex justify-between items-center w-full py-2 text-left"
               >
-                <span>Harga</span>
+                <span>Price</span>
                 {isPriceOpen ? (
                   <ChevronUp className="accordion__icon h-4 w-4" />
                 ) : (
@@ -208,9 +236,10 @@ export const Products = () => {
                       onClick={() => {
                         setSelectedPriceRange(range);
                         setIsModalOpen(false);
+                        setCurrentPage(0);
                       }}
                       className={`accordion__item py-2 text-left ${
-                        selectedPriceRange === range
+                        selectedPriceRange?.label === range.label
                           ? "font-semibold text-blue-600"
                           : ""
                       }`}

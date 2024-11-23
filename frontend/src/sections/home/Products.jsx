@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useProducts } from "../../hooks/autoHooks";
+import { useNavigate } from "react-router-dom";
 
 export const Products = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const { data: products = [], isLoading, error } = useProducts();
-
+  const navigate = useNavigate();
   // const sortedProducts = products.sort((a, b) => {
   //   const dateA = new Date(a.created_at);
   //   const dateB = new Date(b.created_at);
@@ -51,6 +52,7 @@ export const Products = () => {
           <div
             key={product.id}
             className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
+            onClick={() => navigate(`/products/${product.slug}`)}
           >
             <div
               className="product-card__image-wrapper relative aspect-square overflow-hidden"
