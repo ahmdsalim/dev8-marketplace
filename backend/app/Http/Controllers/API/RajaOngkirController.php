@@ -33,12 +33,12 @@ class RajaOngkirController extends Controller
             $response = Http::withHeaders([
                 'key' => $this->API_KEY,
             ])->get('https://api.rajaongkir.com/starter/province');
-    
+            
             $provinces = $response['rajaongkir']['results'];
     
             return ApiResponseClass::sendResponse($provinces, 'Provinces fetched successfully', 200);
         } catch (\Exception $e) {
-            return ApiResponseClass::throw($e, 'Provinces not fetched');
+            return ApiResponseClass::throw($e,'Provinces not fetched');
         }
         
     }
@@ -78,12 +78,20 @@ class RajaOngkirController extends Controller
                 'weight'            => $request->weight,
                 'courier'           => $request->courier
             ]);
+
+            \Log::info('Delivery cost API Response:', [
+                'status'  => $response->status(),
+                'headers' => $response->headers(),
+                'body'    => $response->json()
+            ]);
     
             $costs = $response['rajaongkir']['results'][0]['costs'];
     
             return ApiResponseClass::sendResponse($costs, 'Delivery cost fetched successfully', 200);
         } catch (\Exception $e) {
-            return ApiResponseClass::throw($e, 'Delivery cost not fetched');
+            // throw::($e, $e->getMessage());
+
+            return ApiResponseClass::throw($e, $e-> getMessage());
         }
     }
 

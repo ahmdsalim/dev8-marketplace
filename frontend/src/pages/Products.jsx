@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
 import { useCategory, useProducts } from "../hooks/autoHooks";
+import { formatRupiah } from "../utils/FormatRupiah";
 
 export const Products = () => {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export const Products = () => {
   return (
     <div className="products container bg-white max-w-7xl mx-auto px-4 py-12">
       <div className="products__header flex justify-between items-center mb-6">
-        <h2 className="products__title text-lg font-semibold">Produk</h2>
+        <h2 className="products__title text-lg font-semibold">Product</h2>
         <button
           onClick={() => setIsModalOpen(true)}
           className="products_filter-button px-4 py-2 rounded bg-gray-300 text-black"
@@ -131,7 +132,7 @@ export const Products = () => {
                 {product.name}
               </h2>
               <span className="product-card__price text-sm font-bold text-black ">
-                Rp {product.price.toLocaleString()}
+                {formatRupiah(product.price)}
               </span>
             </div>
           </div>

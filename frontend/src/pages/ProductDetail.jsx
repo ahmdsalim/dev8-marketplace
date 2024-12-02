@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { addToCart, useProduct } from "../hooks/autoHooks";
 import { useNavigate, useParams } from "react-router-dom";
+import { showSuccessToast } from "../utils/ToastUtils";
+import { formatRupiah } from "../utils/FormatRupiah";
 
 export const ProductDetail = () => {
   const { slug } = useParams();
@@ -49,7 +51,7 @@ export const ProductDetail = () => {
       quantity,
     });
     navigate("/cart");
-    alert("Item added to cart");
+    showSuccessToast("Item added to cart");
   };
 
   if (isLoadingProduct) return <p>Loading Product...</p>;
@@ -95,7 +97,7 @@ export const ProductDetail = () => {
               {product.name}
             </h1>
             <p className="product-detail__price text-2xl font-bold mt-2">
-              Rp {product.price.toLocaleString()}
+              {formatRupiah(product.price)}
             </p>
           </div>
           <div className="product-detail__options space-y-4">

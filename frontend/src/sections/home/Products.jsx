@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useProducts } from "../../hooks/autoHooks";
 import { useNavigate } from "react-router-dom";
+import { formatRupiah } from "../../utils/FormatRupiah";
 
 export const Products = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -79,7 +80,7 @@ export const Products = () => {
                 {product.name}
               </h2>
               <span className="product-card__price text-sm font-bold text-black ">
-                Rp {product.price.toLocaleString()}
+                {formatRupiah(product.price)}
               </span>
             </div>
           </div>

@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/assets/images/logo.svg";
-import { useProductSearch } from "../hooks/autoHooks";
+import { useCartItems, useProductSearch } from "../hooks/autoHooks";
 import { isAuthenticated } from "../helpers/AuthHelpers";
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const {
     data: searchResults,
@@ -15,6 +16,14 @@ export const Navigation = () => {
     isError,
     error,
   } = useProductSearch(searchQuery);
+
+  const { data } = useCartItems();
+
+  useEffect(() => {
+    if (data?.data?.length) {
+      setCartCount(data.data.length);
+    }
+  }, [data]);
 
   const handleProfileRedirect = () => {
     if (isAuthenticated()) {
@@ -117,9 +126,14 @@ export const Navigation = () => {
             </button>
             <Link
               to="/cart"
-              className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100"
+              className="btn btn--icon p-2 rounded-full text-gray-500 hover:bg-gray-100 relative"
             >
               <ShoppingCart size={24} />
+              {cartCount > 0 && (
+                <span className="navigation__cart-count absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -145,7 +159,7 @@ export const Navigation = () => {
             New Arrival
           </Link>
           <Link
-            to="/"
+            to="/products"
             className="mobile-menu__item text-gray hover:bg-gray-100 block px-3 py-2 rounded-md text-base hover:font-bold"
           >
             Products

@@ -47,13 +47,14 @@ export const INCREASE_QTY_ITEM_URL = (id) =>
   `${API_BASE_URL}/data/cart/items/increase-qty/${id}`;
 export const DECREASE_QTY_ITEM_URL = (id) =>
   `${API_BASE_URL}/data/cart/items/decrease-qty/${id}`;
-export const GET_CHECKOUT_ITEMS_URL = `${API_BASE_URL}/cart/items/checkout`;
+export const GET_CHECKOUT_ITEMS_URL = `${API_BASE_URL}/data/cart/items/checkout`;
 
-export const GET_ALL_PROVINCES_URL = `${API_BASE_URL}/rajaongkir/provinces`;
-export const GET_ALL_CITIES_URL = `${API_BASE_URL}/rajaongkir/cities`;
-export const CHECK_DELIVERY_COST_URL = `${API_BASE_URL}/rajaongkir/delivery-cost`;
+export const GET_ALL_PROVINCES_URL = `${API_BASE_URL}/data/rajaongkir/provinces`;
+export const GET_ALL_CITIES_URL = `${API_BASE_URL}/data/rajaongkir/cities`;
+export const CHECK_DELIVERY_COST_URL = `${API_BASE_URL}/data/rajaongkir/delivery-cost`;
 
-export const GET_ORDER_USER_LOGGED_URL = `${API_BASE_URL}/data/orders/list`;
+export const GET_ORDER_USER_LOGGED_URL = `${API_BASE_URL}/data/orders/user/list`;
 export const ORDER_CHECKOUT_URL = `${API_BASE_URL}/data/orders/checkout`;
+export const GET_ORDERS_URL = `${API_BASE_URL}/data/orders/list`;
 
 export const CREATE_PAYMENT_DETAIL = `${API_BASE_URL}/webhooks/midtrans`;
