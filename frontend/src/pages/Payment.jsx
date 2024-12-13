@@ -1,7 +1,7 @@
 import React from "react";
 
-export const DetailCart = () => {
-  return <div>DetailCart</div>;
+export const Payment = () => {
+  return <div>Payment</div>;
 };
 
 // <div className="container mx-auto p-4 md:p-6">

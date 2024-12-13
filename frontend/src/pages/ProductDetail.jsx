@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
-import { addToCart, useProduct } from "../hooks/autoHooks";
+import { addToCart } from "../hooks/cartHooks";
+import { useProduct } from "../hooks/productHooks";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { showSuccessToast } from "../utils/ToastUtils";
 import { formatRupiah } from "../utils/FormatRupiah";
@@ -14,7 +16,7 @@ export const ProductDetail = () => {
   } = useProduct(slug);
 
   const navigate = useNavigate();
-  const mutation = addToCart();
+  const mutation = useProduct();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [activeTab, setActiveTab] = useState("details");

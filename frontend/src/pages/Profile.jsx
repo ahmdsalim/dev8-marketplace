@@ -4,7 +4,7 @@ import {
   useUser,
   useChangePassword,
   useChangeProfile,
-} from "../hooks/autoHooks";
+} from "../hooks/authHooks";
 import { CalendarIcon, Package, User, LogOut } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

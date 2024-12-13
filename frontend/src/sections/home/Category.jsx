@@ -1,5 +1,5 @@
 import React from "react";
-import { useCategory } from "../../hooks/autoHooks";
+import { useCategory } from "../../hooks/variantHooks";
 
 export const Category = () => {
   const { data: categories = [], isLoading, error } = useCategory();

@@ -8,7 +8,8 @@ import {
   ChevronUp,
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
-import { useCategory, useProducts } from "../hooks/autoHooks";
+import { useProducts } from "../hooks/productHooks";
+import { useCategory } from "../hooks/variantHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
 
 export const Products = () => {

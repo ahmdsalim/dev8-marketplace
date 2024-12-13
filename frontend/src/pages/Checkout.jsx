@@ -5,7 +5,7 @@ import {
   useCitiesByProvince,
   useDeliveryCost,
   useProvinces,
-} from "../hooks/autoHooks";
+} from "../hooks/checkoutHooks";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -99,7 +99,6 @@ export const Checkout = () => {
   }, [deliveryCosts]);
 
   const onSubmit = (data) => {
-    alert("ok");
     const payload = {
       delivery_address: data.delivery_address,
       service: data.service,

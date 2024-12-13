@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
   useCartItems,
-  useCheckoutItems,
   useDecreaseQty,
   useIncreaseQty,
   useRemoveCartItem,
-} from "../hooks/autoHooks";
+} from "../hooks/cartHooks";
+import { useCheckoutItems } from "../hooks/checkoutHooks";
+
 import { showErrorToast, showSuccessToast } from "../utils/ToastUtils";
 import { useNavigate } from "react-router-dom";
 import { formatRupiah } from "../utils/FormatRupiah";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useProducts } from "../../hooks/autoHooks";
+import { useProducts } from "../../hooks/productHooks";
 import { useNavigate } from "react-router-dom";
 import { formatRupiah } from "../../utils/FormatRupiah";
 

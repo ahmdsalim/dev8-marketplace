@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../public/assets/images/logo.svg";
-import { useCartItems, useProductSearch } from "../hooks/autoHooks";
+import { useCartItems } from "../hooks/cartHooks";
+import { useProductSearch } from "../hooks/productHooks";
 import { isAuthenticated } from "../helpers/AuthHelpers";
 
 export const Navigation = () => {

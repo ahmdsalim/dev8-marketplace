@@ -484,31 +484,20 @@ export const useDeliveryCost = (destination, weight, courier) => {
   );
 };
 
-export const useCheckout = (
-  delivery_address,
-  service,
-  destination,
-  courier,
-  cart_item_ids
-) => {
+export const useCheckout = () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
     throw new Error("Token is missing");
   }
-
   return useMutation(
-    async () => {
-      const res = await axios.post(
-        `${ORDER_CHECKOUT_URL}`,
-        { delivery_address, service, destination, courier, cart_item_ids },
-        {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    async (payload) => {
+      const res = await axios.post(`${ORDER_CHECKOUT_URL}`, payload, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return res.data;
     },
     {
