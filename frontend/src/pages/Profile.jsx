@@ -5,19 +5,12 @@ import {
   useChangePassword,
   useChangeProfile,
 } from "../hooks/authHooks";
-import { CalendarIcon, Package, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { showErrorToast, showSuccessToast } from "../utils/ToastUtils";
 import { useNavigate } from "react-router-dom";
-
-const orders = [
-  { id: "ORD001", date: "2023-01-15", status: "Delivered", total: 125.99 },
-  { id: "ORD002", date: "2023-02-20", status: "Shipped", total: 85.5 },
-  { id: "ORD003", date: "2023-03-10", status: "Processing", total: 220.0 },
-  { id: "ORD004", date: "2023-04-05", status: "Delivered", total: 65.75 },
-];
 
 const profileSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -44,13 +37,13 @@ const passwordSchema = yup.object().shape({
 export const Profile = () => {
   const { data, error, isLoading } = useUser();
   const { mutate: logout, isLoading: isLogoutLoading } = useLogout();
+
   const { mutate: changePassword, isLoading: isChangingPassword } =
     useChangePassword();
   const { mutate: changeProfile, isLoading: isChangingProfile } =
     useChangeProfile();
   const [activeTab, setActiveTab] = useState("profile");
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit: handleSubmitProfile,
@@ -151,7 +144,7 @@ export const Profile = () => {
               </div>
             </div>
             <div className="profile__tabs flex mb-6">
-              {["profile", "orders", "password"].map((tab) => (
+              {["profile", "password"].map((tab) => (
                 <button
                   key={tab}
                   className={`profile__tab flex-1 py-2 px-4 text-center ${
@@ -331,47 +324,7 @@ export const Profile = () => {
               </form>
             )}
           </div>
-          <div className="profile__orders w-full md:w-2/3 bg-gray-100 p-6 rounded-lg shadow">
-            {activeTab === "orders" && (
-              <div className="profile__orders">
-                <h2 className="profile__orders-title text-2xl font-bold mb-2">
-                  Order History
-                </h2>
-                <p className="profile__orders-description text-gray-600 mb-4">
-                  View your past orders and their status.
-                </p>
-                <div className="overflow-x-auto">
-                  <table className="profile__orders-table w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="py-2">Order ID</th>
-                        <th className="py-2">Date</th>
-                        <th className="py-2">Status</th>
-                        <th className="py-2 text-right">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b">
-                        <td className="py-2">12345</td>
-                        <td className="py-2">
-                          <div className="flex items-center">
-                            <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
-                            <span>01/01/2024</span>
-                          </div>
-                        </td>
-                        <td className="py-2">
-                          <div className="flex items-center">
-                            <Package className="mr-2 h-4 w-4 text-gray-500" />
-                            <span>Delivered</span>
-                          </div>
-                        </td>
-                        <td className="py-2 text-right">$100.00</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+          <div className="profile__informations w-full md:w-2/3 bg-gray-100 p-6 rounded-lg shadow">
             {activeTab === "profile" && (
               <div className="profile__account-info">
                 <h2 className="profile__account-title text-2xl font-bold mb-4">

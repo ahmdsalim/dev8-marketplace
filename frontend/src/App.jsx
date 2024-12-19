@@ -12,6 +12,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ProductDetail } from "./pages/ProductDetail";
 import { Cart } from "./pages/Cart";
 import { Checkout } from "./pages/Checkout";
+import { Payment } from "./pages/Payment";
+import { Orders } from "./pages/Orders";
 
 function App() {
   return (
@@ -27,7 +29,9 @@ function App() {
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/orders" element={<Orders />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment" element={<Payment />} />
           </Route>
         </Routes>
       </Layout>

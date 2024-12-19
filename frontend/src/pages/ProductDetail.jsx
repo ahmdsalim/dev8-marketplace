@@ -16,7 +16,7 @@ export const ProductDetail = () => {
   } = useProduct(slug);
 
   const navigate = useNavigate();
-  const mutation = useProduct();
+  const mutation = addToCart();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [activeTab, setActiveTab] = useState("details");
