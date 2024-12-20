@@ -115,50 +115,15 @@ export const Checkout = () => {
     checkout(payload, {
       onSuccess: (response) => {
         console.log(response);
-        try {
-          showSuccessToast("Order placed successfully!");
-          const { snap_token, id } = response.data;
-          setSnapShow(true);
+        // try {
+        //   showSuccessToast("Order placed successfully!");
 
-          // snapEmbed(snap_token, "snap-container", {
-          //   onSuccess: function (res) {
-          // window.location.href()
-          //     navigate(`/profile`);
-          //     console.log("success", res);
-          //     // setSnapShow(false);
-          //   },
-          //   onPending: function (res) {
-          //     navigate(`/payment`);
-          //     console.log("pending", res);
-          //     setSnapShow(false);
-          //   },
-          //   onClose: function (res) {
-          //     // navigate(`/payment?transaction_id=${data.id}`);
-          //     setSnapShow(false);
-          //   },
-          // });
-        } catch (error) {
-          console.error("Error during snapEmbed:", error);
-        }
+        //   window.location.href = response.payment_url;
+        // } catch (error) {
+        //   console.error("Error during snapEmbed:", error);
+        // }
       },
     });
-    // setSnapShow(true);
-    // snapEmbed(snap_token, "snap-container", {
-    //   onSuccess: function (res) {
-    //     console.log("success", res);
-    //     navigate(`/payment?transaction_id=${data.id}`);
-    //     setSnapShow(false);
-    //   },
-    //   onPending: function (res) {
-    //     console.log("pending", res);
-    //     navigate(`/payment?transaction_id=${data.id}`);
-    //     setSnapShow(false);
-    //   },
-    //   onClose: function (res) {
-    //     navigate(`/payment?transaction_id=${data.id}`);
-    //     setSnapShow(false);
-    //   },
-    // });
   };
 
   return (

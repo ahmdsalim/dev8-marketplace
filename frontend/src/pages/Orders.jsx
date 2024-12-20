@@ -46,7 +46,6 @@ export const Orders = () => {
     {
       name: "Total",
       selector: (row) => `${formatRupiah(row.total_amount)}`,
-      right: true,
     },
   ];
 

@@ -117,14 +117,14 @@ export const Profile = () => {
       <div className="profile__containter container max-w-7xl mx-auto px-4 py-8">
         <div className="profile__header flex justify-between items-center mb-8">
           <h1 className="profile__title text-3xl font-bold">User Profile</h1>
-          <button
+          {/* <button
             disabled={isLogoutLoading}
             onClick={handleLogout}
             className="profile__logout-button flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           >
             <LogOut className="w-5 h-5 mr-2" />
             Logout
-          </button>
+          </button> */}
         </div>
         <div className="profile__content flex flex-col md:flex-row gap-8">
           <div

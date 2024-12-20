@@ -1,9 +1,9 @@
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("id-ID", {
-    weekday: "long", // Menampilkan hari dalam format lengkap
+    weekday: "long",
     year: "numeric",
-    month: "long", // Menampilkan bulan dalam format lengkap
+    month: "long",
     day: "numeric",
   });
 };
