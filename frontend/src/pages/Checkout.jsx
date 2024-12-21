@@ -9,7 +9,7 @@ import {
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { showSuccessToast } from "../utils/ToastUtils";
+import { showSuccessToast, showErrorToast } from "../utils/ToastUtils";
 import { formatRupiah } from "../utils/FormatRupiah";
 import useSnap from "../hooks/snapHooks";
 
@@ -112,16 +112,32 @@ export const Checkout = () => {
       cart_item_ids: selectedCartItems.map((item) => item.id),
     };
 
+    // checkout(payload, {
+    //   onSuccess: (response) => {
+    //     try {
+    //       showSuccessToast("Order placed successfully!");
+    //       window.open(response.payment_url);
+    //     } catch (error) {
+    //       console.error("Error during snapEmbed:", error);
+    //     }
+    //   },
+    // });
+
     checkout(payload, {
       onSuccess: (response) => {
-        console.log(response);
-        // try {
-        //   showSuccessToast("Order placed successfully!");
-
-        //   window.location.href = response.payment_url;
-        // } catch (error) {
-        //   console.error("Error during snapEmbed:", error);
-        // }
+        try {
+          console.log("response", response);
+          const paymentUrl = response.data.payment_url.replace(/['"]/g, "");
+          if (paymentUrl) {
+            showSuccessToast("Order placed successfully!");
+            window.location.href = paymentUrl;
+          } else {
+            throw new Error("Invalid payment URL.");
+          }
+        } catch (error) {
+          console.error("Error during snapEmbed:", error);
+          showErrorToast("Failed to process the payment. Please try again.");
+        }
       },
     });
   };
