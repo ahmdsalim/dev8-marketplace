@@ -35,7 +35,11 @@ class OrderRepository implements OrderRepositoryInterface
         $search = $request->query('search');
         $status = $request->query('status');
         
-        $query = Order::query()->with(['orderitems','payment'])->where('user_id', auth()->id());
+        $query = Order::query()->with([
+            'orderitems.product:id,category_id,name,images,slug',
+            'orderitems.product.category:id,name',
+            'orderitems.variant:id,name',
+            'payment'])->where('user_id', auth()->id());
         
         if($search) {
             $query->where('name', 'like', '%'.$search.'%');
@@ -170,6 +174,10 @@ class OrderRepository implements OrderRepositoryInterface
     public function getById($id)
     {
         //only user logged in can access their order
-        return Order::with(['orderitems', 'payment'])->where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+        return Order::with([
+            'orderitems.product:id,category_id,name,images,slug',
+            'orderitems.product.category:id,name',
+            'orderitems.variant:id,name',
+            'payment'])->where('id', $id)->where('user_id', auth()->id())->firstOrFail();
     }
 }

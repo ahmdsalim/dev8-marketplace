@@ -25,7 +25,9 @@ class ProductResource extends JsonResource
             'collaboration' => $this->collaboration->name ?? null,
             'category' => $this->category->name,
             'images' => $this->images,
-            'total_stock' => $this->total_stock,
+            'total_stock' => $this->when($this->relationLoaded('variants'), function () {
+                return $this->variants->sum('pivot.stock');
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

@@ -16,7 +16,7 @@ class Product extends Model
         'images' => 'json'
     ];
 
-    protected $appends = ['total_stock'];
+    // protected $appends = ['total_stock'];
 
     public static function boot()
     {
@@ -68,8 +68,8 @@ class Product extends Model
                     ->withPivot(['stock', 'additional_price']);
     }
 
-    public function getTotalStockAttribute()
-    {
-        return $this->variants->sum('pivot.stock');
-    }
+    // public function getTotalStockAttribute()
+    // {
+    //     return $this->variants->sum('pivot.stock');
+    // }
 }
