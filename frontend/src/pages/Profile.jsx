@@ -78,13 +78,6 @@ export const Profile = () => {
     resolver: yupResolver(passwordSchema),
   });
 
-  const handleLogout = () => {
-    if (isLogoutLoading) return;
-    logout();
-    showSuccessToast("Logout successfully");
-    navigate("/login");
-  };
-
   const handleProfileSubmit = (data) => {
     changeProfile(data, {
       onSuccess: () => {
@@ -116,7 +109,9 @@ export const Profile = () => {
     <div className="profile min-h-screen bg-white">
       <div className="profile__containter container max-w-7xl mx-auto px-4 py-8">
         <div className="profile__header flex justify-between items-center mb-8">
-          <h1 className="profile__title text-3xl font-bold">User Profile</h1>
+          <h1 className="profile__title text-2xl font-semibold">
+            User Profile
+          </h1>
           {/* <button
             disabled={isLogoutLoading}
             onClick={handleLogout}

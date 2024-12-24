@@ -108,7 +108,7 @@ export const Cart = () => {
 
   return (
     <div className="container cart__container bg-white max-w-7xl mx-auto px-4 py-12">
-      <h1 className="cart__title text-2xl font-bold mb-4 text-black">
+      <h1 className="cart__title text-2xl font-semibold mb-4 text-black">
         Your Cart
       </h1>
       {isLoading ? (

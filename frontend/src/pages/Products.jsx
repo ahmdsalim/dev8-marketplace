@@ -46,7 +46,7 @@ export const Products = () => {
         const max = minPrice + ((i + 1) * (maxPrice - minPrice)) / rangeCount;
 
         return {
-          label: `Rp.${min.toLocaleString()} - Rp.${max.toLocaleString()}`,
+          label: `${formatRupiah(min)} - ${formatRupiah(max)}`,
           min,
           max,
         };
@@ -84,7 +84,7 @@ export const Products = () => {
   return (
     <div className="products container bg-white max-w-7xl mx-auto px-4 py-12">
       <div className="products__header flex justify-between items-center mb-6">
-        <h2 className="products__title text-lg font-semibold">Product</h2>
+        <h2 className="products__title text-2xl font-semibold">Product</h2>
         <button
           onClick={() => setIsModalOpen(true)}
           className="products_filter-button px-4 py-2 rounded bg-gray-300 text-black"
