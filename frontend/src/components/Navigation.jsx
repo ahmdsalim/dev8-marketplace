@@ -143,7 +143,7 @@ export const Navigation = () => {
               {/* <div className="relative mr-4"> */}
               <input
                 type="text"
-                placeholder="Cari"
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={handleSearchChange}
                 className="search__input pl-10 pr-4 py-2 w-64 rounded-full border border-gray focus:outline-none focus:border-gray"

@@ -1,9 +1,5 @@
-import React from "react";
-
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarIcon, Package } from "lucide-react";
-import DataTable from "react-data-table-component";
 import { useOrders } from "../hooks/orderHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
 import { formatDate } from "../utils/FormatDate";
@@ -16,16 +12,65 @@ export const Orders = () => {
   } = useOrders();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [query, setQuery] = useState("");
+  const [filteredItems, setFilteredItems] = useState(orders);
+  const [sortOrder, setSortOrder] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const navigate = useNavigate();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const handleSearchChange = (e) => setQuery(e.target.value.toLowerCase());
 
-  const handleViewDetails = (order) => {
-    navigate(`/order-detail/${order.id}`);
-    setSelectedOrder(order);
-    setIsModalOpen(true);
+  const filterByDate = (orders) => {
+    if (!startDate && !endDate) return orders;
+    return orders.filter((order) => {
+      const orderDate = new Date(order.order_date);
+      const isAfterStartDate = startDate
+        ? orderDate >= new Date(startDate)
+        : true;
+      const isBeforeEndDate = endDate ? orderDate <= new Date(endDate) : true;
+      return isAfterStartDate && isBeforeEndDate;
+    });
   };
+
+  const sortOrders = (orders) => {
+    switch (sortOrder) {
+      case "newest":
+        return orders.sort(
+          (a, b) => new Date(b.order_date) - new Date(a.order_date)
+        );
+      case "oldest":
+        return orders.sort(
+          (a, b) => new Date(a.order_date) - new Date(b.order_date)
+        );
+      case "highest":
+        return orders.sort((a, b) => b.total_amount - a.total_amount);
+      case "lowest":
+        return orders.sort((a, b) => a.total_amount - b.total_amount);
+      default:
+        return orders;
+    }
+  };
+
+  useEffect(() => {
+    if (!orders.length) return;
+
+    let filtered = orders.filter((order) =>
+      order.order_items.some((item) =>
+        item.product.name.toLowerCase().includes(query.toLowerCase())
+      )
+    );
+
+    if (selectedStatus) {
+      filtered = filtered.filter((order) => order.status === selectedStatus);
+    }
+
+    filtered = filterByDate(filtered);
+    filtered = sortOrders(filtered);
+
+    setFilteredItems(filtered);
+  }, [query, startDate, endDate, sortOrder, orders, selectedStatus]);
+
+  const handleViewDetails = (order) => navigate(`/order-detail/${order.id}`);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -40,7 +85,6 @@ export const Orders = () => {
     }
   };
 
-  // Jika ada error atau data belum siap
   if (isOrdersLoading) return <div>Loading...</div>;
   if (errorOrders) return <div>Error loading orders!</div>;
 
@@ -49,21 +93,19 @@ export const Orders = () => {
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-semibold">Order History</h1>
         <div className="flex flex-wrap gap-2">
-          <button className="px-4 py-2 rounded-full border hover:bg-gray-50">
-            All Orders({orders.length})
-          </button>
-          <button className="px-4 py-2 rounded-full border hover:bg-gray-50">
-            Pending(
-            {orders.filter((order) => order.status === "pending").length})
-          </button>
-          <button className="px-4 py-2 rounded-full border hover:bg-gray-50">
-            Processed(
-            {orders.filter((order) => order.status === "processed").length})
-          </button>
-          <button className="px-4 py-2 rounded-full border hover:bg-gray-50">
-            Cancelled(
-            {orders.filter((order) => order.status === "cancelled").length})
-          </button>
+          {["", "pending", "processed", "cancelled"].map((status) => (
+            <button
+              key={status}
+              className="px-4 py-2 rounded-full border hover:bg-gray-50"
+              onClick={() => setSelectedStatus(status)}
+            >
+              {status
+                ? `${status.charAt(0).toUpperCase() + status.slice(1)} (${
+                    orders.filter((order) => order.status === status).length
+                  })`
+                : `All Orders (${orders.length})`}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -88,6 +130,8 @@ export const Orders = () => {
           <div className="relative">
             <input
               type="search"
+              value={query}
+              onChange={handleSearchChange}
               placeholder="Search..."
               className="pl-8 pr-4 py-2 border rounded-lg w-[200px] md:w-[300px]"
             />
@@ -105,7 +149,11 @@ export const Orders = () => {
               />
             </svg>
           </div>
-          <select className="px-4 py-2 border rounded-lg">
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="px-4 py-2 border rounded-lg"
+          >
             <option value="">Sort by</option>
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -119,33 +167,32 @@ export const Orders = () => {
         <table className="w-full">
           <thead>
             <tr className="border-b bg-gray-50">
-              <th className="px-4 py-3 text-left">Invoice</th>
-              <th className="px-4 py-3 text-left">Date</th>
-              <th className="px-4 py-3 text-left">Products</th>
-              <th className="px-4 py-3 text-left">Status</th>
-              <th className="px-4 py-3 text-left">Total</th>
-              <th className="px-4 py-3 text-left">Action</th>
+              {["Invoice", "Date", "Products", "Status", "Total", "Action"].map(
+                (header) => (
+                  <th key={header} className="px-4 py-3 text-left">
+                    {header}
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, index) => (
+            {filteredItems.map((order, index) => (
               <tr
                 key={order.id}
-                className={`${index === orders.length - 1 ? "" : "border-b"}`}
+                className={index !== filteredItems.length - 1 ? "border-b" : ""}
               >
                 <td className="px-4 py-3 font-medium">
                   {order.invoice_number}
                 </td>
                 <td className="px-4 py-3">{formatDate(order.order_date)}</td>
                 <td className="px-4 py-3">
-                  <div className="space-y-1">
-                    {order.order_items.map((item) => (
-                      <div key={item.id} className="text-sm">
-                        {item.product.name} ({item.variant.name}) x
-                        {item.quantity}
-                      </div>
-                    ))}
-                  </div>
+                  {order.order_items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="text-sm"
+                    >{`${item.product.name} (${item.variant.name}) x${item.quantity}`}</div>
+                  ))}
                 </td>
                 <td className="px-4 py-3">
                   <span
@@ -172,91 +219,6 @@ export const Orders = () => {
           </tbody>
         </table>
       </div>
-
-      {/* {isModalOpen && selectedOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 space-y-6">
-              <div className="flex justify-between items-start">
-                <h3 className="text-lg font-semibold">
-                  Order Details - {selectedOrder.invoice_number}
-                </h3>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Products</h4>
-                  <div className="space-y-2">
-                    {selectedOrder.order_items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex justify-between text-sm"
-                      >
-                        <span>
-                          {item.product.name} ({item.variant.name}) x
-                          {item.quantity}
-                        </span>
-                        <span>{formatRupiah(item.price * item.quantity)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-between font-medium">
-                  <span>Subtotal</span>
-                  <span>{formatRupiah(selectedOrder.subtotal)}</span>
-                </div>
-
-                <div className="flex justify-between text-sm">
-                  <span>Delivery Cost ({selectedOrder.courier})</span>
-                  <span>{formatRupiah(selectedOrder.delivery_cost)}</span>
-                </div>
-
-                <div className="flex justify-between font-medium">
-                  <span>Total</span>
-                  <span>{formatRupiah(selectedOrder.total_amount)}</span>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">Order Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Date</span>
-                      <span>{formatDate(selectedOrder.order_date)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Status</span>
-                      <span
-                        className={`px-2 py-1 text-sm rounded-full border capitalize ${getStatusColor(
-                          selectedOrder.status
-                        )}`}
-                      >
-                        {selectedOrder.status}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Delivery Address</span>
-                      <span>{selectedOrder.delivery_address}</span>
-                    </div>
-                    {selectedOrder.payment && (
-                      <div className="flex justify-between">
-                        <span>Payment Method</span>
-                        <span>{selectedOrder.payment.payment_method}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };
