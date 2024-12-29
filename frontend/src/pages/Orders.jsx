@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useOrders } from "../hooks/orderHooks";
+import { useOrderPagination } from "../hooks/orderHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
 import { formatDate } from "../utils/FormatDate";
+import { Pagination } from "../components/Pagination";
 
 export const Orders = () => {
+  const [page, setPage] = useState(0);
   const {
     data: orders = [],
     isLoading: isOrdersLoading,
     error: errorOrders,
-  } = useOrders();
+  } = useOrderPagination(page + 1);
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [query, setQuery] = useState("");
@@ -71,6 +74,10 @@ export const Orders = () => {
   }, [query, startDate, endDate, sortOrder, orders, selectedStatus]);
 
   const handleViewDetails = (order) => navigate(`/order-detail/${order.id}`);
+
+  const handlePageChange = ({ selected }) => {
+    setPage(selected);
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -219,6 +226,10 @@ export const Orders = () => {
           </tbody>
         </table>
       </div>
+      <Pagination
+        pageCount={Math.ceil(orders.length / 10)}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

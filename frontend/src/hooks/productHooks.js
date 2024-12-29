@@ -8,15 +8,24 @@ import {
   GET_LIST_PRODUCT_SEARCH_URL,
 } from "../service/api";
 
-export const useProducts = () => {
-  return useQuery("products", async () => {
-    const res = await axios.get(GET_LIST_PRODUCT_URL, {
-      headers: {
-        "Content-Type": "application/json",
+export const useProducts = (page) => {
+  return useQuery(
+    ["products", page],
+    async () => {
+      const res = await axios.get(`${GET_LIST_PRODUCT_URL}?page=${page}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data.data.result;
+    },
+    {
+      keepPreviousData: true,
+      onError: (error) => {
+        console.error("Error fetching Product data:", error);
       },
-    });
-    return res.data.data.result;
-  });
+    }
+  );
 };
 
 export const useProductSearch = (searchQuery) => {

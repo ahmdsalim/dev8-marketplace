@@ -32,30 +32,31 @@ export const useOrders = () => {
   );
 };
 
-// export const useOrder = (id) => {
-//   const token = localStorage.getItem("token");
+export const useOrderPagination = (page) => {
+  const token = localStorage.getItem("token");
 
-//   if (!token) {
-//     throw new Error("Token is missing");
-//   }
-//   return useQuery(
-//     ["order", id],
-//     async () => {
-//       const res = await axios.get(`${GET_ORDER_BY_ID}/${id}`, {
-//         headers: {
-//           Accept: "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-//       return res.data.result;
-//     },
-//     {
-//       onError: (error) => {
-//         console.error("Error fetching order data:", error);
-//       },
-//     }
-//   );
-// };
+  if (!token) {
+    throw new Error("Token is missing");
+  }
+  return useQuery(
+    ["orders", page],
+    async () => {
+      const res = await axios.get(`${GET_ORDER_USER_LOGGED_URL}?page=${page}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res.data.data.result;
+    },
+    {
+      keepPreviousData: true,
+      onError: (error) => {
+        console.error("Error fetching order data:", error);
+      },
+    }
+  );
+};
 
 export const useOrder = (id) => {
   const token = localStorage.getItem("token");
@@ -76,7 +77,7 @@ export const useOrder = (id) => {
       return res.data;
     },
     {
-      enabled: !!id, // Hanya jalankan query jika ID tersedia
+      enabled: !!id,
       onError: (error) => {
         console.error("Error fetching order data:", error);
       },

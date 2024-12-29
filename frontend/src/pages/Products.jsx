@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ChevronLeft,
-  ChevronRight,
-  X,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { X, ChevronDown, ChevronUp } from "lucide-react";
 import ReactPaginate from "react-paginate";
 import { useProducts } from "../hooks/productHooks";
 import { useCategory } from "../hooks/variantHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
+import { Pagination } from "../components/Pagination";
 
 export const Products = () => {
   const navigate = useNavigate();
@@ -21,14 +16,14 @@ export const Products = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 4;
+
+  const [page, setPage] = useState(0);
 
   const {
     data: products = [],
     isLoading: isProductsLoading,
     error: errorProducts,
-  } = useProducts();
+  } = useProducts(page + 1);
   const {
     data: categories = [],
     isLoading: isCategoriesLoading,
@@ -68,11 +63,9 @@ export const Products = () => {
           product.price <= selectedPriceRange.max;
     return matchCategory && matchPrice;
   });
-  const offset = currentPage * itemsPerPage;
-  const currentProducts = filteredProducts.slice(offset, offset + itemsPerPage);
 
-  const handlePageClick = (data) => {
-    setCurrentPage(data.selected);
+  const handlePageChange = ({ selected }) => {
+    setPage(selected);
   };
 
   if (isProductsLoading) return <p>Products Loading...</p>;
@@ -102,7 +95,7 @@ export const Products = () => {
       )}
 
       <div className="products__list flex flex-wrap justify-center">
-        {currentProducts.map((product, index) => (
+        {products.map((product, index) => (
           <div
             key={product.id}
             className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
@@ -140,38 +133,9 @@ export const Products = () => {
         ))}
       </div>
 
-      <ReactPaginate
-        previousLabel={<ChevronLeft className="w-4 h-4" />}
-        nextLabel={<ChevronRight className="w-4 h-4" />}
-        breakLabel={"..."}
-        pageCount={Math.ceil(filteredProducts.length / itemsPerPage)}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageClick}
-        containerClassName={
-          "pagination flex justify-center items-center space-x-2 mt-8"
-        }
-        pageClassName={"pagination__page"}
-        pageLinkClassName={
-          "pagination__link w-8 h-8 flex items-center justify-center rounded-full text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-        }
-        activeClassName={"pagination__page--active"}
-        activeLinkClassName={"bg-black text-white hover:bg-gray"}
-        previousClassName={"pagination__previous"}
-        nextClassName={"pagination__next"}
-        previousLinkClassName={
-          "pagination__nav-link w-8 h-8 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-        }
-        nextLinkClassName={
-          "pagination__nav-link w-8 h-8 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-200"
-        }
-        disabledClassName={
-          "pagination__link--disabled opacity-50 cursor-not-allowed"
-        }
-        breakClassName={"pagination__break"}
-        breakLinkClassName={
-          "pagination__link w-8 h-8 flex items-center justify-center rounded-full text-sm text-gray-700"
-        }
+      <Pagination
+        pageCount={Math.ceil(products.length / 10)}
+        onPageChange={handlePageChange}
       />
 
       {isModalOpen && (
@@ -203,7 +167,6 @@ export const Products = () => {
                       onClick={() => {
                         setSelectedCategory(category.name);
                         setIsModalOpen(false);
-                        setCurrentPage(0);
                       }}
                       className={`accordion__item py-2 text-left ${
                         selectedCategory === category.name
@@ -232,13 +195,12 @@ export const Products = () => {
               </button>
               {isPriceOpen && (
                 <div className="accordion__content flex flex-col space-y-2 ml-4">
-                  {priceRanges.map((range) => (
+                  {priceRanges.map((range, index) => (
                     <button
-                      key={range.label}
+                      key={index + 1}
                       onClick={() => {
                         setSelectedPriceRange(range);
                         setIsModalOpen(false);
-                        setCurrentPage(0);
                       }}
                       className={`accordion__item py-2 text-left ${
                         selectedPriceRange?.label === range.label
