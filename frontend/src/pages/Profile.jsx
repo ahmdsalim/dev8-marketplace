@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-  useLogout,
   useUser,
   useChangePassword,
   useChangeProfile,
 } from "../hooks/authHooks";
-import { User, LogOut } from "lucide-react";
+import { User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { showErrorToast, showSuccessToast } from "../utils/ToastUtils";
-import { useNavigate } from "react-router-dom";
+import { LoadingOnError } from "../components/LoadingOnError";
 
 const profileSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -35,15 +34,14 @@ const passwordSchema = yup.object().shape({
 });
 
 export const Profile = () => {
-  const { data, error, isLoading } = useUser();
-  const { mutate: logout, isLoading: isLogoutLoading } = useLogout();
+  const { data: user = {}, error, isLoading } = useUser();
+  const noData = !user?.data;
 
   const { mutate: changePassword, isLoading: isChangingPassword } =
     useChangePassword();
   const { mutate: changeProfile, isLoading: isChangingProfile } =
     useChangeProfile();
   const [activeTab, setActiveTab] = useState("profile");
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit: handleSubmitProfile,
@@ -52,23 +50,23 @@ export const Profile = () => {
   } = useForm({
     resolver: yupResolver(profileSchema),
     defaultValues: {
-      name: data?.name || "",
-      username: data?.username || "",
-      email: data?.email || "",
-      phone: data?.phone || "",
+      name: user?.name || "",
+      username: user?.username || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
     },
   });
 
   useEffect(() => {
-    if (data) {
+    if (user) {
       reset({
-        name: data.name,
-        username: data.username,
-        email: data.email,
-        phone: data.phone,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
       });
     }
-  }, [data, reset]);
+  }, [user, reset]);
 
   const {
     register: registerPassword,
@@ -102,24 +100,22 @@ export const Profile = () => {
     });
   };
 
-  if (error) return <div>Error fetching user data: {error.message}</div>;
-  if (isLoading) return <div>Loading...</div>;
-
   return (
     <div className="profile min-h-screen bg-white">
       <div className="profile__containter container max-w-7xl mx-auto px-4 py-8">
+        <LoadingOnError
+          isLoading={isLoading}
+          error={error}
+          noData={noData}
+          loadingMessage="Fetching Profile..."
+          errorMessage="Error loading Profile!"
+          noDataMessage="No data available"
+        />
+
         <div className="profile__header flex justify-between items-center mb-8">
           <h1 className="profile__title text-2xl font-semibold">
             User Profile
           </h1>
-          {/* <button
-            disabled={isLogoutLoading}
-            onClick={handleLogout}
-            className="profile__logout-button flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-          >
-            <LogOut className="w-5 h-5 mr-2" />
-            Logout
-          </button> */}
         </div>
         <div className="profile__content flex flex-col md:flex-row gap-8">
           <div
@@ -131,10 +127,10 @@ export const Profile = () => {
               </div>
               <div>
                 <h2 className="profile__user-name text-2xl font-bold">
-                  {data.name}
+                  {user.name}
                 </h2>
                 <p className="profile__user-email text-gray-600">
-                  {data.email}
+                  {user.email}
                 </p>
               </div>
             </div>
@@ -326,16 +322,16 @@ export const Profile = () => {
                   Account Information
                 </h2>
                 <p className="mb-2">
-                  <strong>Name:</strong> {data.name}
+                  <strong>Name:</strong> {user.name}
                 </p>
                 <p className="mb-2">
-                  <strong>Username:</strong> {data.username}
+                  <strong>Username:</strong> {user.username}
                 </p>
                 <p className="mb-2">
-                  <strong>Email:</strong> {data.email}
+                  <strong>Email:</strong> {user.email}
                 </p>
                 <p className="mb-2">
-                  <strong>Phone Number:</strong> {data.phone}
+                  <strong>Phone Number:</strong> {user.phone}
                 </p>
               </div>
             )}
@@ -345,16 +341,16 @@ export const Profile = () => {
                   Account Information
                 </h2>
                 <p className="mb-2">
-                  <strong>Name:</strong> {data.name}
+                  <strong>Name:</strong> {user.name}
                 </p>
                 <p className="mb-2">
-                  <strong>Username:</strong> {data.username}
+                  <strong>Username:</strong> {user.username}
                 </p>
                 <p className="mb-2">
-                  <strong>Email:</strong> {data.email}
+                  <strong>Email:</strong> {user.email}
                 </p>
                 <p className="mb-2">
-                  <strong>Phone Number:</strong> {data.phone}
+                  <strong>Phone Number:</strong> {user.phone}
                 </p>
               </div>
             )}

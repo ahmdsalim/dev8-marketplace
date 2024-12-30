@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { showSuccessToast, showErrorToast } from "../utils/ToastUtils";
 import { formatRupiah } from "../utils/FormatRupiah";
-import useSnap from "../hooks/snapHooks";
+// import useSnap from "../hooks/snapHooks";
 
 const checkoutSchema = yup.object().shape({
   province: yup.string().required("Province is required"),
@@ -34,7 +34,6 @@ export const Checkout = () => {
   const [snapShow, setSnapShow] = useState(null);
 
   const location = useLocation();
-  const navigate = useNavigate();
   const selectedCartItems = location.state?.selectedCartItems || [];
 
   const subTotal = () => {
@@ -51,11 +50,7 @@ export const Checkout = () => {
     return acc + productWeight * quantity;
   }, 0);
 
-  const {
-    data: provinces,
-    isLoading: isLoadingProvinces,
-    error: provinceError,
-  } = useProvinces();
+  const { data: provinces, isLoading: isLoadingProvinces } = useProvinces();
   const { data: cities, isLoading: isLoadingCities } =
     useCitiesByProvince(selectedProvince);
 
@@ -66,7 +61,7 @@ export const Checkout = () => {
   );
 
   const { mutate: checkout } = useCheckout();
-  const { snapEmbed } = useSnap();
+  // const { snapEmbed } = useSnap();
 
   const {
     register,
@@ -111,17 +106,6 @@ export const Checkout = () => {
       courier: data.courier,
       cart_item_ids: selectedCartItems.map((item) => item.id),
     };
-
-    // checkout(payload, {
-    //   onSuccess: (response) => {
-    //     try {
-    //       showSuccessToast("Order placed successfully!");
-    //       window.open(response.payment_url);
-    //     } catch (error) {
-    //       console.error("Error during snapEmbed:", error);
-    //     }
-    //   },
-    // });
 
     checkout(payload, {
       onSuccess: (response) => {

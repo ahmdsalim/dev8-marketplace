@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
-import ReactPaginate from "react-paginate";
 import { useProducts } from "../hooks/productHooks";
 import { useCategory } from "../hooks/variantHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
 import { Pagination } from "../components/Pagination";
+import { LoadingOnError } from "../components/LoadingOnError";
 
 export const Products = () => {
   const navigate = useNavigate();
@@ -68,14 +68,21 @@ export const Products = () => {
     setPage(selected);
   };
 
-  if (isProductsLoading) return <p>Products Loading...</p>;
-  if (isCategoriesLoading) return <p>Categories Loading...</p>;
-  if (errorProducts) return <p>Error Products: {errorProducts.message}</p>;
-  if (errorCategories)
-    return <p>Error Categories: {errorCategories.message}</p>;
-
   return (
     <div className="products container bg-white max-w-7xl mx-auto px-4 py-12">
+      <LoadingOnError
+        isLoading={isProductsLoading}
+        error={errorProducts}
+        loadingMessage="Fetching Products..."
+        errorMessage="Error loading Products!"
+      />
+
+      <LoadingOnError
+        isLoading={isCategoriesLoading}
+        error={errorCategories}
+        loadingMessage="Fetching Categories..."
+        errorMessage="Error loading Categories!"
+      />
       <div className="products__header flex justify-between items-center mb-6">
         <h2 className="products__title text-2xl font-semibold">Product</h2>
         <button
@@ -86,13 +93,14 @@ export const Products = () => {
         </button>
       </div>
 
-      {filteredProducts.length === 0 && selectedCategory !== "Lihat semua" && (
-        <div className="text-center py-6">
-          <p className="text-xl font-semibold text-gray-700">
-            Tidak ada produk untuk kategori "{selectedCategory}".
-          </p>
-        </div>
-      )}
+      {filteredProducts.length === 0 &&
+        selectedCategory !== "View All Category" && (
+          <div className="text-center py-6">
+            <p className="text-xl font-semibold text-gray-700">
+              There is not product with this category "{selectedCategory}".
+            </p>
+          </div>
+        )}
 
       <div className="products__list flex flex-wrap justify-center">
         {products.map((product, index) => (

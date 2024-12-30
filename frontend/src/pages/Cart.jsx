@@ -10,6 +10,7 @@ import { useCheckoutItems } from "../hooks/checkoutHooks";
 import { showErrorToast, showSuccessToast } from "../utils/ToastUtils";
 import { useNavigate } from "react-router-dom";
 import { formatRupiah } from "../utils/FormatRupiah";
+import { LoadingOnError } from "../components/LoadingOnError";
 
 export const Cart = () => {
   const { data, error, isLoading } = useCartItems();
@@ -111,17 +112,15 @@ export const Cart = () => {
       <h1 className="cart__title text-2xl font-semibold mb-4 text-black">
         Your Cart
       </h1>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>Error loading cart items</div>
-      ) : cartItems.length === 0 ? (
+      <LoadingOnError
+        isLoading={isLoading}
+        error={error}
+        loadingMessage="Fetching Products..."
+        errorMessage="Error loading Products!"
+      />
+
+      {!isLoading && !error && cartItems.length === 0 && (
         <div className="empty-cart flex flex-col items-center text-center text-gray-600 py-16">
-          {/* <img
-            src="/images/empty-cart.png"
-            alt="Empty Cart"
-            className="mb-8 w-32 h-32"
-          /> */}
           <h2 className="text-xl font-semibold mb-4">Your cart is empty</h2>
           <p className="mb-4">
             It seems you haven’t added anything to your cart yet.
@@ -133,7 +132,10 @@ export const Cart = () => {
             Start Shopping
           </button>
         </div>
-      ) : (
+      )}
+
+      {/* Menampilkan cart items jika ada data */}
+      {!isLoading && !error && cartItems.length > 0 && (
         <div className="cart__items-container flex flex-col md:flex-row gap-4">
           <div className="cart__item-list md:w-2/3">
             {cartItems.map((item) => (

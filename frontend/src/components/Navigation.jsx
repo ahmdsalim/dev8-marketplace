@@ -41,14 +41,6 @@ export const Navigation = () => {
     }
   };
 
-  // const handleProfileRedirect = () => {
-  //   if (isAuthenticated()) {
-  //     navigate("/profile");
-  //   } else {
-  //     navigate("/login");
-  //   }
-  // };
-
   const handleLogout = () => {
     if (isLogoutLoading) return;
     logout();

@@ -1,28 +1,18 @@
 import React from "react";
 import { useCategory } from "../../hooks/variantHooks";
+import { LoadingOnError } from "../../components/LoadingOnError";
 
 export const Category = () => {
   const { data: categories = [], isLoading, error } = useCategory();
 
-  if (isLoading) {
-    return (
-      <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
-        <p>Loading categories...</p>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
-        <p className="text-red-500">
-          Error loading categories: {error.message}
-        </p>
-      </section>
-    );
-  }
   return (
     <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
+      <LoadingOnError
+        isLoading={isLoading}
+        error={error}
+        loadingMessage="Fetching Categories..."
+        errorMessage="Error loading Categories!"
+      />
       <div className="categories__header flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div className="categories__info mb-4 md:mb-0">
           <h2 className="categories__title text-3xl font-bold mb-2">

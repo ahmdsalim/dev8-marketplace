@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useProducts } from "../../hooks/productHooks";
 import { useNavigate } from "react-router-dom";
 import { formatRupiah } from "../../utils/FormatRupiah";
+import { LoadingOnError } from "../../components/LoadingOnError";
 
 export const Products = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -16,26 +17,15 @@ export const Products = () => {
 
   // const latestProducts = sortedProducts.slice(0, 4);
 
-  if (isLoading) {
-    return (
-      <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
-        <p>Loading categories...</p>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
-        <p className="text-red-500">
-          Error loading categories: {error.message}
-        </p>
-      </section>
-    );
-  }
-
   return (
     <section className="products container bg-white max-w-7xl mx-auto px-4 py-12">
+      <LoadingOnError
+        isLoading={isLoading}
+        error={error}
+        loadingMessage="Fetching Products..."
+        errorMessage="Error loading Products !"
+        noDataMessage="No order details data found."
+      />
       <div className="products__header flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div className="products__info mb-4 md:mb-0">
           <h2 className="products__title text-3xl font-bold">New Arrival</h2>
