@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { showSuccessToast, showErrorToast } from "../utils/ToastUtils";
 import { formatRupiah } from "../utils/FormatRupiah";
-// import useSnap from "../hooks/snapHooks";
 
 const checkoutSchema = yup.object().shape({
   province: yup.string().required("Province is required"),

@@ -35,7 +35,6 @@ const passwordSchema = yup.object().shape({
 
 export const Profile = () => {
   const { data: user = {}, error, isLoading } = useUser();
-  const noData = !user?.data;
 
   const { mutate: changePassword, isLoading: isChangingPassword } =
     useChangePassword();
@@ -106,10 +105,8 @@ export const Profile = () => {
         <LoadingOnError
           isLoading={isLoading}
           error={error}
-          noData={noData}
           loadingMessage="Fetching Profile..."
           errorMessage="Error loading Profile!"
-          noDataMessage="No data available"
         />
 
         <div className="profile__header flex justify-between items-center mb-8">

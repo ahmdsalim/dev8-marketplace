@@ -65,7 +65,7 @@ export const Cart = () => {
         showSuccessToast("Successfully removed item");
       },
       onError: (error) => {
-        console.error(error);
+        showErrorToast(error);
       },
     });
   };
@@ -101,7 +101,7 @@ export const Cart = () => {
         });
       },
       onError: (err) => {
-        console.error("Checkout failed: ", err);
+        // console.error("Checkout failed: ", err);
         showErrorToast("Checkout failed. Please try again");
       },
     });

@@ -28,7 +28,7 @@ export const Navigation = () => {
   const { data } = useCartItems();
 
   useEffect(() => {
-    if (data?.data?.length) {
+    if (data?.data) {
       setCartCount(data.data.length);
     }
   }, [data]);
@@ -102,7 +102,7 @@ export const Navigation = () => {
               <img src={logo} alt="Logo" className="logo__image h-16 w-auto" />
             </Link>
             <div className="nav__menu hidden md:block ml-10">
-              <div className="menu__items flex items-baseline space-x-4">
+              <div className="menu__items flex items-center space-x-4">
                 <Link
                   to="/"
                   className="menu__item text-black hover:text-black px-3 py-2 rounded-md text-sm hover:font-bold"

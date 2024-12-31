@@ -9,7 +9,7 @@ import { LoadingOnError } from "../components/LoadingOnError";
 
 export const Products = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("Lihat semua");
+  const [selectedCategory, setSelectedCategory] = useState("View All Category");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [priceRanges, setPriceRanges] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,7 +53,7 @@ export const Products = () => {
 
   const filteredProducts = products.filter((product) => {
     const matchCategory =
-      selectedCategory === "Lihat semua"
+      selectedCategory === "View All Category"
         ? true
         : product.category === selectedCategory;
     const matchPrice =
@@ -103,48 +103,87 @@ export const Products = () => {
         )}
 
       <div className="products__list flex flex-wrap justify-center">
-        {products.map((product, index) => (
-          <div
-            key={product.id}
-            className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
-            onClick={() => navigate(`/products/${product.slug}`)}
-          >
-            <div
-              className="product-card__image-wrapper relative aspect-square overflow-hidden"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <img
-                src={product.images[1].image}
-                alt={`${product.name} - Front`}
-                className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                  hoveredIndex === index ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              <img
-                src={product.images[0].image}
-                alt={`${product.name} - Back`}
-                className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                  hoveredIndex === index ? "opacity-100" : "opacity-0"
-                }`}
-              />
-            </div>
-            <div className="product-card__details flex flex-col items-center text-center p-4 ">
-              <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
-                {product.name}
-              </h2>
-              <span className="product-card__price text-sm font-bold text-black ">
-                {formatRupiah(product.price)}
-              </span>
-            </div>
-          </div>
-        ))}
+        {selectedCategory === "View All Category"
+          ? products.map((product, index) => (
+              <div
+                key={product.id}
+                className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
+                onClick={() => navigate(`/products/${product.slug}`)}
+              >
+                <div
+                  className="product-card__image-wrapper relative aspect-square overflow-hidden"
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  <img
+                    src={product.images[1].image}
+                    alt={`${product.name} - Front`}
+                    className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                      hoveredIndex === index ? "opacity-0" : "opacity-100"
+                    }`}
+                  />
+                  <img
+                    src={product.images[0].image}
+                    alt={`${product.name} - Back`}
+                    className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                      hoveredIndex === index ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </div>
+                <div className="product-card__details flex flex-col items-center text-center p-4 ">
+                  <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
+                    {product.name}
+                  </h2>
+                  <span className="product-card__price text-sm font-bold text-black ">
+                    {formatRupiah(product.price)}
+                  </span>
+                </div>
+              </div>
+            ))
+          : filteredProducts.map((product, index) => (
+              <div
+                key={product.id}
+                className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
+                onClick={() => navigate(`/products/${product.slug}`)}
+              >
+                <div
+                  className="product-card__image-wrapper relative aspect-square overflow-hidden"
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  <img
+                    src={product.images[1].image}
+                    alt={`${product.name} - Front`}
+                    className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                      hoveredIndex === index ? "opacity-0" : "opacity-100"
+                    }`}
+                  />
+                  <img
+                    src={product.images[0].image}
+                    alt={`${product.name} - Back`}
+                    className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                      hoveredIndex === index ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </div>
+                <div className="product-card__details flex flex-col items-center text-center p-4 ">
+                  <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
+                    {product.name}
+                  </h2>
+                  <span className="product-card__price text-sm font-bold text-black ">
+                    {formatRupiah(product.price)}
+                  </span>
+                </div>
+              </div>
+            ))}
       </div>
 
-      <Pagination
-        pageCount={Math.ceil(products.length / 10)}
-        onPageChange={handlePageChange}
-      />
+      {products.length > 0 && filteredProducts.length > 0 && (
+        <Pagination
+          pageCount={Math.ceil(products.length / 10)}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       {isModalOpen && (
         <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

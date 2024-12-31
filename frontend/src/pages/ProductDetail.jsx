@@ -4,7 +4,7 @@ import { addToCart } from "../hooks/cartHooks";
 import { useProduct } from "../hooks/productHooks";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { showSuccessToast } from "../utils/ToastUtils";
+import { showErrorToast, showSuccessToast } from "../utils/ToastUtils";
 import { formatRupiah } from "../utils/FormatRupiah";
 
 export const ProductDetail = () => {
@@ -47,6 +47,11 @@ export const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      showErrorToast("Please select a size first.");
+      return;
+    }
+
     mutation.mutate({
       product_id: product.id,
       variant_id: selectedSize.id,
