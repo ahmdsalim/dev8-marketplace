@@ -225,7 +225,7 @@ export const Orders = () => {
                         <div
                           key={item.id}
                           className="text-sm"
-                        >{`${item.product.name} (${item.variant.name}) x${item.quantity}`}</div>
+                        >{`${item.product.name} (${item.variant.name}) x ${item.quantity}pcs`}</div>
                       ))}
                     </td>
                     <td className="px-4 py-3">

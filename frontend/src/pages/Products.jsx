@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { X, ChevronDown, ChevronUp, Filter } from "lucide-react";
 import { useProducts } from "../hooks/productHooks";
 import { useCategory } from "../hooks/variantHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
@@ -89,7 +89,7 @@ export const Products = () => {
           onClick={() => setIsModalOpen(true)}
           className="products_filter-button px-4 py-2 rounded bg-gray-300 text-black"
         >
-          Filter
+          <Filter className="h-6 w-6 mr-2 text-gray-500" />
         </button>
       </div>
 

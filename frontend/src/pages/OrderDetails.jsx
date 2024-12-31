@@ -8,6 +8,9 @@ import {
   TruckIcon,
   CreditCardIcon,
   CheckCircleIcon,
+  MapPinHouse,
+  ListChecks,
+  Receipt,
 } from "lucide-react";
 import { LoadingOnError } from "../components/LoadingOnError";
 
@@ -61,6 +64,7 @@ export const OrderDetails = () => {
               <div className="order-detail__list flex flex-col space-y-6">
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
                   <div className="order-detail__label flex items-center text-sm font-medium text-gray-500 sm:w-1/3">
+                    <CalendarIcon className="h-4 w-4 mr-2 text-gray-500" />
                     Date
                   </div>
                   <div className="order-detail__value mt-1 text-sm text-gray-900 sm:mt-0 sm:w-2/3">
@@ -69,6 +73,7 @@ export const OrderDetails = () => {
                 </div>
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
                   <div className="order-detail__label flex items-center text-sm font-medium text-gray-500 sm:w-1/3">
+                    <TruckIcon className="h-4 w-4 mr-2 text-gray-500" />
                     Status
                   </div>
                   <div className="order-detail__value mt-1 sm:mt-0 sm:w-2/3">
@@ -78,7 +83,8 @@ export const OrderDetails = () => {
                   </div>
                 </div>
                 <div className="order-detail__row flex flex-col sm:flex-row">
-                  <div className="order-detail__label text-sm font-medium text-gray-500 sm:w-1/3">
+                  <div className="order-detail__label flex items-center text-sm font-medium text-gray-500 sm:w-1/3">
+                    <ListChecks className="h-4 w-4 mr-2 text-gray-500" />
                     Items
                   </div>
                   <div className="order-detail__value mt-1 text-sm text-gray-900 sm:mt-0 sm:w-2/3">
@@ -95,7 +101,7 @@ export const OrderDetails = () => {
                           </div>
                           <div className="order-detail__item-price ml-4 flex-shrink-0">
                             <span className="order-detail__item-price-text font-medium">
-                              {item.quantity} x {formatRupiah(item.price)}
+                              {item.quantity} pcs x {formatRupiah(item.price)}
                             </span>
                           </div>
                         </li>
@@ -104,7 +110,8 @@ export const OrderDetails = () => {
                   </div>
                 </div>
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
-                  <div className="order-detail__label text-sm font-medium text-gray-500 sm:w-1/3">
+                  <div className="order-detail__label flex items-center text-sm font-medium text-gray-500 sm:w-1/3">
+                    <Receipt className="h-4 w-4 mr-2 text-gray-500" />
                     Total
                   </div>
                   <div className="order-detail__value mt-1 text-sm text-gray-900 sm:mt-0 sm:w-2/3">
@@ -112,7 +119,8 @@ export const OrderDetails = () => {
                   </div>
                 </div>
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
-                  <div className="order-detail__label text-sm font-medium text-gray-500 sm:w-1/3">
+                  <div className="order-detail__label flex text-sm items-center font-medium text-gray-500 sm:w-1/3">
+                    <MapPinHouse className="h-4 w-4 mr-2 text-gray-500" />
                     Shipping Address
                   </div>
                   <div className="order-detail__value mt-1 text-sm text-gray-900 sm:mt-0 sm:w-2/3">
@@ -121,6 +129,7 @@ export const OrderDetails = () => {
                 </div>
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
                   <div className="order-detail__label flex items-center text-sm font-medium text-gray-500 sm:w-1/3">
+                    <CreditCardIcon className="h-4 w-4 mr-2 text-gray-500" />
                     Payment Method
                   </div>
                   <div className="order-detail__value mt-1 text-sm text-gray-900 sm:mt-0 sm:w-2/3">
