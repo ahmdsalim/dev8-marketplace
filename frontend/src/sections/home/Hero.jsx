@@ -17,13 +17,8 @@ export const Hero = () => {
             Reto
           </h1>
           <p className="hero__description mt-2 text-lg sm:text-xl md:text-2xl">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
-            omnis exercitationem fugiat, ad esse perferendis repudiandae ratione
-            beatae excepturi voluptate, est facere vero nemo nisi. Repudiandae
-            beatae veniam labore dignissimos voluptas. Sint ut mollitia, vitae
-            aliquid beatae libero assumenda aspernatur, reiciendis, repellat
-            voluptate quaerat dignissimos necessitatibus? Modi deleniti
-            cupiditate dolorem!
+            Reto is a local brand that collaborates with Indonesian figures and
+            highlights widely discussed current issues.
           </p>
           <Link
             to="/products"

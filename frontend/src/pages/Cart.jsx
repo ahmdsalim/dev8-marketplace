@@ -102,7 +102,7 @@ export const Cart = () => {
       },
       onError: (err) => {
         // console.error("Checkout failed: ", err);
-        showErrorToast("Checkout failed. Please try again");
+        showErrorToast(err);
       },
     });
   };
