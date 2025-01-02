@@ -237,13 +237,13 @@ export const Products = () => {
             <div className="mt-6 space-y-2">
               <button
                 onClick={handleApplyFilters}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                className="w-full px-4 py-2 bg-black text-white rounded hover:bg-white hover:text-black transition-colors border"
               >
                 Apply Filters
               </button>
               <button
                 onClick={handleReset}
-                className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                className="w-full px-4 py-2 bg-white text-black rounded hover:bg-black hover:text-white transition-colors border"
               >
                 Reset Filters
               </button>
