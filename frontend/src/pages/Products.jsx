@@ -11,6 +11,8 @@ export const Products = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("View All Category");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
+  const [tempCategory, setTempCategory] = useState("View All Category");
+  const [tempPriceRange, setTempPriceRange] = useState(null);
   const [priceRanges, setPriceRanges] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
@@ -53,19 +55,34 @@ export const Products = () => {
 
   const filteredProducts = products.filter((product) => {
     const matchCategory =
-      selectedCategory === "View All Category"
-        ? true
-        : product.category === selectedCategory;
+      selectedCategory === "View All Category" ||
+      product.category === selectedCategory;
     const matchPrice =
-      selectedPriceRange === null
-        ? true
-        : product.price >= selectedPriceRange.min &&
-          product.price <= selectedPriceRange.max;
+      !selectedPriceRange ||
+      (product.price >= selectedPriceRange.min &&
+        product.price <= selectedPriceRange.max);
     return matchCategory && matchPrice;
   });
 
   const handlePageChange = ({ selected }) => {
     setPage(selected);
+  };
+
+  const handleReset = () => {
+    setTempCategory("View All Category");
+    setTempPriceRange(null);
+  };
+
+  const handleApplyFilters = () => {
+    setSelectedCategory(tempCategory);
+    setSelectedPriceRange(tempPriceRange);
+    setIsModalOpen(false);
+  };
+
+  const openModal = () => {
+    setTempCategory(selectedCategory);
+    setTempPriceRange(selectedPriceRange);
+    setIsModalOpen(true);
   };
 
   return (
@@ -86,96 +103,58 @@ export const Products = () => {
       <div className="products__header flex justify-between items-center mb-6">
         <h2 className="products__title text-2xl font-semibold">Product</h2>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className="products_filter-button px-4 py-2 rounded bg-gray-300 text-black"
         >
           <Filter className="h-6 w-6 mr-2 text-gray-500" />
         </button>
       </div>
 
-      {filteredProducts.length === 0 &&
-        selectedCategory !== "View All Category" && (
-          <div className="text-center py-6">
-            <p className="text-xl font-semibold text-gray-700">
-              There is not product with this category "{selectedCategory}".
-            </p>
-          </div>
-        )}
+      {filteredProducts.length === 0 && (
+        <div className="text-center py-6">
+          <p className="text-xl font-semibold text-gray-700">
+            No products found with the selected filters.
+          </p>
+        </div>
+      )}
 
       <div className="products__list flex flex-wrap justify-center">
-        {selectedCategory === "View All Category"
-          ? products.map((product, index) => (
-              <div
-                key={product.id}
-                className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
-                onClick={() => navigate(`/products/${product.slug}`)}
-              >
-                <div
-                  className="product-card__image-wrapper relative aspect-square overflow-hidden"
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                >
-                  <img
-                    src={product.images[1].image}
-                    alt={`${product.name} - Front`}
-                    className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                      hoveredIndex === index ? "opacity-0" : "opacity-100"
-                    }`}
-                  />
-                  <img
-                    src={product.images[0].image}
-                    alt={`${product.name} - Back`}
-                    className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                      hoveredIndex === index ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                </div>
-                <div className="product-card__details flex flex-col items-center text-center p-4 ">
-                  <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
-                    {product.name}
-                  </h2>
-                  <span className="product-card__price text-sm font-bold text-black ">
-                    {formatRupiah(product.price)}
-                  </span>
-                </div>
-              </div>
-            ))
-          : filteredProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
-                onClick={() => navigate(`/products/${product.slug}`)}
-              >
-                <div
-                  className="product-card__image-wrapper relative aspect-square overflow-hidden"
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                >
-                  <img
-                    src={product.images[1].image}
-                    alt={`${product.name} - Front`}
-                    className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                      hoveredIndex === index ? "opacity-0" : "opacity-100"
-                    }`}
-                  />
-                  <img
-                    src={product.images[0].image}
-                    alt={`${product.name} - Back`}
-                    className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                      hoveredIndex === index ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                </div>
-                <div className="product-card__details flex flex-col items-center text-center p-4 ">
-                  <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
-                    {product.name}
-                  </h2>
-                  <span className="product-card__price text-sm font-bold text-black ">
-                    {formatRupiah(product.price)}
-                  </span>
-                </div>
-              </div>
-            ))}
+        {filteredProducts.map((product, index) => (
+          <div
+            key={product.id}
+            className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
+            onClick={() => navigate(`/products/${product.slug}`)}
+          >
+            <div
+              className="product-card__image-wrapper relative aspect-square overflow-hidden"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <img
+                src={product.images[1].image}
+                alt={`${product.name} - Front`}
+                className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                  hoveredIndex === index ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <img
+                src={product.images[0].image}
+                alt={`${product.name} - Back`}
+                className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                  hoveredIndex === index ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            </div>
+            <div className="product-card__details flex flex-col items-center text-center p-4 ">
+              <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
+                {product.name}
+              </h2>
+              <span className="product-card__price text-sm font-bold text-black ">
+                {formatRupiah(product.price)}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {products.length > 0 && filteredProducts.length > 0 && (
@@ -211,12 +190,9 @@ export const Products = () => {
                   {categories.map((category) => (
                     <button
                       key={category.id}
-                      onClick={() => {
-                        setSelectedCategory(category.name);
-                        setIsModalOpen(false);
-                      }}
+                      onClick={() => setTempCategory(category.name)}
                       className={`accordion__item py-2 text-left ${
-                        selectedCategory === category.name
+                        tempCategory === category.name
                           ? "font-semibold text-blue-600"
                           : ""
                       }`}
@@ -245,12 +221,9 @@ export const Products = () => {
                   {priceRanges.map((range, index) => (
                     <button
                       key={index + 1}
-                      onClick={() => {
-                        setSelectedPriceRange(range);
-                        setIsModalOpen(false);
-                      }}
+                      onClick={() => setTempPriceRange(range)}
                       className={`accordion__item py-2 text-left ${
-                        selectedPriceRange?.label === range.label
+                        tempPriceRange?.label === range.label
                           ? "font-semibold text-blue-600"
                           : ""
                       }`}
@@ -260,6 +233,20 @@ export const Products = () => {
                   ))}
                 </div>
               )}
+            </div>
+            <div className="mt-6 space-y-2">
+              <button
+                onClick={handleApplyFilters}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Apply Filters
+              </button>
+              <button
+                onClick={handleReset}
+                className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+              >
+                Reset Filters
+              </button>
             </div>
           </div>
         </div>

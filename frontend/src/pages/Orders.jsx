@@ -89,6 +89,12 @@ export const Orders = () => {
     }
   };
 
+  const handleReset = () => {
+    setStartDate("");
+    setEndDate("");
+    setQuery("");
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto p-4 space-y-6">
       <LoadingOnError
@@ -185,6 +191,12 @@ export const Orders = () => {
                 <option value="highest">Highest Amount</option>
                 <option value="lowest">Lowest Amount</option>
               </select>
+              <button
+                onClick={handleReset}
+                className="px-4 py-2 border rounded-lg bg-black text-white hover:bg-white hover:text-black transition-colors"
+              >
+                Reset
+              </button>
             </div>
           </div>
 
