@@ -90,12 +90,12 @@ export const Auth = () => {
   };
 
   return (
-    <div className="auth min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="auth__container w-full max-w-md bg-white  p-8">
-        <h2 className="auth__title text-2xl font-bold text-center mb-4 text-black">
+    <div className="auth min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="auth__container w-full max-w-md bg-white p-8">
+        <h2 className="auth__title text-2xl font-bold text-center mb-2 text-black">
           {isLogin ? "Login" : "Register"}
         </h2>
-        <p className="auth__description text-center text-gray-600 mb-6">
+        <p className="auth__description text-center text-gray mb-6">
           {isLogin
             ? "Enter your credentials to access your account"
             : "Create a new account to get started"}
@@ -109,7 +109,7 @@ export const Auth = () => {
               <div className="auth__form-group">
                 <label
                   htmlFor="username"
-                  className="auth__label block text-sm font-medium text-gray-700"
+                  className="auth__label block text-sm font-medium text-black"
                 >
                   Username
                 </label>
@@ -118,8 +118,8 @@ export const Auth = () => {
                   type="text"
                   placeholder="Username"
                   {...register("username")}
-                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                          focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray rounded-md text-sm shadow-sm placeholder-gray
+                          focus:outline-none focus:border-gray focus:ring-1 focus:ring-gray"
                 />
                 {errors.username && (
                   <p className="auth_error text-red-500 text-xs italic">
@@ -130,7 +130,7 @@ export const Auth = () => {
               <div className="auth__form-group">
                 <label
                   htmlFor="name"
-                  className="auth__label block text-sm font-medium text-gray-700"
+                  className="auth__label block text-sm font-medium text-black"
                 >
                   Name
                 </label>
@@ -139,8 +139,8 @@ export const Auth = () => {
                   type="text"
                   placeholder="Name"
                   {...register("name")}
-                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                         focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray rounded-md text-sm shadow-sm placeholder-gray
+                         focus:outline-none focus:border-gray focus:ring-1 focus:ring-gray"
                 />
                 {errors.name && (
                   <p className="auth__error text-red-500 text-xs italic">
@@ -151,7 +151,7 @@ export const Auth = () => {
               <div className="auth__form-group">
                 <label
                   htmlFor="email"
-                  className="auth__label block text-sm font-medium text-gray-700"
+                  className="auth__label block text-sm font-medium text-black"
                 >
                   Email
                 </label>
@@ -160,8 +160,8 @@ export const Auth = () => {
                   type="email"
                   placeholder="abc@example.com"
                   {...register("email")}
-                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                        focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray rounded-md text-sm shadow-sm placeholder-gray
+                        focus:outline-none focus:border-gray focus:ring-1 focus:ring-gray"
                 />
                 {errors.email && (
                   <p className="auth__error text-red-500 text-xs italic">
@@ -176,7 +176,7 @@ export const Auth = () => {
               <div>
                 <label
                   htmlFor="username"
-                  className="auth__label block text-sm font-medium text-gray-700"
+                  className="auth__label block text-sm font-medium text-black"
                 >
                   Username
                 </label>
@@ -185,8 +185,8 @@ export const Auth = () => {
                   type="text"
                   placeholder="Username"
                   {...register("username")}
-                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                      focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+                  className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray rounded-md text-sm shadow-sm placeholder-gray
+                      focus:outline-none focus:border-gray focus:ring-1 focus:ring-gray"
                 />
                 {errors.username && (
                   <p className="auth__error text-red-500 text-xs italic">
@@ -199,7 +199,7 @@ export const Auth = () => {
           <div>
             <label
               htmlFor="password"
-              className="auth__label block text-sm font-medium text-gray-700"
+              className="auth__label block text-sm font-medium text-black"
             >
               Password
             </label>
@@ -208,8 +208,8 @@ export const Auth = () => {
               type="password"
               placeholder="Password"
               {...register("password")}
-              className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                        focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+              className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray rounded-md text-sm shadow-sm placeholder-gray
+                        focus:outline-none focus:border-gray focus:ring-1 focus:ring-gray"
             />
             {errors.password && (
               <p className="auth__error text-red-500 text-xs italic">
@@ -217,33 +217,12 @@ export const Auth = () => {
               </p>
             )}
           </div>
-          {/* <div>
-            <label
-              htmlFor="email"
-              className="auth__label block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="abc@example.com"
-              {...register("email")}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                        focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
-            />
-            {errors.email && (
-              <p className="auth__error text-red-500 text-xs italic">
-                {errors.email.message}
-              </p>
-            )}
-          </div> */}
 
           {!isLogin && (
             <div>
               <label
                 htmlFor="phone"
-                className="auth__label block text-sm font-medium text-gray-700"
+                className="auth__label block text-sm font-medium text-black"
               >
                 Phone Number
               </label>
@@ -252,8 +231,8 @@ export const Auth = () => {
                 type="text"
                 placeholder="Phone Number"
                 {...register("phone")}
-                className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                          focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
+                className="auth__input mt-1 block w-full px-3 py-2 bg-white border border-gray rounded-md text-sm shadow-sm placeholder-gray
+                          focus:outline-none focus:border-gray focus:ring-1 focus:ring-gray"
               />
               {errors.phone && (
                 <p className="auth__error text-red-500 text-xs italic">
@@ -268,11 +247,11 @@ export const Auth = () => {
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="auth__checkbox h-4 w-4 text-black focus:ring-gray-500 border-gray-300 rounded"
+                  className="auth__checkbox h-4 w-4 text-black focus:ring-gray border-gray rounded"
                 />
                 <label
                   htmlFor="remember-me"
-                  className="auth__remember-label ml-2 block text-sm text-gray-700"
+                  className="auth__remember-label ml-2 block text-sm text-black font-medium"
                 >
                   Remember me
                 </label>
@@ -280,7 +259,7 @@ export const Auth = () => {
               <div className="auth__forgot text-sm">
                 <button
                   type="button"
-                  className="auth__forgot-button font-medium text-gray-600 hover:text-black"
+                  className="auth__forgot-button font-medium text-black hover:underline"
                 >
                   Forgot your password?
                 </button>
@@ -289,7 +268,7 @@ export const Auth = () => {
           )}
           <button
             type="submit"
-            className="auth__submit w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            className="auth__submit w-full py-2 px-4 border-2 border rounded-md text-sm font-medium text-white bg-black hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray"
             disabled={isLoginLoading || isRegisterLoading}
           >
             {isLogin ? "Login" : "Register"}
@@ -298,7 +277,7 @@ export const Auth = () => {
         <div className="auth__toggle mt-6 text-center">
           <button
             type="button"
-            className="auth__toggle-button text-sm text-gray-600 hover:text-black"
+            className="auth__toggle-button text-sm text-black hover:underline"
             onClick={toggleAuthMode}
           >
             {isLogin
