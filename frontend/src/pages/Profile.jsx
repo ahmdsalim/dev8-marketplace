@@ -79,6 +79,7 @@ export const Profile = () => {
     changeProfile(data, {
       onSuccess: () => {
         showSuccessToast("Profile update successfully");
+        reset(data);
       },
       onError: (err) => {
         const errorMessage =
@@ -161,7 +162,7 @@ export const Profile = () => {
                   <input
                     id="name"
                     {...register("name")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {errors.name && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -180,7 +181,7 @@ export const Profile = () => {
                   <input
                     id="username"
                     {...register("username")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {errors.username && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -199,7 +200,7 @@ export const Profile = () => {
                   <input
                     id="email"
                     {...register("email")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {errors.email && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -218,7 +219,7 @@ export const Profile = () => {
                   <input
                     id="phone"
                     {...register("phone")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {errors.phone && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -229,8 +230,8 @@ export const Profile = () => {
 
                 <button
                   type="submit"
-                  disabled={isChangingPassword}
-                  className="profile__submit-button w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                  disabled={isChangingProfile}
+                  className="profile__submit-button w-full border bg-black text-white py-2 px-4 rounded-md hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-gray focus:ring-offset-2"
                 >
                   {isChangingProfile ? "Updating..." : "Update Profile"}
                 </button>
@@ -245,7 +246,7 @@ export const Profile = () => {
                 <div className="profile__form-group space-y-2">
                   <label
                     htmlFor="current_password"
-                    className="profile__form-label block text-sm font-medium text-gray-700"
+                    className="profile__form-label block text-sm font-medium text-black"
                   >
                     Current Password
                   </label>
@@ -253,7 +254,7 @@ export const Profile = () => {
                     id="current_password"
                     type="password"
                     {...registerPassword("current_password")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {passwordErrors.current_password && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -265,7 +266,7 @@ export const Profile = () => {
                 <div className="profile__form-group space-y-2">
                   <label
                     htmlFor="new_password"
-                    className="profile__form-label block text-sm font-medium text-gray-700"
+                    className="profile__form-label block text-sm font-medium text-black"
                   >
                     New Password
                   </label>
@@ -273,7 +274,7 @@ export const Profile = () => {
                     id="new_password"
                     type="password"
                     {...registerPassword("new_password")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {passwordErrors.new_password && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -293,7 +294,7 @@ export const Profile = () => {
                     id="confirm_password"
                     type="password"
                     {...registerPassword("confirm_password")}
-                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="profile__form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray focus:border-transparent"
                   />
                   {passwordErrors.confirm_password && (
                     <span className="profile__form-error text-red-500 text-sm">
@@ -305,7 +306,7 @@ export const Profile = () => {
                 <button
                   type="submit"
                   disabled={isChangingPassword}
-                  className="profile__submit-button w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                  className="profile__submit-button w-full border bg-black text-white py-2 px-4 rounded-md hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-gray focus:ring-offset-2"
                 >
                   {isChangingPassword ? "Updating..." : "Update Password"}
                 </button>

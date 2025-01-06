@@ -8,7 +8,6 @@ import { Pagination } from "../components/Pagination";
 import { LoadingOnError } from "../components/LoadingOnError";
 
 export const Products = () => {
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("View All Category");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [tempCategory, setTempCategory] = useState("View All Category");
@@ -18,6 +17,8 @@ export const Products = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
 
@@ -106,13 +107,13 @@ export const Products = () => {
           onClick={openModal}
           className="products_filter-button px-4 py-2 rounded bg-white text-black"
         >
-          <Filter className="h-6 w-6 mr-2 text-gray" />
+          <Filter className="h-6 w-6 mr-2 text-black" />
         </button>
       </div>
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-6">
-          <p className="text-xl font-semibold text-gray">
+          <p className="text-xl font-semibold text-black">
             No products found with the selected filters.
           </p>
         </div>

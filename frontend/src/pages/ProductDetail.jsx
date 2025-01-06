@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { addToCart } from "../hooks/cartHooks";
 import { useProduct } from "../hooks/productHooks";
@@ -48,27 +48,6 @@ export const ProductDetail = () => {
       setQuantity((prevQty) => prevQty - 1);
     }
   };
-
-  // const handleAddToCart = () => {
-  //   if (!isAuthenticated) {
-  //     navigate("/login");
-  //     showErrorToast("You need to login first.");
-  //     return;
-  //   } else {
-  //     if (!selectedSize) {
-  //       showErrorToast("Please select a size first.");
-  //       return;
-  //     }
-
-  //     mutation.mutate({
-  //       product_id: product.id,
-  //       variant_id: selectedSize.id,
-  //       quantity,
-  //     });
-  //     navigate("/cart");
-  //     showSuccessToast("Item added to cart");
-  //   }
-  // };
 
   const handleAddToCart = async () => {
     if (!selectedSize) {
@@ -149,7 +128,7 @@ export const ProductDetail = () => {
                     className={`product-detail__size px-3 py-1 border ${
                       selectedSize?.id === variant.id
                         ? "bg-black text-white"
-                        : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                        : "border-gray text-gray hover:border-black hover:text-black"
                     } ${
                       variant.pivot.stock === 0
                         ? "opacity-50 cursor-not-allowed"
@@ -191,18 +170,18 @@ export const ProductDetail = () => {
             <button
               onClick={handleAddToCart}
               disabled={mutation.isLoading}
-              className="product-detail__add-to-cart w-full bg-black text-white py-2 px-4 mb-4 hover:bg-gray-800"
+              className="product-detail__add-to-cart w-full border bg-black text-white py-2 px-4 mb-4 hover:bg-white hover:text-black"
             >
               {mutation.isLoading ? "Added..." : "+ Add To Cart"}
             </button>
-            <nav className="product-detail__tabs flex border-b border-gray-200 mb-4">
+            <nav className="product-detail__tabs flex border-b border-gray mb-4">
               {["details", "sizing", "shipping", "reviews"].map((tab) => (
                 <button
                   key={tab}
                   className={`product-detail__tab flex-1 py-2 px-1 text-center font-medium text-sm ${
                     activeTab === tab
                       ? "border-b-2 border-black text-black"
-                      : "border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                      : "border-b-2 border-transparent text-gray hover:text-black"
                   }`}
                   onClick={() => setActiveTab(tab)}
                 >

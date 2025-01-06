@@ -30,24 +30,18 @@ export const Checkout = () => {
   const [selectedService, setSelectedService] = useState("");
   const [shippingCost, setShippingCost] = useState(null);
 
-  // const [snapShow, setSnapShow] = useState(null);
-
   const location = useLocation();
   const selectedCartItems = location.state?.selectedCartItems || [];
 
-  const subTotal = () => {
-    const item = selectedCartItems.map((item) => item.product.price);
-    const calculateItem = item.reduce(
-      (acc, currentValue) => acc + currentValue
-    );
-    return calculateItem;
-  };
+  const subTotal = selectedCartItems.reduce(
+    (acc, item) => acc + item.product.price,
+    0
+  );
 
-  const totalWeight = selectedCartItems.reduce((acc, item) => {
-    const productWeight = item.product?.weight || 0;
-    const quantity = item.quantity || 1;
-    return acc + productWeight * quantity;
-  }, 0);
+  const totalWeight = selectedCartItems.reduce(
+    (acc, item) => acc + (item.product?.weight || 0) * (item.quantity || 1),
+    0
+  );
 
   const { data: provinces, isLoading: isLoadingProvinces } = useProvinces();
   const { data: cities, isLoading: isLoadingCities } =
@@ -60,7 +54,6 @@ export const Checkout = () => {
   );
 
   const { mutate: checkout } = useCheckout();
-  // const { snapEmbed } = useSnap();
 
   const {
     register,
@@ -90,12 +83,6 @@ export const Checkout = () => {
     );
     setShippingCost(selectedCost?.cost[0]?.value || 0);
   };
-
-  useEffect(() => {
-    if (!deliveryCosts?.data?.length) {
-      setShippingCost(null);
-    }
-  }, [deliveryCosts]);
 
   const onSubmit = (data) => {
     const payload = {
@@ -154,7 +141,7 @@ export const Checkout = () => {
                   id="province"
                   {...register("province")}
                   onChange={handleProvinceChange}
-                  className="checkout__input w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+                  className="checkout__input w-full px-3 py-2 border border-black rounded-md bg-white"
                 >
                   <option value="">Select province</option>
                   {isLoadingProvinces ? (
@@ -171,7 +158,7 @@ export const Checkout = () => {
                   )}
                 </select>
                 {errors.province && (
-                  <p className="checkout__error text-red-600 text-sm">
+                  <p className="checkout__error text-red-500 text-sm">
                     {errors.province.message}
                   </p>
                 )}
@@ -190,7 +177,7 @@ export const Checkout = () => {
                   {...register("city")}
                   onChange={handleCityChange}
                   disabled={!selectedProvince || isLoadingCities}
-                  className="checkout__input w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+                  className="checkout__input w-full px-3 py-2 border border-black rounded-md bg-white"
                 >
                   <option value="">Select city</option>
                   {isLoadingCities ? (
@@ -204,7 +191,7 @@ export const Checkout = () => {
                   )}
                 </select>
                 {errors.city && (
-                  <p className="checkout__error text-red-600 text-sm">
+                  <p className="checkout__error text-red-500 text-sm">
                     {errors.city.message}
                   </p>
                 )}
@@ -223,7 +210,7 @@ export const Checkout = () => {
                   {...register("courier")}
                   disabled={!selectedCity}
                   onChange={handleCourierChange}
-                  className="checkout__input w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+                  className="checkout__input w-full px-3 py-2 border border-black rounded-md bg-white"
                 >
                   <option value="">Select courier</option>
                   <option value="jne">JNE</option>
@@ -231,7 +218,7 @@ export const Checkout = () => {
                   <option value="tiki">TIKI</option>
                 </select>
                 {errors.courier && (
-                  <p className="checkout__error text-red-600 text-sm">
+                  <p className="checkout__error text-red-500 text-sm">
                     {errors.courier.message}
                   </p>
                 )}
@@ -250,7 +237,7 @@ export const Checkout = () => {
                   {...register("service")}
                   disabled={!deliveryCosts?.data.length || isLoadingDelivery}
                   onChange={handleServiceChange}
-                  className="checkout__input w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+                  className="checkout__input w-full px-3 py-2 border border-black rounded-md bg-white"
                 >
                   <option value="">Select service</option>
                   {isLoadingDelivery ? (
@@ -264,7 +251,7 @@ export const Checkout = () => {
                   )}
                 </select>
                 {errors.service && (
-                  <p className="checkout__error text-red-600 text-sm">
+                  <p className="checkout__error text-red-500 text-sm">
                     {errors.service.message}
                   </p>
                 )}
@@ -281,10 +268,10 @@ export const Checkout = () => {
                 <textarea
                   id="delivery_address"
                   {...register("delivery_address")}
-                  className="checkout__input w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="checkout__input w-full px-3 py-2 border border-black rounded-md"
                 ></textarea>
                 {errors.delivery_address && (
-                  <p className="checkout__error text-red-600 text-sm">
+                  <p className="checkout__error text-red-500 text-sm">
                     {errors.delivery_address.message}
                   </p>
                 )}
@@ -294,7 +281,7 @@ export const Checkout = () => {
 
           {/* Order Details Section */}
           <div className="checkout__order flex-1">
-            <div className="checkout__order-summary bg-white p-6 border border-gray-200 rounded-lg">
+            <div className="checkout__order-summary bg-white p-6 border border-black rounded-lg">
               <h2 className="checkout__section-title text-2xl font-semibold mb-6">
                 Order Details
               </h2>
@@ -308,7 +295,7 @@ export const Checkout = () => {
                       <h3 className="checkout__item-name font-medium">
                         {cartItem.product.name}
                       </h3>
-                      <p className="checkout__item-variant text-sm text-gray-600">
+                      <p className="checkout__item-variant text-sm text-black">
                         {cartItem.variant.name}
                       </p>
                     </div>
@@ -320,7 +307,7 @@ export const Checkout = () => {
                 <div className="checkout__totals border-t pt-4">
                   <div className="flex justify-between mb-2">
                     <span>Subtotal</span>
-                    <span>{formatRupiah(subTotal())}</span>
+                    <span>{formatRupiah(subTotal)}</span>
                   </div>
                   <div className="flex justify-between mb-2">
                     <span>Shipping</span>
@@ -336,14 +323,14 @@ export const Checkout = () => {
                   </div>
                   <div className="checkout__total flex justify-between font-medium text-lg border-t pt-2">
                     <span>Total</span>
-                    <span>{formatRupiah(subTotal() + shippingCost)}</span>
+                    <span>{formatRupiah(subTotal + shippingCost)}</span>
                   </div>
                 </div>
               </div>
               <button
                 type="submit"
                 form="checkoutForm"
-                className="checkout__button w-full bg-black text-white mt-4 py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200"
+                className="checkout__button w-full border bg-black text-white mt-4 py-2 px-4 rounded-md hover:bg-white hover:text-black transition duration-200"
               >
                 Place Order
               </button>

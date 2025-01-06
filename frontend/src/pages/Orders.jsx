@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderPagination } from "../hooks/orderHooks";
 import { formatRupiah } from "../utils/FormatRupiah";
 import { formatDate } from "../utils/FormatDate";
 import { Pagination } from "../components/Pagination";
 import { LoadingOnError } from "../components/LoadingOnError";
+
+const StatusButton = ({ status, count, setSelectedStatus }) => {
+  <button
+    onClick={() => setSelectedStatus(status)}
+    className="px-4 py-2 rounded-full border hover:bg-gray"
+  >
+    {status
+      ? `${status.charAt(0).toUpperCase() + status.slice(1)} (${count})`
+      : `All Orders (${count})`}
+  </button>;
+};
 
 export const Orders = () => {
   const [page, setPage] = useState(0);
@@ -16,21 +27,26 @@ export const Orders = () => {
   const [filteredItems, setFilteredItems] = useState(orders);
   const [sortOrder, setSortOrder] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+
   const navigate = useNavigate();
 
   const handleSearchChange = (e) => setQuery(e.target.value.toLowerCase());
 
-  const filterByDate = (orders) => {
-    if (!startDate && !endDate) return orders;
-    return orders.filter((order) => {
-      const orderDate = new Date(order.order_date);
-      const isAfterStartDate = startDate
-        ? orderDate >= new Date(startDate)
-        : true;
-      const isBeforeEndDate = endDate ? orderDate <= new Date(endDate) : true;
-      return isAfterStartDate && isBeforeEndDate;
-    });
-  };
+  const filterByDate = useCallback(
+    (orders) => {
+      if (!startDate && !endDate) return orders;
+      return orders.filter((order) => {
+        const orderDate = new Date(order.order_date);
+        const isAfterStartDate = startDate
+          ? orderDate >= new Date(startDate)
+          : true;
+
+        const isBeforeEndDate = endDate ? orderDate <= new Date(endDate) : true;
+        return isAfterStartDate && isBeforeEndDate;
+      });
+    },
+    [startDate, , endDate]
+  );
 
   const sortOrders = (orders) => {
     switch (sortOrder) {
@@ -51,24 +67,24 @@ export const Orders = () => {
     }
   };
 
-  useEffect(() => {
-    if (!orders.length) return;
-
+  const filteredAndSortedOrders = useMemo(() => {
     let filtered = orders.filter((order) =>
       order.order_items.some((item) =>
         item.product.name.toLowerCase().includes(query.toLowerCase())
       )
     );
-
     if (selectedStatus) {
       filtered = filtered.filter((order) => order.status === selectedStatus);
     }
 
     filtered = filterByDate(filtered);
     filtered = sortOrders(filtered);
+    return filtered;
+  }, [query, selectedStatus, orders, filterByDate, sortOrders]);
 
-    setFilteredItems(filtered);
-  }, [query, startDate, endDate, sortOrder, orders, selectedStatus]);
+  useEffect(() => {
+    setFilteredItems(filteredAndSortedOrders);
+  }, [filteredAndSortedOrders]);
 
   const handleViewDetails = (order) => navigate(`/order-detail/${order.id}`);
 
@@ -105,7 +121,7 @@ export const Orders = () => {
       />
 
       {!isLoading && !error && orders.length === 0 ? (
-        <div className="empty-cart flex flex-col items-center text-center text-gray-600 py-16">
+        <div className="empty-cart flex flex-col items-center text-center text-gray py-16">
           <h2 className="text-xl font-semibold mb-4">
             Your Order History is Empty
           </h2>
@@ -114,7 +130,7 @@ export const Orders = () => {
           </p>
           <button
             onClick={() => navigate("/products")}
-            className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors"
+            className="bg-black text-white py-2 px-4 border rounded hover:bg-white hover:text-black transition-colors"
           >
             Start Shopping
           </button>
@@ -125,17 +141,14 @@ export const Orders = () => {
             <h1 className="text-2xl font-semibold">Order History</h1>
             <div className="flex flex-wrap gap-2">
               {["", "pending", "processed", "cancelled"].map((status) => (
-                <button
+                <StatusButton
                   key={status}
-                  className="px-4 py-2 rounded-full border hover:bg-gray-50"
-                  onClick={() => setSelectedStatus(status)}
-                >
-                  {status
-                    ? `${status.charAt(0).toUpperCase() + status.slice(1)} (${
-                        orders.filter((order) => order.status === status).length
-                      })`
-                    : `All Orders (${orders.length})`}
-                </button>
+                  status={status}
+                  count={
+                    orders.filter((order) => order.status === status).length
+                  }
+                  setSelectedStatus={setSelectedStatus}
+                />
               ))}
             </div>
           </div>
@@ -167,7 +180,7 @@ export const Orders = () => {
                   className="pl-8 pr-4 py-2 border rounded-lg w-[200px] md:w-[300px]"
                 />
                 <svg
-                  className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500"
+                  className="absolute left-2.5 top-2.5 h-4 w-4 text-gray"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -193,7 +206,7 @@ export const Orders = () => {
               </select>
               <button
                 onClick={handleReset}
-                className="px-4 py-2 border rounded-lg bg-black text-white hover:bg-white hover:text-black transition-colors"
+                className="px-4 py-2 border rounded-lg text-black"
               >
                 Reset
               </button>
@@ -203,7 +216,7 @@ export const Orders = () => {
           <div className="border rounded-lg overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b bg-gray-50">
+                <tr className="border-b bg-white">
                   {[
                     "Invoice",
                     "Date",
@@ -255,7 +268,7 @@ export const Orders = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleViewDetails(order)}
-                        className="px-4 py-1 text-sm border rounded hover:bg-gray-50"
+                        className="px-4 py-1 text-sm border rounded bg-black text-white hover:bg-white hover:text-black"
                       >
                         View Details
                       </button>
