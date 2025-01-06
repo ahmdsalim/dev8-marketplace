@@ -12,7 +12,6 @@ export const Navigation = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount, setCartCount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -26,12 +25,7 @@ export const Navigation = () => {
   const { mutate: logout, isLoading: isLogoutLoading } = useLogout();
 
   const { data } = useCartItems();
-
-  useEffect(() => {
-    if (data?.data) {
-      setCartCount(data.data.length);
-    }
-  }, [data]);
+  const cartCount = data?.data?.length || 0;
 
   const toggleProfileDropdown = () => {
     if (!isAuthenticated()) {
@@ -62,26 +56,17 @@ export const Navigation = () => {
       ) {
         setSearchQuery("");
       }
+      if (!e.target.closest("#profileDropdown")) {
+        setIsProfileDropdownOpen(false);
+      }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest("#profileDropdown")) {
-        setIsProfileDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  });
 
   return (
     <nav className="nav bg-white border-b border-gray">
@@ -90,7 +75,7 @@ export const Navigation = () => {
           <div className="nav__mobile-menu-button flex items-center md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="btn btn--icon inline-flex items-center justify-center p-2 rounded-md text-black hover:text-black focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              className="btn btn--icon inline-flex items-center justify-center p-2 rounded-md text-black hover:text-black focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray"
             >
               <span className="sr-only">Open main menu</span>
               <Menu className="btn__icon block h-6 w-6" aria-hidden="true" />
@@ -98,7 +83,6 @@ export const Navigation = () => {
           </div>
           <div className="nav__logo flex-1 flex items-center justify-center md:justify-start">
             <Link to="/" className="flex-shrink-0">
-              {/* <span className="text-xl font-bold italic">RETO</span> */}
               <img src={logo} alt="Logo" className="logo__image h-16 w-auto" />
             </Link>
             <div className="nav__menu hidden md:block ml-10">
@@ -132,7 +116,6 @@ export const Navigation = () => {
           </div>
           <div className="nav__actions flex items-center">
             <div className="nav__search hidden md:block relative">
-              {/* <div className="relative mr-4"> */}
               <input
                 type="text"
                 placeholder="Search..."
@@ -144,7 +127,6 @@ export const Navigation = () => {
                 className="search__icon absolute left-3 top-1/2 transform -translate-y-1/2 text-black hover:text-black"
                 size={18}
               />
-              {/* </div> */}
             </div>
             <div className="relative" id="profileDropdown">
               <button
@@ -177,12 +159,7 @@ export const Navigation = () => {
                 </div>
               )}
             </div>
-            {/* <button
-              onClick={handleProfileRedirect}
-              className="btn btn--icon p-2 rounded-full text-black-500"
-            >
-              <User size={24} />
-            </button> */}
+
             <Link
               to="/cart"
               className="btn btn--icon p-2 rounded-full  relative"
@@ -238,10 +215,10 @@ export const Navigation = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Cari"
+              placeholder="Search"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="mobile-search__input pl-10 pr-4 py-2 w-full rounded-full border border-gray focus:outline-none focus:border-gray-500"
+              className="mobile-search__input pl-10 pr-4 py-2 w-full rounded-full border border-gray focus:outline-none focus:border-gray"
             />
             <Search
               className="mobile-search__icon absolute left-3 top-1/2 transform -translate-y-1/2 text-black hover:text-black"
@@ -265,7 +242,7 @@ export const Navigation = () => {
                 Error loading products: {error.message}
               </p>
             ) : searchResults?.length > 0 ? (
-              <ul>
+              <ul className="flex flex-col">
                 {searchResults.map((result, index) => {
                   return (
                     <Link

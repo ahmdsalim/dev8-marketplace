@@ -101,7 +101,6 @@ export const Cart = () => {
         });
       },
       onError: (err) => {
-        // console.error("Checkout failed: ", err);
         showErrorToast(err);
       },
     });
@@ -120,14 +119,14 @@ export const Cart = () => {
       />
 
       {!isLoading && !error && cartItems.length === 0 && (
-        <div className="empty-cart flex flex-col items-center text-center text-gray-600 py-16">
+        <div className="empty-cart flex flex-col items-center text-center text-black py-16">
           <h2 className="text-xl font-semibold mb-4">Your cart is empty</h2>
           <p className="mb-4">
             It seems you haven’t added anything to your cart yet.
           </p>
           <button
             onClick={() => navigate("/products")}
-            className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors"
+            className="border bg-black text-white py-2 px-4 rounded hover:bg-white hover:text-black transition-colors"
           >
             Start Shopping
           </button>
@@ -148,7 +147,7 @@ export const Cart = () => {
                     type="checkbox"
                     checked={selectedItems[item.id] || false}
                     onChange={() => handleItem(item.id)}
-                    className="cart__item-checkbox mr-4 h-5 w-5 border-gray-300 rounded"
+                    className="cart__item-checkbox mr-4 h-5 w-5 border-black rounded"
                   />
                   <img
                     src={item.product.images[0].image}
@@ -159,10 +158,10 @@ export const Cart = () => {
                     <h3 className="cart__item-name font-semibold text-black">
                       {item.product.name}
                     </h3>
-                    <p className="cart__item-variant text-gray-600">
+                    <p className="cart__item-variant text-gray">
                       {item.variant.name}
                     </p>
-                    <p className="cart__item-price text-gray-600">
+                    <p className="cart__item-price text-gray">
                       {formatRupiah(item.product.price)}
                     </p>
                   </div>
@@ -171,23 +170,23 @@ export const Cart = () => {
                   <div className="cart__item-quantity flex items-center mr-4">
                     <button
                       onClick={() => handleDecrease(item.id)}
-                      className="cart__item-quantity-button cart__item-quantity-button--decrease bg-white border border-gray-300 text-gray-600 hover:bg-gray-100 px-2 py-1 rounded-l"
+                      className="cart__item-quantity-button cart__item-quantity-button--decrease bg-white border border-gray text-black px-2 py-1 rounded-l"
                     >
                       -
                     </button>
-                    <span className="cart__item-quantity-display bg-white border-t border-b border-gray-300 text-black px-4 py-1">
+                    <span className="cart__item-quantity-display bg-white border-t border-b border-gray text-black px-4 py-1">
                       {item.quantity}
                     </span>
                     <button
                       onClick={() => handleIncrease(item.id)}
-                      className="cart__item-quantity-button cart__item-quantity-button--increase bg-white border border-gray-300 text-gray-600 hover:bg-gray-100 px-2 py-1 rounded-r"
+                      className="cart__item-quantity-button cart__item-quantity-button--increase bg-white border border-gray text-black px-2 py-1 rounded-r"
                     >
                       +
                     </button>
                   </div>
                   <button
                     onClick={() => handleRemoveItem(item.id)}
-                    className="cart__item-remove text-gray-600 hover:text-black"
+                    className="cart__item-remove text-gray hover:text-black"
                     aria-label="Remove item"
                   >
                     <svg
@@ -220,7 +219,7 @@ export const Cart = () => {
             </div>
             <button
               onClick={() => handleCheckout()}
-              className="cart__checkout w-full bg-black text-white py-2 rounded mt-4 hover:bg-gray-800 transition-colors"
+              className="cart__checkout w-full bg-black border text-white py-2 rounded mt-4 hover:bg-white hover:text-black transition-colors"
             >
               Checkout
             </button>

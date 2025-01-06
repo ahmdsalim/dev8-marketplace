@@ -66,7 +66,7 @@ export const Products = () => {
               />
             </div>
             <div className="product-card__details flex flex-col items-center text-center p-4 ">
-              <h2 className="product-card__name text-sm font-semibold text-gray-800 mb-2">
+              <h2 className="product-card__name text-sm font-semibold text-gray mb-2">
                 {product.name}
               </h2>
               <span className="product-card__price text-sm font-bold text-black ">

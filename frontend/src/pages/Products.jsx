@@ -104,15 +104,15 @@ export const Products = () => {
         <h2 className="products__title text-2xl font-semibold">Product</h2>
         <button
           onClick={openModal}
-          className="products_filter-button px-4 py-2 rounded bg-gray-300 text-black"
+          className="products_filter-button px-4 py-2 rounded bg-white text-black"
         >
-          <Filter className="h-6 w-6 mr-2 text-gray-500" />
+          <Filter className="h-6 w-6 mr-2 text-gray" />
         </button>
       </div>
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-6">
-          <p className="text-xl font-semibold text-gray-700">
+          <p className="text-xl font-semibold text-gray">
             No products found with the selected filters.
           </p>
         </div>

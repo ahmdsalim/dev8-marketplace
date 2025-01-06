@@ -17,8 +17,10 @@ export const Hero = () => {
             Reto
           </h1>
           <p className="hero__description mt-2 text-lg sm:text-xl md:text-2xl">
-            Reto is a local brand that collaborates with Indonesian figures and
-            highlights widely discussed current issues.
+            Reto is a local brand that blends fashion with social awareness,
+            collaborating with Indonesian figures to highlight current issues.
+            Through unique designs, Reto creates collections that are not only
+            stylish but also meaningful.
           </p>
           <Link
             to="/products"
