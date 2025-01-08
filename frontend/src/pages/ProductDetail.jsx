@@ -117,7 +117,7 @@ export const ProductDetail = () => {
                 {product.name}
               </h1>
               <p className="product-detail__price text-2xl font-bold mt-2">
-                {formatRupiah(product.price)}
+                {formatRupiah(product.price + (selectedSize?.pivot?.additional_price || 0))}
               </p>
             </div>
             <div className="product-detail__options space-y-4">

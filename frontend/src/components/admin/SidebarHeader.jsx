@@ -12,7 +12,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { KeyRound, Bell, LogOut } from "lucide-react";
 import { useAuth, useLogout } from "@/hooks/authHooks";
-import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import getInitials from "@/utils/GetInitials";
@@ -21,7 +20,6 @@ import ChangePasswordDialog from "./ChangePasswordDialog";
 export const SidebarHeader = () => {
   const { user } = useAuth();
   const { mutate: logout } = useLogout();
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [openChangePassword, setOpenChangePassword] = useState(false);
 
@@ -38,8 +36,6 @@ export const SidebarHeader = () => {
       new Promise((resolve, reject) => {
         logout(null, {
             onSuccess: async () => {
-              localStorage.removeItem("token");
-              queryClient.invalidateQueries({ queryKey: ["user"], exact: false });
               navigate("/login");
               resolve();
             },

@@ -32,14 +32,21 @@ export const Cart = () => {
 
   const handleDecrease = (itemId) => {
     decreaseQty(itemId, {
-      onSuccess: () => {
-        setCartItems((prevItems) =>
-          prevItems.map((item) =>
-            item.id === itemId
-              ? { ...item, quantity: Math.max(item.quantity - 1, 0) }
-              : item
-          )
-        );
+      onSuccess: (response) => {
+        const { data } = response;
+        if (data?.item_removed) {
+          setCartItems((prevItems) =>
+            prevItems.filter((item) => item.id !== itemId)
+          );
+        } else {
+          setCartItems((prevItems) =>
+            prevItems.map((item) =>
+              item.id === itemId
+                ? { ...item, quantity: Math.max(item.quantity - 1, 0) }
+                : item
+            )
+          );
+        }
       },
     });
   };
@@ -80,7 +87,7 @@ export const Cart = () => {
   const calculateTotal = () => {
     return cartItems
       .filter((item) => selectedItems[item.id])
-      .reduce((total, item) => total + item.quantity * item.product.price, 0);
+      .reduce((total, item) => total + (item.quantity * item.price), 0);
   };
 
   const handleCheckout = () => {
@@ -162,7 +169,7 @@ export const Cart = () => {
                       {item.variant.name}
                     </p>
                     <p className="cart__item-price text-gray">
-                      {formatRupiah(item.product.price)}
+                      {formatRupiah(item.price)}
                     </p>
                   </div>
                 </div>

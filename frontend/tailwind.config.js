@@ -9,11 +9,11 @@ export default {
     		},
     		colors: {
     			primary: {
-    				DEFAULT: '#AB222E',
+    				DEFAULT: 'hsl(var(--primary))',
     				foreground: 'hsl(var(--primary-foreground))'
     			},
     			secondary: {
-    				DEFAULT: '#63A375',
+    				DEFAULT: 'hsl(var(--secondary))',
     				foreground: 'hsl(var(--secondary-foreground))'
     			},
     			white: '#FFFFFF',

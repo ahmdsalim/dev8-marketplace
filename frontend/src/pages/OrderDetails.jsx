@@ -62,6 +62,13 @@ export const OrderDetails = () => {
             </div>
             <div className="order-detail__body border-t border-gray px-4 py-5 sm:p-6">
               <div className="order-detail__list flex flex-col space-y-6">
+                { order.data.need_refund && (
+                  <div className="order-detail__row w-full">
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                      <span className="block sm:inline text-sm"> {order.data.refund.reason}</span>
+                    </div>
+                  </div>
+                ) }
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
                   <div className="order-detail__label flex items-center text-sm font-medium text-gray sm:w-1/3">
                     <CalendarIcon className="h-4 w-4 mr-2 text-gray" />
@@ -114,6 +121,18 @@ export const OrderDetails = () => {
                           </div>
                         </li>
                       ))}
+                      <li className="order-detail__item pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                          <div className="order-detail__item-name w-0 flex-1 flex items-center">
+                            <span className="order-detail__item-name-text ml-2 flex-1 w-0 truncate">
+                              Shipping Cost
+                            </span>
+                          </div>
+                          <div className="order-detail__item-price ml-4 flex-shrink-0">
+                            <span className="order-detail__item-price-text font-medium">
+                              1 x {formatRupiah(order.data.delivery_cost)}
+                            </span>
+                          </div>
+                      </li>
                     </ul>
                   </div>
                 </div>

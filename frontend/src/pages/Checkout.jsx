@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   useCheckout,
   useCitiesByProvince,
@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { showSuccessToast, showErrorToast } from "../utils/ToastUtils";
 import { formatRupiah } from "../utils/FormatRupiah";
+import { LoaderCircle } from "lucide-react";
 
 const checkoutSchema = yup.object().shape({
   province: yup.string().required("Province is required"),
@@ -29,12 +30,13 @@ export const Checkout = () => {
   const [selectedCourier, setSelectedCourier] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [shippingCost, setShippingCost] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const location = useLocation();
-  const selectedCartItems = location.state?.selectedCartItems || [];
-
+  const selectedCartItems = useMemo(() => location.state?.selectedCartItems || [], [location.state]);
   const subTotal = selectedCartItems.reduce(
-    (acc, item) => acc + item.product.price,
+    (acc, item) => acc + (item.price * item.quantity),
     0
   );
 
@@ -64,6 +66,12 @@ export const Checkout = () => {
     resolver: yupResolver(checkoutSchema),
   });
 
+  useEffect(() => {
+    if(selectedCartItems?.length === 0) {
+      navigate("/cart");
+    }
+  }, [selectedCartItems, navigate]);
+
   const handleProvinceChange = (e) => {
     setSelectedProvince(e.target.value);
     setSelectedCity("");
@@ -92,14 +100,16 @@ export const Checkout = () => {
       courier: data.courier,
       cart_item_ids: selectedCartItems.map((item) => item.id),
     };
-
+    setIsLoading(true);
     checkout(payload, {
       onSuccess: (response) => {
         try {
-          console.log("response", response);
           const paymentUrl = response.data.payment_url.replace(/['"]/g, "");
           if (paymentUrl) {
             showSuccessToast("Order placed successfully!");
+            //clear location state
+            window.history.replaceState(null, "");
+            //redirect to payment page
             window.location.href = paymentUrl;
           } else {
             throw new Error("Invalid payment URL.");
@@ -109,6 +119,9 @@ export const Checkout = () => {
           showErrorToast("Failed to process the payment. Please try again.");
         }
       },
+      onSettled: () => {
+        isLoading(false);
+      }
     });
   };
 
@@ -300,7 +313,7 @@ export const Checkout = () => {
                       </p>
                     </div>
                     <span className="checkout__item-price font-medium">
-                      {formatRupiah(cartItem.product.price)}
+                      {cartItem.quantity} x {formatRupiah(cartItem.price)}
                     </span>
                   </div>
                 ))}
@@ -330,9 +343,17 @@ export const Checkout = () => {
               <button
                 type="submit"
                 form="checkoutForm"
-                className="checkout__button w-full border bg-black text-white mt-4 py-2 px-4 rounded-md hover:bg-white hover:text-black transition duration-200"
+                disabled={isLoading}
+                className="checkout__button w-full border bg-black text-white mt-4 py-2 px-4 rounded-md hover:bg-white hover:text-black transition duration-200 flex items-center justify-center"
               >
-                Place Order
+                {isLoading ? (
+                  <>
+                    <LoaderCircle className="animate-spin mr-2" />
+                    Processing...
+                  </>
+                ) : (
+                  "Place Order"
+                )}
               </button>
             </div>
           </div>

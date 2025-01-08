@@ -9,7 +9,7 @@ import { Layout } from "./components/Layout";
 // import { isAuthenticated } from "./helpers/AuthHelpers";
 import { Profile } from "./pages/Profile";
 import { Products } from "./pages/Products";
-import ProtectedRoute from "./components/ProtectedRoute";
+// import ProtectedRoute from "./components/ProtectedRoute";
 import { ProductDetail } from "./pages/ProductDetail";
 import { Cart } from "./pages/Cart";
 import { Checkout } from "./pages/Checkout";
@@ -26,7 +26,9 @@ import ProductList from "./pages/Admin/Products";
 import OrderList from "./pages/Admin/Orders";
 import RoleBasedRoute from "./components/RoleBasedRoute";
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
+import GuestRoute from "./components/GuestRoute";
 import NotFound from "./pages/NotFound";
+import Forbidden from "./pages/Forbidden";
 
 function App() {
   return (
@@ -38,24 +40,28 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:slug" element={<ProductDetail />} />
-          <Route path="/login" element={<Auth />} />
-          <Route path="/register" element={<Auth />} />
+          <Route element={<GuestRoute />}>
+            <Route path="/login" element={<Auth />} />
+            <Route path="/register" element={<Auth />} />
+          </Route>
         </Route>
 
         {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout />}>
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/order-detail/:id" element={<OrderDetails />} />
-            <Route path="/checkout" element={<Checkout />} />
+        <Route element={<AuthenticatedRoute />}>
+          <Route element={<RoleBasedRoute allowedRoles={["user"]} showForbidden={true} />}>
+            <Route element={<Layout />}>
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/order-detail/:id" element={<OrderDetails />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Route>
           </Route>
         </Route>
 
         {/* Admin Routes */}
-        <Route element={<AuthenticatedRoute showNotFound={true} />}>
-          <Route element={<RoleBasedRoute allowedRoles={["admin"]} />}>
+        <Route element={<AuthenticatedRoute />}>
+          <Route element={<RoleBasedRoute allowedRoles={["admin"]} showForbidden={true} />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/users" element={<Users />} />
@@ -71,7 +77,8 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="/404-not-found" element={<NotFound />} />
+        <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="/not-found" element={<NotFound />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

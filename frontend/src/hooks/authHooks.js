@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 
 import {
@@ -53,6 +53,7 @@ export const useLogin = () => {
 };
 
 export const useLogout = () => {
+  const queryClient = useQueryClient();
   return useMutation(
     async () => {
       const token = localStorage.getItem("token");
@@ -70,6 +71,7 @@ export const useLogout = () => {
     },
     {
       onSuccess: () => {
+        queryClient.clear();
         localStorage.removeItem("token");
       },
       onError: (error) => {
@@ -148,7 +150,7 @@ export const useChangeProfile = () => {
 };
 
 export const useAuth = () => {
-  const { data, isLoading, isError } = useQuery('userAuth', async () => {
+  const { data, isLoading, isError } = useQuery(['userAuth'], async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("No token found");
@@ -165,6 +167,11 @@ export const useAuth = () => {
     staleTime: 5 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,
+    onError: (error) => {
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+      }
+    },
   });
 
   return {

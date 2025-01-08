@@ -5,6 +5,7 @@ import {
   AvatarFallback
 } from "@/components/ui/avatar"
 import getInitials from "@/utils/GetInitials";
+import UcFirst from "@/utils/UcFirst";
 
 export function RecentOrders({ orders }) {
     return (
@@ -20,7 +21,11 @@ export function RecentOrders({ orders }) {
                 {order.user.email}
               </p>
             </div>
-            <div className="ml-auto font-medium">{ formatRupiah(order.total_amount) }</div>
+            <div className="ml-auto flex flex-col gap-1 items-end">
+              {/* status and total */}
+              <p className="text-sm font-normal rounded-full px-2 border">{ UcFirst(order.status) }</p>
+              <p className="text-sm">{formatRupiah(order.total_amount)}</p>
+            </div>
           </div>
         ))}
       </div>

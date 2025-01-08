@@ -7,6 +7,7 @@ import { useCartItems } from "../hooks/cartHooks";
 import { useProductSearch } from "../hooks/productHooks";
 import { isAuthenticated } from "../helpers/AuthHelpers";
 import { showSuccessToast } from "../utils/ToastUtils";
+import toast from "react-hot-toast";
 
 export const Navigation = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -35,11 +36,27 @@ export const Navigation = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (isLogoutLoading) return;
-    logout();
-    showSuccessToast("Logout Successfully");
-    navigate("/login");
+    toast.promise(
+      new Promise((resolve, reject) => logout(null, {
+        onSuccess: () => {
+          navigate("/login");
+          resolve();
+        },
+        onError: (error) => {
+          reject(error);
+        }
+      })),
+      {
+        success: "Logged out successfully",
+        loading: "Logging out...",
+        error: "Failed to logout",
+      },
+      {
+        position: "top-right",
+      }
+    );
   };
 
   const handleSearchChange = (e) => {
