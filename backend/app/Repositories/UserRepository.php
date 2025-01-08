@@ -11,6 +11,10 @@ class UserRepository implements UserRepositoryInterface
 	public function index(Request $request, $limit = 10)
 	{
         $search = $request->query('search');
+
+		if($request->has('limit') && $request->query('limit') <= 50){
+			$limit = (integer) $request->query('limit');
+		}
         
         $query = User::query();
         
@@ -19,6 +23,16 @@ class UserRepository implements UserRepositoryInterface
                 ->orWhere('email', 'like', '%'.$search.'%')
                 ->orWhere('phone', 'like', '%'.$search.'%');
         }
+
+		if($request->has('sortby')){
+			$sortDef = array(
+				'latest' => 'desc',
+				'oldest' => 'asc'
+			);
+
+			$sort = $sortDef[$request->query('sortby', 'oldest')];
+			$query->orderBy('id', $sort);
+		}
 
 		return $query->paginate($limit);
 	}

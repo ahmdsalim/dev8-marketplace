@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Front End URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used by the backend to properly generate URLs when using
+    | the frontend URL in the application. You should set this to the root of
+    | the frontend application so that it's available within the backend.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+
 ];

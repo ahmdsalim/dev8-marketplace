@@ -14,6 +14,9 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $route = $request->route();
+        $isShowSold = $route->uri() === 'api/products' && $request->isMethod('GET');
+         
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -22,12 +25,15 @@ class ProductResource extends JsonResource
             'slug' => $this->slug,
             'weight' => $this->weight,
             'price' => $this->price,
+            'collaboration_id' => $this->collaboration_id ?? null,
             'collaboration' => $this->collaboration->name ?? null,
+            'category_id' => $this->category_id,
             'category' => $this->category->name,
             'images' => $this->images,
             'total_stock' => $this->when($this->relationLoaded('variants'), function () {
                 return $this->variants->sum('pivot.stock');
             }),
+            'sold' => $this->when($isShowSold, $this->sold),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

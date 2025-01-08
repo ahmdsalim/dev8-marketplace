@@ -59,3 +59,4 @@ export const GET_ORDERS_URL = `${API_BASE_URL}/data/orders/list`;
 export const GET_ORDER_BY_ID = `${API_BASE_URL}/data/orders/list`;
 
 export const CREATE_PAYMENT_DETAIL = `${API_BASE_URL}/webhooks/midtrans`;
+export const GET_LIST_COLLABORATION_URL = `${API_BASE_URL}/data/collaborations/list`;

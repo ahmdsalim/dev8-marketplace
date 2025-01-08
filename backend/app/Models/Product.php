@@ -68,8 +68,25 @@ class Product extends Model
                     ->withPivot(['stock', 'additional_price']);
     }
 
+    public function getSoldAttribute()
+    {
+        return $this->orderItems()->whereHas('order', function($query) {
+            $query->where('status', 'processed');
+        })->sum('quantity');
+    }
+
     // public function getTotalStockAttribute()
     // {
     //     return $this->variants->sum('pivot.stock');
     // }
+
+    public function scopeOrderByBestseller($query)
+    {
+        return $query->addSelect(['sold' => OrderItem::selectRaw('sum(quantity)')
+            ->whereColumn('product_id', 'products.id')
+            ->whereHas('order', function($query) {
+                $query->where('status', 'processed');
+            })
+        ])->orderBy('sold', 'desc');
+    }
 }

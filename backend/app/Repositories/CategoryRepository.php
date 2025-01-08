@@ -17,15 +17,29 @@ class CategoryRepository implements CategoryRepositoryInterface
         $this->APP_URL = env('APP_ENV') == 'production' ? env('APP_URL') : env('APP_URL').':'.env('APP_PORT');
     }
 	
-    public function index(Request $request, $limit = 10)
+    public function index(Request $request, $limit = null)
 	{
         $search = $request->query('search');
+
+        if($request->has('limit') && $request->query('limit') <= 50){
+            $limit = (integer) $request->query('limit');
+        }
         
         $query = Category::query();
         
         if($search) {
             $query->where('name', 'like', '%'.$search.'%');
         }
+
+        if($request->has('sortby')){
+			$sortDef = array(
+				'latest' => 'desc',
+				'oldest' => 'asc'
+			);
+
+			$sort = $sortDef[$request->query('sortby', 'oldest')];
+			$query->orderBy('id', $sort);
+		}
 
 		return $query->paginate($limit);
 	}
@@ -68,10 +82,12 @@ class CategoryRepository implements CategoryRepositoryInterface
                 $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
                 $image->storeAs('category-images', $imageName, 'public');
                 $data['image'] = "$this->APP_URL/storage/category-images/$imageName";  
-                //delete old image
-                $oldImage = str_replace($this->APP_URL.'/storage/','',$category->image);
-                //delete old image from public storage
-                Storage::disk('public')->delete($oldImage);
+                //delete old image if exists
+                if($category->image){
+                    $oldImage = str_replace($this->APP_URL.'/storage/','',$category->image);
+                    //delete old image from public storage
+                    Storage::disk('public')->delete($oldImage);
+                }
             } else {
                 unset($data['image']);
             }

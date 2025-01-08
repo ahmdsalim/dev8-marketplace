@@ -54,9 +54,9 @@ class PaymentRepository implements PaymentRepositoryInterface
                     $response = Transaction::cancel($order_id);
                     Log::info($response . " for order ID {$order_id}");
                     $message = 'Payment is canceled automatically by system';
+                }else{
+                    $message = 'Payment is still pending';
                 }
-                
-                $message = 'Payment is still pending';
             } else {
                 //check if payment is not already created
                 if(!isset($order->payment)) {

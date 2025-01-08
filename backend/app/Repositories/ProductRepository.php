@@ -22,6 +22,10 @@ class ProductRepository implements ProductRepositoryInterface
         $search = $request->query('search');
         $category = $request->query('category');
         $collaboration = $request->query('collaboration');
+
+        if($request->has('limit') && $request->query('limit') <= 50){
+			$limit = (integer) $request->query('limit');
+		}
         
         $query = Product::query()->with('variants');
         
@@ -36,6 +40,24 @@ class ProductRepository implements ProductRepositoryInterface
         if($collaboration) {
             $query->where('collaboration_id', $collaboration);
         }
+
+        $sortOptions = array(
+            'latest' => ['id', 'desc'],
+            'oldest' => ['id', 'asc'],
+            'price-lowest' => ['price', 'asc'],
+            'price-highest' => ['price', 'desc'],
+            'bestseller' => null
+        );
+
+        $sortby = $request->query('sortby');
+
+        if($sortby && array_key_exists($sortby, $sortOptions)) {
+            if($sortby === 'bestseller') {
+                $query->orderByBestSeller();
+            } else {
+                $query->orderBy($sortOptions[$sortby][0], $sortOptions[$sortby][1]);
+            }
+		}
 
 		return $query->paginate($limit);
     }
@@ -171,6 +193,12 @@ class ProductRepository implements ProductRepositoryInterface
         $product->save();
 
         return $product;
+    }
+
+    public function indexVariant($productId)
+    {
+        $product = Product::with('variants')->where('id', $productId)->select('id')->first();
+        return $product->variants;
     }
 
     public function addVariant(array $data, $id)

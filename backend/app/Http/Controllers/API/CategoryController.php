@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
+use App\Exports\CategoriesExport;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategoryCollection;
@@ -103,5 +105,14 @@ class CategoryController extends Controller
     {
         $this->categoryRepository->delete($id);
         return ApiResponseClass::sendResponse([], 'Category deleted successfully', 200);
+    }
+
+    public function export()
+    {
+        try {
+            return Excel::download(new CategoriesExport, "categories-". date('d-m-Y') .".xlsx");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, 'Category export failed');
+        }
     }
 }
