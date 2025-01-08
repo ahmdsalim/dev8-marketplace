@@ -10,8 +10,12 @@ use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\VariantController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\RajaOngkirController;
 use App\Http\Controllers\API\CollaborationController;
+use App\Http\Controllers\API\ResetPasswordController;
+use App\Http\Controllers\API\ForgotPasswordController;
+use App\Http\Controllers\API\RefundController;
 
 Route::prefix('auth')->group(function() {
     Route::get('/unauthenticated', function () {
@@ -22,8 +26,8 @@ Route::prefix('auth')->group(function() {
     })->name('login');
     
     Route::controller(AuthController::class)->group(function() {
-        Route::post('/register', 'register');
-        Route::post('/login', 'login');
+        Route::post('/register', 'register')->middleware('guest');
+        Route::post('/login', 'login')->middleware('guest');
         Route::post('/logout', 'logout')->middleware('auth:sanctum');
     });
     
@@ -33,15 +37,34 @@ Route::prefix('auth')->group(function() {
 
     Route::put('/user/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
     Route::put('/user/update-profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+    Route::post('/forgot-password', [ForgotPasswordController::class, '__invoke'])->middleware('guest');
+    Route::post('/reset-password', [ResetPasswordController::class, '__invoke'])->middleware('guest');
+    Route::post('/verify-email/{token}', [AuthController::class, 'verifyUser']);
 });
 
+//dashboard
+Route::get('/getdashboard', [DashboardController::class, '__invoke'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/getorderchart/{period}', [DashboardController::class, 'getOrderChart'])->middleware(['auth:sanctum', 'authtype:admin']);
+
 //delete image product
-Route::delete('/products/images/delete/{id}/{imgId}', [ProductController::class, 'destroyImage'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::delete('/products/{id}/images/{imgId}', [ProductController::class, 'destroyImage'])->middleware(['auth:sanctum', 'authtype:admin']);
 
 //product variant
-Route::post('/products/variants/store/{id}', [ProductController::class, 'storeVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
-Route::put('/products/variants/update/{id}/{variantId}', [ProductController::class, 'updateVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
-Route::delete('/products/variants/delete/{id}/{variantId}', [ProductController::class, 'destroyVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/products/{id}/variants', [ProductController::class, 'indexVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::post('/products/{id}/variants', [ProductController::class, 'storeVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::put('/products/{id}/variants/{variantId}', [ProductController::class, 'updateVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::delete('/products/{id}/variants/{variantId}', [ProductController::class, 'destroyVariant'])->middleware(['auth:sanctum', 'authtype:admin']);
+
+//route export
+Route::get('/users/export', [UserController::class, 'export'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/products/export', [ProductController::class, 'export'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/categories/export', [CategoryController::class, 'export'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/collaborations/export', [CollaborationController::class, 'export'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/variants/export', [VariantController::class, 'export'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::get('/data/orders/export', [OrderController::class, 'export'])->middleware(['auth:sanctum', 'authtype:admin']);
+
+//update resi number
+Route::put('/data/orders/{id}/resi-number', [OrderController::class, 'updateResiNumber'])->middleware(['auth:sanctum', 'authtype:admin']);
 
 //route resource
 Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum', 'authtype:admin']);
@@ -69,6 +92,9 @@ Route::prefix('data')->group(function(){
         Route::get('/orders/list/{order_id}', 'show');
         Route::post('/orders/checkout', 'checkOut');
     });
+
+    //route payment refund
+    Route::post('/payment-refund', [RefundController::class, '__invoke'])->middleware(['auth:sanctum', 'authtype:user']);
 
     //route cart
     Route::middleware(['auth:sanctum', 'authtype:user'])->controller(CartController::class)->group(function() {

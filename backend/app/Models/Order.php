@@ -20,9 +20,15 @@ class Order extends Model
         'subtotal',
         'delivery_address',
         'courier',
+        'courier_service',
+        'resi_number',
         'delivery_cost',
         'snap_token',
         'payment_url',
+    ];
+
+    protected $casts = [
+        'order_date' => 'datetime',
     ];
 
     protected $appends = ['need_refund'];

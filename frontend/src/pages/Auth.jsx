@@ -57,9 +57,13 @@ export const Auth = () => {
   const onSubmit = (data) => {
     if (isLogin) {
       login(data, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           showSuccessToast("Welcome Back !");
-          navigate("/");
+          if (data.user.role === "admin") {
+            navigate("/dashboard");
+          }else{
+            navigate("/");
+          }
         },
         onError: (err) => {
           const errorMessage =

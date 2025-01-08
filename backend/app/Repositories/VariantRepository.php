@@ -8,13 +8,21 @@ use Illuminate\Http\Request;
 
 class VariantRepository implements VariantRepositoryInterface
 {
-    public function index(Request $request, $limit = 10) {
+    public function index(Request $request, $limit = null) {
         $search = $request->query('search');
+
+        $request->has('limit') && $limit = (integer) $request->query('limit');
+
         $query = Variant::query();
+
         if($search){
             $query->where('name', 'like', '%'.$search.'%')
                   ->orWhere('type', 'like', '%'.$search.'%');
         }
+
+        if($request->has('type') && $request->query('type') !== "all"){
+			$query->where('type', 'like', '%'.$request->query('type').'%');
+		}
 
         return $query->paginate($limit);
     }

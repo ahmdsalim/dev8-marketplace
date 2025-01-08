@@ -25,7 +25,7 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'category_id' => 'required|exists:categories,id',
+            'category' => 'required|exists:categories,id',
             'images' => 'required|array|min:2',
             'images.*' => 'required|image|mimes:png,jpg,jpeg|max:2048',
             'description' => 'required',
@@ -34,7 +34,8 @@ class StoreProductRequest extends FormRequest
             'variants.*.stock' => 'required|integer|min:1',
             'variants.*.additional_price' => 'nullable|integer',
             'weight' => 'required|integer',
-            'price' => 'required|integer'
+            'price' => 'required|integer',
+            'collaboration' => 'nullable|exists:collaborations,id'
         ];
     }
 

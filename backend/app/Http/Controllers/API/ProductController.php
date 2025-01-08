@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use App\Exports\ProductsExport;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductVariantResource;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Http\Requests\StoreProductVariantRequest;
 use App\Http\Requests\UpdateProductVariantRequest;
-use App\Http\Resources\ProductVariantResource;
 
 class ProductController extends Controller
 {
@@ -49,8 +51,8 @@ class ProductController extends Controller
     {
         $details = [
             'name' => $request->name,
-            'collaboration_id' => $request->collaboration_id ?? null,
-            'category_id' => $request->category_id,
+            'collaboration_id' => $request->collaboration ?? null,
+            'category_id' => $request->category,
             'images' => $request->file('images'),
             'description' => $request->description,
             'variants' => $request->variants,
@@ -92,11 +94,10 @@ class ProductController extends Controller
     {
         $details = [
             'name' => $request->name,
-            'collaboration_id' => $request->collaboration_id ?? null,
-            'category_id' => $request->category_id,
+            'collaboration_id' => $request->collaboration ?? null,
+            'category_id' => $request->category,
             'images' => $request->file('images') ?? null,
             'description' => $request->description,
-            'size' => $request->size,
             'weight' => $request->weight,
             'price' => $request->price
         ];
@@ -131,6 +132,12 @@ class ProductController extends Controller
             $errCode = $isErrorInList ? $e->getCode() : 500;
             return ApiResponseClass::throw($e, $errMsg, $errCode);
         }
+    }
+
+    public function indexVariant(string $productId)
+    {
+        $variants = $this->productRepository->indexVariant($productId);
+        return ApiResponseClass::sendResponse(ProductVariantResource::collection($variants), '', 200);
     }
 
     public function storeVariant(StoreProductVariantRequest $request, string $id)
@@ -179,6 +186,15 @@ class ProductController extends Controller
             return ApiResponseClass::sendResponse([], 'Product variant deleted successfully', 200);
         } catch(\Exception $e) {
             return ApiResponseClass::throw($e, 'Product variant delete failed', 500);
+        }
+    }
+
+    public function export()
+    {
+        try {
+            return Excel::download(new ProductsExport, "products-". date('d-m-Y') .".xlsx");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, 'Product export failed');
         }
     }
 }

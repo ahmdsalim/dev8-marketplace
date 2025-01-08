@@ -4,12 +4,14 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
+use App\Exports\VariantsExport;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreVariantRequest;
-use App\Http\Requests\UpdateVariantRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\VariantResource;
 use App\Http\Resources\VariantCollection;
+use App\Http\Requests\StoreVariantRequest;
+use App\Http\Requests\UpdateVariantRequest;
 use App\Interfaces\VariantRepositoryInterface;
 
 class VariantController extends Controller
@@ -72,6 +74,15 @@ class VariantController extends Controller
             return ApiResponseClass::sendResponse([], 'Variant deleted successfully', 200);
         } catch (\Exception $e) {
             return ApiResponseClass::throw($e, 'Variant delete failed');
+        }
+    }
+
+    public function export()
+    {
+        try {
+            return Excel::download(new VariantsExport, "variants-". date('d-m-Y') .".xlsx");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, 'Variant export failed');
         }
     }
 }

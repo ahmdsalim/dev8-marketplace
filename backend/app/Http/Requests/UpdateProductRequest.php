@@ -25,13 +25,13 @@ class UpdateProductRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'category_id' => 'required|exists:categories,id',
+            'category' => 'required|exists:categories,id',
+            'images' => 'nullable|array',
             'images.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'description' => 'required',
-            'size' => 'required',
-            'weight' => 'required|numeric',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric'
+            'weight' => 'required|integer',
+            'price' => 'required|integer',
+            'collaboration' => 'nullable|exists:collaborations,id'
         ];
     }
 

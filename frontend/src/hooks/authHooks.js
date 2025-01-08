@@ -146,3 +146,31 @@ export const useChangeProfile = () => {
     return res.data;
   });
 };
+
+export const useAuth = () => {
+  const { data, isLoading, isError } = useQuery('userAuth', async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found");
+    }
+    const res = await axios.get(LOGGED_USER_URL, {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  },
+  {
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    user: data || null,
+    role: data?.role || null,
+    isLoading,
+    isError,
+  };
+};

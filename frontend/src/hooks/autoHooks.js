@@ -25,6 +25,7 @@ import {
   GET_ALL_CITIES_URL,
   CHECK_DELIVERY_COST_URL,
   ORDER_CHECKOUT_URL,
+  GET_LIST_COLLABORATION_URL
 } from "../service/api";
 
 export const useRegister = () => {
@@ -510,3 +511,22 @@ export const useCheckout = () => {
     }
   );
 };
+
+export const useCollaboration = () => {
+  return useQuery(
+    "collaborations",
+    async () => {
+      const res = await axios.get(GET_LIST_COLLABORATION_URL, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data.data.result;
+    },
+    {
+      onError: (error) => {
+        console.error("Error fetching collaborations data:", error);
+      },
+    }
+  );
+}

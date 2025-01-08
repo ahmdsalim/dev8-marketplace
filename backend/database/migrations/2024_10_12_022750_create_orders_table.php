@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('total_amount')->nullable();
             $table->text('delivery_address');
             $table->string('courier');
+            $table->string('courier_service');
+            $table->string('resi_number')->nullable();
             $table->integer('delivery_cost')->nullable();
             $table->string('snap_token')->nullable();
             $table->text('payment_url')->nullable(); //Column for development purpose only

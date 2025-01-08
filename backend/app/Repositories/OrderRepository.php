@@ -16,15 +16,39 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $search = $request->query('search');
         $status = $request->query('status');
+
+        if($request->has('limit') && $request->query('limit') <= 50){
+			$limit = (integer) $request->query('limit');
+		}
         
-        $query = Order::query()->with('payment');
+        $query = Order::query()->with([
+            'orderitems.product:id,name',
+            'orderitems.variant:id,name',
+            'payment']);
         
         if($search) {
-            $query->where('name', 'like', '%'.$search.'%');
+            $query->where('invoice_number', 'like', '%'.$search.'%')
+                  ->orWhereHas('user', function($q) use ($search) {
+                      $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%');
+                  });
         }
 
         if($status) {
             $query->where('status', $status);
+        }
+
+        $sortOptions = [
+            'latest' => ['id', 'desc'],
+            'oldest' => ['id', 'asc'],
+            'lowest-amount' => ['total_amount', 'asc'],
+            'highest-amount' => ['total_amount', 'desc']
+        ];
+
+        $sortby = $request->query('sortby');
+
+        if ($sortby && array_key_exists($sortby, $sortOptions)) {
+            $query->orderBy($sortOptions[$sortby][0], $sortOptions[$sortby][1]);
         }
 
 		return $query->paginate($limit);
@@ -34,6 +58,12 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $search = $request->query('search');
         $status = $request->query('status');
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+
+        if($request->has('limit') && $request->query('limit') <= 50){
+			$limit = (integer) $request->query('limit');
+		}
         
         $query = Order::query()->with([
             'orderitems.product:id,category_id,name,images,slug',
@@ -42,11 +72,28 @@ class OrderRepository implements OrderRepositoryInterface
             'payment'])->where('user_id', auth()->id());
         
         if($search) {
-            $query->where('name', 'like', '%'.$search.'%');
+            $query->where('invoice_number', 'like', '%'.$search.'%');;
         }
 
         if($status) {
             $query->where('status', $status);
+        }
+
+        $sortOptions = [
+            'latest' => ['id', 'desc'],
+            'oldest' => ['id', 'asc'],
+            'lowest-amount' => ['total_amount', 'asc'],
+            'highest-amount' => ['total_amount', 'desc']
+        ];
+
+        $sortby = $request->query('sortby');
+
+        if ($sortby && array_key_exists($sortby, $sortOptions)) {
+            $query->orderBy($sortOptions[$sortby][0], $sortOptions[$sortby][1]);
+        }
+
+        if($start_date && $end_date) {
+            $query->whereBetween('order_date', [$start_date, $end_date]);
         }
 
 		return $query->paginate($limit);
@@ -61,7 +108,8 @@ class OrderRepository implements OrderRepositoryInterface
             'user_id' => auth()->id(),
             'status' => 'pending',
             'delivery_address' => $request->delivery_address,
-            'courier' => $request->courier
+            'courier' => $request->courier,
+            'courier_service' => $request->service,
         ];
 
         $order = Order::create($details);

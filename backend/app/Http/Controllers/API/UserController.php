@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\UserCollection;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -90,7 +92,9 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'phone' => $request->phone
-        ];  
+        ];
+        
+        $request->password && $details['password'] = bcrypt($request->password);
 
         DB::beginTransaction();
         try {
@@ -111,4 +115,17 @@ class UserController extends Controller
 
         return ApiResponseClass::sendResponse([], 'User deleted successfully', 200);
     }
+
+    /**
+     * Export data to excel.
+     */
+    public function export()
+    {
+        try {
+            return Excel::download(new UsersExport, "users-". date('d-m-Y') .".xlsx");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, 'User export failed');
+        }
+    }
+
 }

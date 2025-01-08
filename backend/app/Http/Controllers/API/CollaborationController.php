@@ -4,13 +4,15 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
+use App\Exports\CollaborationsExport;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Interfaces\CollaborationRepositoryInterface;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Resources\CollaborationResource;
 use App\Http\Resources\CollaborationCollection;
 use App\Http\Requests\StoreCollaborationRequest;
 use App\Http\Requests\UpdateCollaborationRequest;
-use App\Http\Resources\CollaborationResource;
+use App\Interfaces\CollaborationRepositoryInterface;
 
 class CollaborationController extends Controller
 {
@@ -100,5 +102,14 @@ class CollaborationController extends Controller
     {
         $this->collaborationRepository->delete($id);
         return ApiResponseClass::sendResponse([], 'Collaboration deleted successfully', 200);   
+    }
+
+    public function export()
+    {
+        try {
+            return Excel::download(new CollaborationsExport, "collaborations-". date('d-m-Y') .".xlsx");
+        } catch (\Exception $e) {
+            return ApiResponseClass::throw($e, 'Collaboration export failed');
+        }
     }
 }

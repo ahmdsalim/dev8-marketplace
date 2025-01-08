@@ -5,15 +5,16 @@ namespace App\Http\Controllers\API;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
+use App\Events\UserVerification;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
-use Illuminate\Validation\ValidationException;
+use App\Models\UserVerify;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -30,6 +31,16 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = User::create($details);
+
+            $verify_token = Str::random(64);
+
+            UserVerify::create([
+                'user_id' => $user->id,
+                'token' => $verify_token
+            ]);
+
+            event(new UserVerification($user, $verify_token));
+
             $success['token'] =  $user->createToken('authToken')->plainTextToken;
             $success['user'] =  $user;
             DB::commit();
@@ -53,13 +64,29 @@ class AuthController extends Controller
             $data['user'] =  $user;
             return ApiResponseClass::sendResponse($data, "User logged in successfully");
         } else {
-            return ApiResponseClass::throw(new \Exception(), "Invalid credentials");
+            return ApiResponseClass::throw(new \Exception(), "Invalid credentials", 401);
         }
     }
     
     public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
         return ApiResponseClass::sendResponse([], "User logged out successfully");
+    }
+
+    public function verifyUser($token) {
+        try {
+            $userVerify = UserVerify::where('token', $token)->first();
+            if(!$userVerify) {
+                return response()->json(["success" => false, "message" => "Invalid token"], 404);
+            }
+            $user = $userVerify->user;
+            $user->email_verified_at = now();
+            $user->save();
+            UserVerify::where('token', $token)->delete();
+            return ApiResponseClass::sendResponse([], "User verified successfully");
+        } catch (\Exception $e) {
+            return ApiResponseClass::rollback($e, "User verification failed");
+        }
     }
 
     public function changePassword(ChangePasswordRequest $request) {

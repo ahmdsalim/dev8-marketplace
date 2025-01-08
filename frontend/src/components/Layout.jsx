@@ -1,12 +1,13 @@
 import React from "react";
 import { Navigation } from "./Navigation";
 import { Footer } from "./Footer";
+import { Outlet } from "react-router-dom";
 
 export const Layout = ({ children }) => {
   return (
     <div>
       <Navigation />
-      <main>{children}</main>
+      <main><Outlet/></main>
       <Footer />
     </div>
   );
