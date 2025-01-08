@@ -127,7 +127,7 @@ class OrderRepository implements OrderRepositoryInterface
                                 ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
                                 ->where('cart_items.id', $cartItemId)
                                 ->where('carts.user_id', auth()->id())
-                                ->select('cart_items.id', 'cart_items.product_id', 'cart_items.variant_id', 'products.name', 'cart_items.quantity', 'cart_items.price', 'products.weight', 'product_variant.stock', 'product_variant.additional_price')
+                                ->select('cart_items.id', 'cart_items.product_id', 'cart_items.variant_id', 'products.name', 'cart_items.quantity', 'cart_items.price', 'products.weight', 'product_variant.stock')
                                 ->first();
 
             //throw exception if cart item not found
@@ -140,7 +140,7 @@ class OrderRepository implements OrderRepositoryInterface
                 'product_id' => $cartItem->product_id,
                 'variant_id' => $cartItem->variant_id,
                 'quantity' => $cartItem->quantity,
-                'price' => $cartItem->price + $cartItem->additional_price,
+                'price' => $cartItem->price,
             ]);
 
             $itemDetails[] = [
@@ -151,7 +151,7 @@ class OrderRepository implements OrderRepositoryInterface
             ];
 
             //count total amount
-            $subtotal += ($cartItem->price + $cartItem->additional_price) * $cartItem->quantity;
+            $subtotal += $cartItem->price * $cartItem->quantity;
             //count total weight
             $total_weight += $cartItem->weight * $cartItem->quantity;
 
@@ -203,7 +203,13 @@ class OrderRepository implements OrderRepositoryInterface
                 'email' => auth()->user()->email,
                 'phone' => auth()->user()->phone
             ),
-            'item_details' => $itemDetails
+            'item_details' => $itemDetails,
+            'callbacks' => [
+                'finish' => config('app.frontend_url') . '/orders',
+                'unfinish' => config('app.frontend_url') . '/order-details/' . $order->id,
+                'error' => config('app.frontend_url') . '/order-details/' . $order->id,
+                'cancel' => config('app.frontend_url') . '/orders',
+            ],
         ];
 
         try {
@@ -226,6 +232,7 @@ class OrderRepository implements OrderRepositoryInterface
             'orderitems.product:id,category_id,name,images,slug',
             'orderitems.product.category:id,name',
             'orderitems.variant:id,name',
-            'payment'])->where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+            'payment',
+            'refund'])->where('id', $id)->where('user_id', auth()->id())->firstOrFail();
     }
 }

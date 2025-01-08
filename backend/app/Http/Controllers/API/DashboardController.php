@@ -31,10 +31,10 @@ class DashboardController extends Controller
             $lastMonthRevenue = Order::whereYear('order_date', $lastMonthYear)->whereMonth('order_date', $lastMonth)->where('status', 'processed')->sum('total_amount');
 
             $metrics = [
-                'totalUsers' => $currentMonthUser,
-                'totalOrders' => $currentMonthOrder,
-                'totalRevenue' => $currentMonthRevenue,
-                'totalPendingRevenue' => Order::whereYear('order_date', $currentYear)->whereMonth('order_date', $currentMonth)->where('status', 'pending')->sum('total_amount'),
+                'totalUsers' => User::ofRole('user')->count(),
+                'totalOrders' => Order::where('status', 'processed')->count(),
+                'totalRevenue' => Order::where('status', 'processed')->sum('total_amount'),
+                'totalPendingRevenue' => Order::where('status', 'pending')->sum('total_amount'),
                 'totalOrdersThisMonth' => $currentMonthOrder,
             ];
 
@@ -44,7 +44,7 @@ class DashboardController extends Controller
                 'revenue' => $this->calculatePercentageChange($lastMonthRevenue, $currentMonthRevenue),
             ];
 
-            $recentOrders = Order::select('id', 'user_id', 'total_amount')->with('user:id,name,email')->orderBy('order_date', 'desc')->limit(5)->get();
+            $recentOrders = Order::select('id', 'user_id', 'total_amount', 'status')->with('user:id,name,email')->orderBy('order_date', 'desc')->limit(5)->get();
 
             $data = [
                 'metrics' => $metrics,

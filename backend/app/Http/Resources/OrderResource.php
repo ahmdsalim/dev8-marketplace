@@ -36,6 +36,7 @@ class OrderResource extends JsonResource
             'snap_token' => $this->snap_token ?? null,
             'payment_url' => $this->payment_url ?? null,
             'need_refund' => $this->need_refund,
+            'refund' => $this->whenLoaded('refund', null),
             'order_date' => $this->order_date,
             'updated_at' => $this->updated_at,
         ];

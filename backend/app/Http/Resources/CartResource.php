@@ -20,6 +20,7 @@ class CartResource extends JsonResource
             'product_id' => $this->product_id,
             'variant_id' => $this->variant_id,
             'quantity' => $this->quantity,
+            'price' => $this->price,
             'product' => new ProductResource($this->whenLoaded('product')),
             'variant' => $this->whenLoaded('variant', $this->variant),
         ];

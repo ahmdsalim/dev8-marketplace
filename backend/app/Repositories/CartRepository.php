@@ -13,7 +13,7 @@ class CartRepository implements CartRepositoryInterface
     public function index()
     {
         $cart = Auth::user()->cart()->with(['items' => function($query) {
-            $query->select('id', 'cart_id', 'product_id', 'variant_id', 'quantity');
+            $query->select('id', 'cart_id', 'product_id', 'variant_id', 'quantity', 'price');
         }, 'items.product' => function($query) {
             $query->select('id', 'name', 'description', 'slug', 'price', 'weight', 'category_id', 'images', 'created_at', 'updated_at');
         }, 'items.product.category' => function($query) {
@@ -27,36 +27,37 @@ class CartRepository implements CartRepositoryInterface
 
     public function addToCart($productId, $variantId, $quantity)
     {
-        $cart = Auth::user()->cart()->firstOrCreate();
-
-        if($quantity < 1) {
+        if ($quantity < 1) {
             throw new \Exception('Quantity must be greater than 0', 400);
         }
-        
-        $product_variant = Product::join('product_variant', 'products.id', '=', 'product_variant.product_id')
-                     ->join('variants', 'variants.id', '=', 'product_variant.variant_id')
-                     ->where('products.id', $productId)
-                     ->where('variants.id', $variantId)
-                     ->select('products.price as price', 'product_variant.stock')
-                     ->firstOrFail();
-        
-        $cartItem = $cart->items()->getQuantity($cart->id, $productId, $variantId)->first();
-        
-        $total_quantity = isset($cartItem->quantity) ? $cartItem->quantity + $quantity : $quantity;
 
-        if($product_variant->stock < $total_quantity) {
+        $cart = Auth::user()->cart()->firstOrCreate();
+
+        $productVariant = $this->getProductVariant($productId, $variantId);
+
+        $cartItem = $cart->items()->firstOrNew(['product_id' => $productId, 'variant_id' => $variantId]);
+
+        $totalQuantity = $cartItem->exists ? $cartItem->quantity + $quantity : $quantity;
+
+        if ($productVariant->stock < $totalQuantity) {
             throw new \Exception('Product variant is out of stock', 400);
         }
-
-        $cartItem = $cart->items()->with('product', function($query) {
-            $query->select('id', 'category_id', 'collaboration_id', 'name', 'images', 'slug', 'description', 'weight', 'price');
-        })->firstOrNew(['product_id' => $productId, 'variant_id' => $variantId]);
-
-        $cartItem->quantity = $cartItem->exists ? $cartItem->quantity + $quantity : $quantity;
-        $cartItem->price = $cartItem->exists ? $cartItem->product->price : $product_variant->price;
+        
+        $cartItem->quantity = $totalQuantity;
+        $cartItem->price = $productVariant->price + $productVariant->additional_price;
         $cartItem->save();
 
         return $cartItem;
+    }
+
+    private function getProductVariant($productId, $variantId)
+    {
+        return Product::join('product_variant', 'products.id', '=', 'product_variant.product_id')
+            ->join('variants', 'variants.id', '=', 'product_variant.variant_id')
+            ->where('products.id', $productId)
+            ->where('variants.id', $variantId)
+            ->select('products.price as price', 'product_variant.id as product_variant_id', 'product_variant.stock', 'product_variant.additional_price')
+            ->firstOrFail();
     }
 
     public function removeFromCart($itemId)
