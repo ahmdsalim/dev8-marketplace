@@ -1,4 +1,5 @@
 import React from "react";
+import Preloader from "./Preloader";
 
 export const LoadingOnError = ({
   isLoading,
@@ -10,8 +11,9 @@ export const LoadingOnError = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center space-x-2">
-        <div className="w-6 h-6 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      <div className="flex flex-col items-center justify-center space-x-2">
+        <Preloader />
+        {/* <div className="w-6 h-6 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div> */}
         <span>{loadingMessage}</span>
       </div>
     );

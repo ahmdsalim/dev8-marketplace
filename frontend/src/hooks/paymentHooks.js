@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import axios from "axios";
 
 import { CREATE_PAYMENT_DETAIL } from "../service/api";

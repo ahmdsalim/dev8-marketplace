@@ -6,6 +6,9 @@ export const LOGGED_USER_URL = `${API_BASE_URL}/auth/user`;
 export const LOGOUT_URL = `${API_BASE_URL}/auth/logout`;
 export const CHANGE_PASSWORD_URL = `${API_BASE_URL}/auth/user/change-password`;
 export const UPDATE_PROFILE_URL = `${API_BASE_URL}/auth/user/update-profile`;
+export const FORGOT_PASSWORD_URL = `${API_BASE_URL}/auth/forgot-password`;
+export const RESET_PASSWORD_URL = `${API_BASE_URL}/auth/reset-password`;
+export const VERIFY_ACCOUNT_URL = `${API_BASE_URL}/auth/verify-email`;
 
 export const GET_USERS_URL = `${API_BASE_URL}/users`;
 export const GET_USER_URL = (id) => `${API_BASE_URL}/users/${id}`;
@@ -59,4 +62,6 @@ export const GET_ORDERS_URL = `${API_BASE_URL}/data/orders/list`;
 export const GET_ORDER_BY_ID = `${API_BASE_URL}/data/orders/list`;
 
 export const CREATE_PAYMENT_DETAIL = `${API_BASE_URL}/webhooks/midtrans`;
+export const CREATE_PAYMENT_REFUND = `${API_BASE_URL}/data/payment-refund`;
+
 export const GET_LIST_COLLABORATION_URL = `${API_BASE_URL}/data/collaborations/list`;

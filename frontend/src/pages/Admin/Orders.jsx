@@ -59,7 +59,13 @@ export default function Orders() {
     data: orderData = {},
     isLoading,
     error,
-  } = useOrderList({ page, searchQuery: debouncedSearch, sortBy: sort, limit, status });
+  } = useOrderList({
+    page,
+    searchQuery: debouncedSearch,
+    sortBy: sort,
+    limit,
+    status,
+  });
 
   const orders = orderData.result || [];
   const total = orderData.total || 0;
@@ -149,7 +155,10 @@ export default function Orders() {
   const handleExport = async () => {
     try {
       setExporting(true);
-      await exportData(`/data/orders/export?option=${exportSelected}`, "orders");
+      await exportData(
+        `/data/orders/export?option=${exportSelected}`,
+        "orders"
+      );
       showSuccessToast("orders exported successfully");
     } catch (error) {
       showErrorToast("Failed to export orders");
@@ -196,7 +205,10 @@ export default function Orders() {
         </div>
         <div className="flex gap-2 self-start">
           {/* Select export range */}
-          <Select value={`${exportSelected}`} onValueChange={handleExportSelected}>
+          <Select
+            value={`${exportSelected}`}
+            onValueChange={handleExportSelected}
+          >
             <SelectTrigger className="bg-white h-8 min-w-20">
               <SelectValue placeholder={`${exportSelected}`} />
             </SelectTrigger>
@@ -236,12 +248,16 @@ export default function Orders() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm">
-                  <span className="text-slate-500">Sort By:</span> {ucFirst(sort)}
+                    <span className="text-slate-500">Sort By:</span>{" "}
+                    {ucFirst(sort)}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {sortOptions.map(({ label, value }, index) => (
-                    <DropdownMenuItem key={index} onSelect={(e) => handleSort(e, value)}>
+                    <DropdownMenuItem
+                      key={index}
+                      onSelect={(e) => handleSort(e, value)}
+                    >
                       {label} {sort === value && <Check className="ml-auto" />}
                     </DropdownMenuItem>
                   ))}
@@ -252,13 +268,18 @@ export default function Orders() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm">
-                    <span className="text-slate-500">Status:</span> {ucFirst(status)}
+                    <span className="text-slate-500">Status:</span>{" "}
+                    {ucFirst(status)}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {statusOptions.map(({ label, value }, index) => (
-                    <DropdownMenuItem key={index} onSelect={(e) => handleFilter(e, value)}>
-                      {label} {status === value && <Check className="ml-auto" />}
+                    <DropdownMenuItem
+                      key={index}
+                      onSelect={(e) => handleFilter(e, value)}
+                    >
+                      {label}{" "}
+                      {status === value && <Check className="ml-auto" />}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -330,10 +351,16 @@ export default function Orders() {
                       <TableCell>{ucWords(item.courier)}</TableCell>
                       <TableCell>{ucWords(item.courier_service)}</TableCell>
                       <TableCell>
-                        <div className={`px-2 py-1 rounded-full text-center ${getStatusColor(item.status)}`}>{ucFirst(item.status)}</div>
+                        <div
+                          className={`px-2 py-1 rounded-full text-center ${getStatusColor(
+                            item.status
+                          )}`}
+                        >
+                          {ucFirst(item.status)}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        {ucWords(item.payment?.payment_method)}
+                        {ucWords(item.payment?.payment_method ?? "")}
                       </TableCell>
                       <TableCell>{formatRupiah(item.total_amount)}</TableCell>
                       <TableCell className="sticky right-0 w-10 bg-white opacity-[0.97] z-10">
@@ -345,12 +372,13 @@ export default function Orders() {
                             >
                               <span className="sr-only">Open menu</span>
                               <MoreHorizontal />
-                              { item.status === "processed" && item.resi_number === null && (
-                                <span className="absolute top-0 right-0 flex h-3 w-3">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
-                                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-400"></span>
-                                </span>
-                              ) }
+                              {item.status === "processed" &&
+                                item.resi_number === null && (
+                                  <span className="absolute top-0 right-0 flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-400"></span>
+                                  </span>
+                                )}
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -426,7 +454,7 @@ export default function Orders() {
               </ul>
             </div>
           </div>
-          { rowAction?.type === "detail" && (
+          {rowAction?.type === "detail" && (
             <DetailOrderDialog
               open={rowAction?.type === "detail"}
               onOpenChange={() => setRowAction(null)}

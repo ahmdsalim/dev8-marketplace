@@ -6,7 +6,7 @@ import { formatRupiah } from "../utils/FormatRupiah";
 import {
   CalendarIcon,
   TruckIcon,
-  CreditCardIcon,
+  Hash,
   CheckCircleIcon,
   MapPinHouse,
   ListChecks,
@@ -62,13 +62,30 @@ export const OrderDetails = () => {
             </div>
             <div className="order-detail__body border-t border-gray px-4 py-5 sm:p-6">
               <div className="order-detail__list flex flex-col space-y-6">
-                { order.data.need_refund && (
+                {order.data.need_refund && (
                   <div className="order-detail__row w-full">
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                      <span className="block sm:inline text-sm"> {order.data.refund.reason}</span>
+                    <div
+                      className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                      role="alert"
+                    >
+                      <span className="block sm:inline text-sm">
+                        {" "}
+                        {order.data.refund.reason}
+                      </span>
                     </div>
                   </div>
-                ) }
+                )}
+                <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
+                  <div className="order-detail__label flex items-center text-sm font-medium text-gray sm:w-1/3">
+                    <Hash className="h-4 w-4 mr-2 text-gray" />
+                    Resi Number
+                  </div>
+                  <div className="order-detail__value mt-1 text-sm text-gray sm:mt-0 sm:w-2/3">
+                    {order.data.resi_number && order.data.resi_number
+                      ? order.data.resi_number
+                      : "N/A"}
+                  </div>
+                </div>
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
                   <div className="order-detail__label flex items-center text-sm font-medium text-gray sm:w-1/3">
                     <CalendarIcon className="h-4 w-4 mr-2 text-gray" />
@@ -81,19 +98,15 @@ export const OrderDetails = () => {
                 <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
                   <div className="order-detail__label flex items-center text-sm font-medium text-gray sm:w-1/3">
                     <TruckIcon className="h-4 w-4 mr-2 text-gray" />
-                    Status
+                    Courier
                   </div>
                   <div className="order-detail__value mt-1 sm:mt-0 sm:w-2/3">
                     <span
-                      className={`order-detail__status px-2 inline-flex text-xs leading-5 font-semibold rounded-full    ${
-                        order.data.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : ""
-                      }
-    ${order.data.status === "cancelled" ? "bg-red-100 text-red-800" : ""}
-    ${order.data.status === "paid" ? "bg-green-100 text-green-800" : ""}`}
+                      className={`order-detail__status mt-1 text-sm text-gray sm:mt-0 sm:w-2/3`}
                     >
-                      {order.data.status}
+                      {" "}
+                      {/* {order.data.status} */}
+                      {order.data.courier}
                     </span>
                   </div>
                 </div>
@@ -122,16 +135,16 @@ export const OrderDetails = () => {
                         </li>
                       ))}
                       <li className="order-detail__item pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                          <div className="order-detail__item-name w-0 flex-1 flex items-center">
-                            <span className="order-detail__item-name-text ml-2 flex-1 w-0 truncate">
-                              Shipping Cost
-                            </span>
-                          </div>
-                          <div className="order-detail__item-price ml-4 flex-shrink-0">
-                            <span className="order-detail__item-price-text font-medium">
-                              1 x {formatRupiah(order.data.delivery_cost)}
-                            </span>
-                          </div>
+                        <div className="order-detail__item-name w-0 flex-1 flex items-center">
+                          <span className="order-detail__item-name-text ml-2 flex-1 w-0 truncate">
+                            Shipping Cost
+                          </span>
+                        </div>
+                        <div className="order-detail__item-price ml-4 flex-shrink-0">
+                          <span className="order-detail__item-price-text font-medium">
+                            1 x {formatRupiah(order.data.delivery_cost)}
+                          </span>
+                        </div>
                       </li>
                     </ul>
                   </div>
@@ -152,17 +165,6 @@ export const OrderDetails = () => {
                   </div>
                   <div className="order-detail__value mt-1 text-sm text-gray sm:mt-0 sm:w-2/3">
                     {order.data.delivery_address || "Address not available"}
-                  </div>
-                </div>
-                <div className="order-detail__row flex flex-col sm:flex-row sm:items-center">
-                  <div className="order-detail__label flex items-center text-sm font-medium text-gray sm:w-1/3">
-                    <CreditCardIcon className="h-4 w-4 mr-2 text-gray" />
-                    Payment Method
-                  </div>
-                  <div className="order-detail__value mt-1 text-sm text-gray sm:mt-0 sm:w-2/3">
-                    {order.data.payment && order.data.payment.payment_method
-                      ? order.data.payment.payment_method
-                      : "N/A"}
                   </div>
                 </div>
               </div>

@@ -150,29 +150,31 @@ export const useChangeProfile = () => {
 };
 
 export const useAuth = () => {
-  const { data, isLoading, isError } = useQuery(['userAuth'], async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("No token found");
-    }
-    const res = await axios.get(LOGGED_USER_URL, {
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data;
-  },
-  {
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-    refetchOnWindowFocus: false,
-    onError: (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
+  const { data, isLoading, isError } = useQuery(
+    ["userAuth"],
+    async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
       }
+      const res = await axios.get(LOGGED_USER_URL, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res.data;
     },
-  });
+    {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+      onError: (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+        }
+      },
+    }
+  );
 
   return {
     user: data || null,

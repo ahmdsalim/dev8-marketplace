@@ -1,11 +1,5 @@
 import ReactPaginate from "react-paginate";
-import {
-  ChevronLeft,
-  ChevronRight,
-  X,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const Pagination = ({ pageCount, onPageChange }) => {
   return (

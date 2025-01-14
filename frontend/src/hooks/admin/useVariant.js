@@ -25,7 +25,6 @@ export default function useVariant() {
           localStorage.removeItem("token");
         }
       },
-      refetchOnWindowFocus: false,
     }
   );
-};
+}
