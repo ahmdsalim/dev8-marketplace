@@ -8,6 +8,9 @@ import {
   LOGGED_USER_URL,
   CHANGE_PASSWORD_URL,
   UPDATE_PROFILE_URL,
+  FORGOT_PASSWORD_URL,
+  RESET_PASSWORD_URL,
+  VERIFY_EMAIL_URL,
 } from "../service/api";
 
 export const useRegister = () => {
@@ -182,4 +185,68 @@ export const useAuth = () => {
     isLoading,
     isError,
   };
+};
+
+// export const useForgotPassword = () => {
+//   return useMutation(async (email) => {
+//     const res = await axios.post(
+//       FORGOT_PASSWORD_URL,
+//       { email },
+//       {
+//         headers: {
+//           Accept: "application/json",
+//         },
+//       }
+//     );
+//     return res.data;
+//   });
+// };
+
+export const useForgotPassword = () => {
+  return useMutation(async (email) => {
+    const res = await axios.post(
+      FORGOT_PASSWORD_URL,
+      { email },
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    return res.data;
+  });
+};
+
+export const useVerifyEmail = () => {
+  return useMutation(async (token) => {
+    if (!token) {
+      throw new Error("No token found");
+    }
+
+    const res = await axios.post(
+      VERIFY_EMAIL_URL(token),
+      {},
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    return res.data;
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation(async (email, password, passwordConfirmation, token) => {
+    const res = await axios.post(
+      FORGOT_PASSWORD_URL,
+      { email, password, passwordConfirmation, token },
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    return res.data;
+  });
 };

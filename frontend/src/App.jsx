@@ -29,6 +29,8 @@ import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import GuestRoute from "./components/GuestRoute";
 import NotFound from "./pages/NotFound";
 import Forbidden from "./pages/Forbidden";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { VerifyEmail } from "./pages/VerifyEmail";
 
 function App() {
   return (
@@ -43,12 +45,18 @@ function App() {
           <Route element={<GuestRoute />}>
             <Route path="/login" element={<Auth />} />
             <Route path="/register" element={<Auth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
         </Route>
 
         {/* Protected Routes */}
         <Route element={<AuthenticatedRoute />}>
-          <Route element={<RoleBasedRoute allowedRoles={["user"]} showForbidden={true} />}>
+          <Route
+            element={
+              <RoleBasedRoute allowedRoles={["user"]} showForbidden={true} />
+            }
+          >
             <Route element={<Layout />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/cart" element={<Cart />} />
@@ -61,7 +69,11 @@ function App() {
 
         {/* Admin Routes */}
         <Route element={<AuthenticatedRoute />}>
-          <Route element={<RoleBasedRoute allowedRoles={["admin"]} showForbidden={true} />}>
+          <Route
+            element={
+              <RoleBasedRoute allowedRoles={["admin"]} showForbidden={true} />
+            }
+          >
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/users" element={<Users />} />

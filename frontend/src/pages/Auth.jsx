@@ -87,6 +87,10 @@ export const Auth = () => {
     }
   };
 
+  const handleForgotPassword = () => {
+    navigate("/forgot-password");
+  };
+
   const toggleAuthMode = () => {
     reset();
     navigate(isLogin ? "/register" : "/login");
@@ -263,6 +267,7 @@ export const Auth = () => {
                 <button
                   type="button"
                   className="auth__forgot-button font-medium text-black hover:underline"
+                  onClick={handleForgotPassword}
                 >
                   Forgot your password?
                 </button>

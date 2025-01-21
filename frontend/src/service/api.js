@@ -8,7 +8,9 @@ export const CHANGE_PASSWORD_URL = `${API_BASE_URL}/auth/user/change-password`;
 export const UPDATE_PROFILE_URL = `${API_BASE_URL}/auth/user/update-profile`;
 export const FORGOT_PASSWORD_URL = `${API_BASE_URL}/auth/forgot-password`;
 export const RESET_PASSWORD_URL = `${API_BASE_URL}/auth/reset-password`;
-export const VERIFY_ACCOUNT_URL = `${API_BASE_URL}/auth/verify-email`;
+// export const VERIFY_ACCOUNT_URL = `${API_BASE_URL}/auth/verify-email`;
+export const VERIFY_EMAIL_URL = (token) =>
+  `${API_BASE_URL}/auth/verify-email/${token}`;
 
 export const GET_USERS_URL = `${API_BASE_URL}/users`;
 export const GET_USER_URL = (id) => `${API_BASE_URL}/users/${id}`;
