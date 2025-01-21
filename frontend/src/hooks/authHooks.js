@@ -203,7 +203,7 @@ export const useAuth = () => {
 // };
 
 export const useForgotPassword = () => {
-  return useMutation(async (email) => {
+  return useMutation(async ({ email }) => {
     const res = await axios.post(
       FORGOT_PASSWORD_URL,
       { email },
@@ -237,16 +237,18 @@ export const useVerifyEmail = () => {
 };
 
 export const useResetPassword = () => {
-  return useMutation(async (email, password, passwordConfirmation, token) => {
-    const res = await axios.post(
-      FORGOT_PASSWORD_URL,
-      { email, password, passwordConfirmation, token },
-      {
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    );
-    return res.data;
-  });
+  return useMutation(
+    async ({ email, password, password_confirmation, token }) => {
+      const res = await axios.post(
+        RESET_PASSWORD_URL,
+        { email, password, password_confirmation, token },
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+      return res.data;
+    }
+  );
 };

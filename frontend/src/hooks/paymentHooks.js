@@ -23,9 +23,6 @@ export const useCheckout = () => {
       onError: (error) => {
         console.error("Payment failed:", error);
       },
-      onSuccess: (data) => {
-        console.log("Payment successful:", data);
-      },
     }
   );
 };

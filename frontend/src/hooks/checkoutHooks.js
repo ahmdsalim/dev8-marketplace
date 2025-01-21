@@ -117,9 +117,6 @@ export const useCheckout = () => {
       onError: (error) => {
         console.error("Checkout failed:", error);
       },
-      onSuccess: (data) => {
-        console.log("Checkout successful:", data);
-      },
     }
   );
 };

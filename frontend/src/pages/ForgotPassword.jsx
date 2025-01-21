@@ -34,15 +34,16 @@ export const ForgotPassword = () => {
   const forgotPasswordMutation = useForgotPassword();
 
   const onSubmit = async (data) => {
-    console.log(data);
     try {
-      await forgotPasswordMutation.mutateAsync(data);
-      showSuccessToast("Password reset email berhasil dikirim!");
+      await forgotPasswordMutation.mutateAsync({ email: data.email });
+      showSuccessToast("Password has been successfully reset!");
     } catch (error) {
-      showErrorToast("Terjadi kesalahan. Coba lagi nanti.");
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred. Please try again later.";
+      showErrorToast(errorMessage);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">

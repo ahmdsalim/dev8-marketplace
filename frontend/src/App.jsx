@@ -31,6 +31,7 @@ import NotFound from "./pages/NotFound";
 import Forbidden from "./pages/Forbidden";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { VerifyEmail } from "./pages/VerifyEmail";
+import { ResetPassword } from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -45,9 +46,10 @@ function App() {
           <Route element={<GuestRoute />}>
             <Route path="/login" element={<Auth />} />
             <Route path="/register" element={<Auth />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/reset-password/" element={<ResetPassword />} />
         </Route>
 
         {/* Protected Routes */}

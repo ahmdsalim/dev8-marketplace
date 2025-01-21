@@ -28,7 +28,6 @@ export const useDecreaseQty = () => {
           },
         }
       );
-      console.log("API Response:", res.data);
 
       return res.data;
     },
