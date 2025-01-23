@@ -13,15 +13,41 @@ import {
   Receipt,
 } from "lucide-react";
 import { LoadingOnError } from "../components/LoadingOnError";
+import { useRefundOrder } from "@/hooks/paymentHooks";
+import { showErrorToast, showSuccessToast } from "@/utils/ToastUtils";
 
 export const OrderDetails = () => {
   const { id } = useParams();
   const { data: order, isLoading, error } = useOrder(id);
   const noData = !order?.data;
+  const { mutate: refundOrder } = useRefundOrder();
 
-  const pay = () => {
+  console.log(order);
+
+  const handlePay = () => {
     const paymentUrl = order.data.payment_url.replace(/['"]/g, "");
     window.location.href = paymentUrl;
+  };
+
+  const handleRefund = () => {
+    if (!order || !order.data || !order.data.id) {
+      console.error("Order ID is missing");
+      return;
+    }
+
+    refundOrder(
+      { order_id: order.data.id },
+      {
+        onSuccess: (data) => {
+          console.log("Refund successful:", data);
+          showSuccessToast("Refund requested successfully!");
+        },
+        onError: (error) => {
+          console.error("Refund failed:", error);
+          showErrorToast("Failed to request refund. Please try again.");
+        },
+      }
+    );
   };
 
   return (
@@ -48,10 +74,17 @@ export const OrderDetails = () => {
               </div>
               {order.data.status === "pending" ? (
                 <button
-                  onClick={pay}
+                  onClick={handlePay}
                   className="order-detail__pay-btn mt-4 sm:mt-0 px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray"
                 >
                   Pay Now
+                </button>
+              ) : order.data.status === "failed" && order.data.need_refund ? (
+                <button
+                  onClick={handleRefund}
+                  className="order-detail__refund-btn mt-4 sm:mt-0 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray"
+                >
+                  Request Refund
                 </button>
               ) : (
                 <div className="mt-4 sm:mt-0 flex items-center text-green-600">

@@ -7,14 +7,16 @@ import { Pagination } from "../components/Pagination";
 import { LoadingOnError } from "../components/LoadingOnError";
 
 const StatusButton = ({ status, count, setSelectedStatus }) => {
-  <button
-    onClick={() => setSelectedStatus(status)}
-    className="px-4 py-2 rounded-full border hover:bg-gray"
-  >
-    {status
-      ? `${status.charAt(0).toUpperCase() + status.slice(1)} (${count})`
-      : `All Orders (${count})`}
-  </button>;
+  return (
+    <button
+      onClick={() => setSelectedStatus(status)}
+      className="px-4 py-2 rounded-full border hover:bg-gray"
+    >
+      {status
+        ? `${status.charAt(0).toUpperCase() + status.slice(1)} (${count})`
+        : `All Orders (${count})`}
+    </button>
+  );
 };
 
 export const Orders = () => {
@@ -24,13 +26,37 @@ export const Orders = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [query, setQuery] = useState("");
-  const [filteredItems, setFilteredItems] = useState(orders);
+  // const [filteredItems, setFilteredItems] = useState(orders);
+
   const [sortOrder, setSortOrder] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const navigate = useNavigate();
 
   const handleSearchChange = (e) => setQuery(e.target.value.toLowerCase());
+
+  const sortOrders = useCallback(
+    (orders) => {
+      const sortedOrders = [...orders]; // Create a copy of the orders array
+      switch (sortOrder) {
+        case "newest":
+          return sortedOrders.sort(
+            (a, b) => new Date(b.order_date) - new Date(a.order_date)
+          );
+        case "oldest":
+          return sortedOrders.sort(
+            (a, b) => new Date(a.order_date) - new Date(b.order_date)
+          );
+        case "highest":
+          return sortedOrders.sort((a, b) => b.total_amount - a.total_amount);
+        case "lowest":
+          return sortedOrders.sort((a, b) => a.total_amount - b.total_amount);
+        default:
+          return sortedOrders;
+      }
+    },
+    [sortOrder]
+  );
 
   const filterByDate = useCallback(
     (orders) => {
@@ -40,32 +66,12 @@ export const Orders = () => {
         const isAfterStartDate = startDate
           ? orderDate >= new Date(startDate)
           : true;
-
         const isBeforeEndDate = endDate ? orderDate <= new Date(endDate) : true;
         return isAfterStartDate && isBeforeEndDate;
       });
     },
-    [startDate, , endDate]
+    [startDate, endDate]
   );
-
-  const sortOrders = (orders) => {
-    switch (sortOrder) {
-      case "newest":
-        return orders.sort(
-          (a, b) => new Date(b.order_date) - new Date(a.order_date)
-        );
-      case "oldest":
-        return orders.sort(
-          (a, b) => new Date(a.order_date) - new Date(b.order_date)
-        );
-      case "highest":
-        return orders.sort((a, b) => b.total_amount - a.total_amount);
-      case "lowest":
-        return orders.sort((a, b) => a.total_amount - b.total_amount);
-      default:
-        return orders;
-    }
-  };
 
   const filteredAndSortedOrders = useMemo(() => {
     let filtered = orders.filter((order) =>
@@ -73,15 +79,16 @@ export const Orders = () => {
         item.product.name.toLowerCase().includes(query.toLowerCase())
       )
     );
+
     if (selectedStatus) {
       filtered = filtered.filter((order) => order.status === selectedStatus);
     }
 
     filtered = filterByDate(filtered);
-    filtered = sortOrders(filtered);
-    return filtered;
+    return sortOrders(filtered);
   }, [query, selectedStatus, orders, filterByDate, sortOrders]);
 
+  const [filteredItems, setFilteredItems] = useState(filteredAndSortedOrders);
   useEffect(() => {
     setFilteredItems(filteredAndSortedOrders);
   }, [filteredAndSortedOrders]);

@@ -19,7 +19,7 @@ class PaymentRepository implements PaymentRepositoryInterface
 
         if($order->status === 'pending') {
             $trans_status = $notification->transaction_status;
-    
+
             if(in_array($trans_status, ['capture', 'settlement'])) {
                 //check if payment is not already created
                 if(!isset($order->payment)) {
@@ -30,7 +30,7 @@ class PaymentRepository implements PaymentRepositoryInterface
                 if($this->isStockSufficient($order)) {
                     $order->status = 'processed';
                     $order->save();
-                    
+
                     //decrement product variant stock
                     $this->deductStock($order);
 
@@ -66,7 +66,7 @@ class PaymentRepository implements PaymentRepositoryInterface
                         'status' => 'failed'
                     ]);
                 }
-                
+
                 $order->status = 'failed';
                 $order->save();
 
@@ -90,7 +90,7 @@ class PaymentRepository implements PaymentRepositoryInterface
                 ->where('product_id', $item->product_id)
                 ->where('variant_id', $item->variant_id)
                 ->first();
-            
+
             if($product_variant->stock < $item->quantity) {
                 return false;
             }
@@ -137,7 +137,7 @@ class PaymentRepository implements PaymentRepositoryInterface
             if($response['status_code'] == 200){
                 //Log refund result
                 Log::info("Refund successful for Order ID {$orderId}", ['response' => $response]);
-                
+
                 //Create refund history with status completed
                 $this->createRefundHistory($orderId, $response['refund_amount'], $response['status']);
             } else {
@@ -148,7 +148,7 @@ class PaymentRepository implements PaymentRepositoryInterface
             }
 
         } catch (\Exception $e) {
-            if (in_array($e->getCode(), [412, 414])) {
+            if (in_array($e->getCode(), [412, 414, 418])) {
                 //Create refund history with status pending
                 $this->createRefundHistory($orderId, $amount, 'pending');
                 return;
