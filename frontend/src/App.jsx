@@ -32,6 +32,8 @@ import Forbidden from "./pages/Forbidden";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { VerifyEmail } from "./pages/VerifyEmail";
 import { ResetPassword } from "./pages/ResetPassword";
+import { NewArrivalProducts } from "./pages/NewArrivalProducts";
+import { CollaborationProducts } from "./pages/CollaborationProducts";
 
 function App() {
   return (
@@ -42,6 +44,8 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/new-arrivals" element={<NewArrivalProducts />} />
+          <Route path="/collaborations" element={<CollaborationProducts />} />
           <Route path="/products/:slug" element={<ProductDetail />} />
           <Route element={<GuestRoute />}>
             <Route path="/login" element={<Auth />} />

@@ -7,15 +7,18 @@ import { formatRupiah } from "../utils/FormatRupiah";
 import { Pagination } from "../components/Pagination";
 import { LoadingOnError } from "../components/LoadingOnError";
 
-export const Products = () => {
+export const CollaborationProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("View All Category");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
+  const [selectedCollaboration, setSelectedCollaboration] = useState(null);
+  const [tempCollaboration, setTempCollaboration] = useState(null);  // State sementara untuk kolaborasi
   const [tempCategory, setTempCategory] = useState("View All Category");
   const [tempPriceRange, setTempPriceRange] = useState(null);
   const [priceRanges, setPriceRanges] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
+  const [isCollaborationOpen, setIsCollaborationOpen] = useState(false);  // Untuk membuka/menutup filter kolaborasi
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const navigate = useNavigate();
@@ -62,7 +65,8 @@ export const Products = () => {
       !selectedPriceRange ||
       (product.price >= selectedPriceRange.min &&
         product.price <= selectedPriceRange.max);
-    return matchCategory && matchPrice;
+    const matchCollaboration = product.collaboration;
+    return matchCategory && matchPrice && matchCollaboration;
   });
 
   const handlePageChange = ({ selected }) => {

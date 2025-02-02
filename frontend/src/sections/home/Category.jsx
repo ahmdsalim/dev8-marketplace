@@ -4,7 +4,6 @@ import { LoadingOnError } from "../../components/LoadingOnError";
 
 export const Category = () => {
   const { data: categories = [], isLoading, error } = useCategory();
-
   return (
     <section className="categories container bg-white max-w-7xl mx-auto px-4 py-12">
       <LoadingOnError
@@ -16,7 +15,7 @@ export const Category = () => {
       <div className="categories__header flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div className="categories__info mb-4 md:mb-0">
           <h2 className="categories__title text-3xl font-bold mb-2">
-            Our Products
+            Our Categories
           </h2>
           <p className="categories__description text-gray-600 max-w-2xl">
             Discover our latest collection of high-quality clothing, featuring

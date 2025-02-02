@@ -8,14 +8,9 @@ export const Products = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const { data: products = [], isLoading, error } = useProducts();
   const navigate = useNavigate();
-  // const sortedProducts = products.sort((a, b) => {
-  //   const dateA = new Date(a.created_at);
-  //   const dateB = new Date(b.created_at);
+  const sortedProducts = [...products].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const latestProducts = sortedProducts.slice(0, 4);
 
-  //   return dateB - dateA;
-  // });
-
-  // const latestProducts = sortedProducts.slice(0, 4);
 
   return (
     <section className="products container bg-white max-w-7xl mx-auto px-4 py-12">
@@ -39,7 +34,7 @@ export const Products = () => {
         </button>
       </div>{" "}
       <div className="products__list flex flex-wrap justify-center">
-        {products.map((product, index) => (
+        {latestProducts.map((product, index) => (
           <div
             key={product.id}
             className="product-card overflow-hidden w-full sm:w-1/2 lg:w-1/4 px-4 mb-8"
@@ -51,14 +46,14 @@ export const Products = () => {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <img
-                src={product.images[1].image}
+                src={product.images[0].image}
                 alt={`${product.name} - Front`}
                 className={`product-card__image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                   hoveredIndex === index ? "opacity-0" : "opacity-100"
                 }`}
               />
               <img
-                src={product.images[0].image}
+                src={product.images[1].image}
                 alt={`${product.name} - Back`}
                 className={`product-card__hover-image absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                   hoveredIndex === index ? "opacity-100" : "opacity-0"

@@ -22,8 +22,6 @@ export const OrderDetails = () => {
   const noData = !order?.data;
   const { mutate: refundOrder } = useRefundOrder();
 
-  console.log(order);
-
   const handlePay = () => {
     const paymentUrl = order.data.payment_url.replace(/['"]/g, "");
     window.location.href = paymentUrl;
@@ -39,7 +37,7 @@ export const OrderDetails = () => {
       { order_id: order.data.id },
       {
         onSuccess: (data) => {
-          console.log("Refund successful:", data);
+          // console.log("Refund successful:", data);
           showSuccessToast("Refund requested successfully!");
         },
         onError: (error) => {

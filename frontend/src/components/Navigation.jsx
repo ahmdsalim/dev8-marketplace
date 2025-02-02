@@ -111,7 +111,7 @@ export const Navigation = () => {
                   Home
                 </Link>
                 <Link
-                  to="/"
+                  to="/new-arrivals"
                   className="menu__item text-black hover:text-black px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   New Arrival
@@ -123,7 +123,7 @@ export const Navigation = () => {
                   Products
                 </Link>
                 <Link
-                  to="/"
+                  to="/collaborations"
                   className="menu__item text-black hover:text-black px-3 py-2 rounded-md text-sm hover:font-bold"
                 >
                   Collaboration

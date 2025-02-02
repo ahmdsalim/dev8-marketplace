@@ -7,7 +7,7 @@ import { formatRupiah } from "../utils/FormatRupiah";
 import { Pagination } from "../components/Pagination";
 import { LoadingOnError } from "../components/LoadingOnError";
 
-export const Products = () => {
+export const NewArrivalProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("View All Category");
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [tempCategory, setTempCategory] = useState("View All Category");
@@ -54,7 +54,11 @@ export const Products = () => {
     }
   }, [products]);
 
-  const filteredProducts = products.filter((product) => {
+  const sortedProducts = products.sort((a, b) =>
+    Date.parse(b.created_at) - Date.parse(a.created_at)
+  );
+
+  const filteredProducts = sortedProducts.filter((product) => {
     const matchCategory =
       selectedCategory === "View All Category" ||
       product.category === selectedCategory;
