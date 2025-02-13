@@ -15,6 +15,7 @@ use App\Http\Controllers\API\RajaOngkirController;
 use App\Http\Controllers\API\CollaborationController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ForgotPasswordController;
+use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\RefundController;
 
 Route::prefix('auth')->group(function() {
@@ -45,6 +46,11 @@ Route::prefix('auth')->group(function() {
 //dashboard
 Route::get('/getdashboard', [DashboardController::class, '__invoke'])->middleware(['auth:sanctum', 'authtype:admin']);
 Route::get('/getorderchart/{period}', [DashboardController::class, 'getOrderChart'])->middleware(['auth:sanctum', 'authtype:admin']);
+
+//notification
+Route::get('/notifications', [NotificationController::class, '__invoke'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::put('/notifications/mark-as-read', [NotificationController::class, 'readAll'])->middleware(['auth:sanctum', 'authtype:admin']);
+Route::put('/notifications/{id}/read', [NotificationController::class, 'read'])->middleware(['auth:sanctum', 'authtype:admin']);
 
 //delete image product
 Route::delete('/products/{id}/images/{imgId}', [ProductController::class, 'destroyImage'])->middleware(['auth:sanctum', 'authtype:admin']);

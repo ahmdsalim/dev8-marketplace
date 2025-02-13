@@ -34,6 +34,7 @@ import { VerifyEmail } from "./pages/VerifyEmail";
 import { ResetPassword } from "./pages/ResetPassword";
 import { NewArrivalProducts } from "./pages/NewArrivalProducts";
 import { CollaborationProducts } from "./pages/CollaborationProducts";
+import Notifications from "./pages/Admin/Notifications";
 
 function App() {
   return (
@@ -91,6 +92,7 @@ function App() {
               <Route path="/dashboard/variants" element={<Variants />} />
               <Route path="/dashboard/products" element={<ProductList />} />
               <Route path="/dashboard/orders" element={<OrderList />} />
+              <Route path="/dashboard/notifications" element={<Notifications />} />
             </Route>
           </Route>
         </Route>

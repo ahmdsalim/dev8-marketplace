@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
+use App\Events\NewUserNotification;
 use App\Events\UserVerification;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -40,6 +41,7 @@ class AuthController extends Controller
             ]);
 
             event(new UserVerification($user, $verify_token));
+            event(new NewUserNotification($user));
 
             $success['token'] =  $user->createToken('authToken')->plainTextToken;
             $success['user'] =  $user;

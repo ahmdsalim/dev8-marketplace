@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Events\IncomingOrderNotification;
 use App\Models\Order;
 use App\Models\Refund;
 use Midtrans\Transaction;
@@ -33,6 +34,8 @@ class PaymentRepository implements PaymentRepositoryInterface
 
                     //decrement product variant stock
                     $this->deductStock($order);
+
+                    event(new IncomingOrderNotification($order));
 
                     $message = 'Payment success';
                 } else {

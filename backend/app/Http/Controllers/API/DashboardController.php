@@ -96,6 +96,6 @@ class DashboardController extends Controller
             return $current == 0 ? 0 : 100;
         }
 
-        return (($current - $previous) / $previous) * 100;
+        return floor((($current - $previous) / $previous) * 100);
     }
 }

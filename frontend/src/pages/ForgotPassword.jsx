@@ -39,7 +39,7 @@ export const ForgotPassword = () => {
       showSuccessToast("Password has been successfully reset!");
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message ||
+        error.response?.data?.data?.message || error.response?.data?.data?.email ||
         "An error occurred. Please try again later.";
       showErrorToast(errorMessage);
     }

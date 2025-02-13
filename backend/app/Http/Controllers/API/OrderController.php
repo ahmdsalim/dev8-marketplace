@@ -12,9 +12,10 @@ use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\OrderCollection;
+use App\Notifications\ResiNumberUpdated;
 use App\Http\Requests\CheckOutOrderRequest;
-use App\Http\Requests\UpdateResiNumberRequest;
 use App\Interfaces\OrderRepositoryInterface;
+use App\Http\Requests\UpdateResiNumberRequest;
 
 class OrderController extends Controller
 {
@@ -105,6 +106,9 @@ class OrderController extends Controller
             $order = Order::where('id', $id)->where('status', 'processed')->firstOrFail();
             $order->resi_number = $request->resi_number;
             $order->save();
+
+            // notify user order is shipped
+            $order->user->notify(new ResiNumberUpdated($order));
     
             return ApiResponseClass::sendResponse(['resi_number' => $request->resi_number], 'Resi number updated successfully', 200);
         } catch (\Exception $e) {

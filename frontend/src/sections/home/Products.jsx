@@ -3,6 +3,7 @@ import { useProducts } from "../../hooks/productHooks";
 import { useNavigate } from "react-router-dom";
 import { formatRupiah } from "../../utils/FormatRupiah";
 import { LoadingOnError } from "../../components/LoadingOnError";
+import { Link } from "react-router-dom";
 
 export const Products = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -29,9 +30,9 @@ export const Products = () => {
             the hottest trends and timeless styles.
           </p>
         </div>
-        <button className="products__button bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border transition-colors">
+        <Link to="/new-arrivals" className="products__button bg-black text-white px-6 py-2 rounded hover:bg-white hover:text-black border transition-colors">
           View All New Arrivals
-        </button>
+        </Link>
       </div>{" "}
       <div className="products__list flex flex-wrap justify-center">
         {latestProducts.map((product, index) => (

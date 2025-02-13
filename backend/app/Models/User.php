@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);   
+    }
+
     //make local scope for filter user by role
     public function scopeOfRole($query, $role)
     {
